@@ -78,18 +78,18 @@ function sendSmsMessage($mobileArray, $content) {
 	} else {
 		return null;
 	}
-	/**
-	 * *
-	 * 生成随机数
-	 * 
-	 * @param $length 随机数商都        	
-	 * @return 随机数
-	 */
-	function getRandNumber($length) {
-		$a = range ( 0, 9 );
-		for($i = 0; $i < $length; $i ++) {
-			$b [] = array_rand ( $a );
-		}
-		return join ( "", $b );
+}
+/**
+ * *
+ * 生成随机数
+ *
+ * @param $length 随机数商都        	
+ * @return 随机数
+ */
+function getRandNumber($length) {
+	$a = range ( 0, 9 );
+	for($i = 0; $i < $length; $i ++) {
+		$b [] = array_rand ( $a );
 	}
+	return join ( "", $b );
 }

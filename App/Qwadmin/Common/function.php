@@ -70,9 +70,10 @@ function sendSmsMessage($mobileArray, $content) {
 			curl_setopt ( $ch, CURLOPT_HEADER, 0 );
 			curl_setopt ( $ch, CURLOPT_URL, $url );
 			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_data );
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //如果需要将结果直接返回到变量里，那加上这句。
 			$result = curl_exec ( $ch );
 			$jsonObject=json_decode($result);
-			array_push ( $resultArray, array($mobileArray->$jsonObject->status->code) );
+			array_push($resultArray, array($mobile=>$jsonObject->status->code));
 			return $resultArray;
 		}
 	} else {

@@ -77,4 +77,24 @@ class SmsController extends ComController {
 		$this->assign ( 'model', $model );
 		$this->display ( 'form' );
 	}
+	
+	
+	/**
+	 * 审核短信
+	 */
+	public function approveindex() {
+		$res=sendSmsMessage(array('13615517375'), '请各位业主及时参加下午3点的会议。【乐助科技】');
+		dump($res);
+	/* 	$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
+		$pagesize = 10; // 每页数量
+		$offset = $pagesize * ($p - 1); // 计算记录偏移量
+		$m = M ( 'em_smsmodel' );
+		$count = $m->where ( 'status=1 and isapprove=0' )->count ();
+		$list = $m->where ( 'status=1 and isapprove=0' )->limit ( $offset . ',' . $pagesize )->select ();
+		$page = new \Think\Page ( $count, $pagesize );
+		$page = $page->show ();
+		$this->assign ( 'list', $list );
+		$this->assign('page', $page);
+		$this->display (); */
+	}
 }

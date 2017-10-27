@@ -70,6 +70,7 @@
 												<th>创建时间</th>
 												<th>类型</th>
 												<th>状态</th>
+												<th>是否通审核过</th>
 												<th class="center">操作</th>
 											</tr>
 										</thead>
@@ -83,6 +84,9 @@
 												</td>
 												<td>
 													<?php if($val['status']==1){echo '启用';}else{echo '禁用';} ?>
+												</td>
+												<td>
+													<?php if($val['isapprove']==1){echo '是';}else{echo '否';} ?>
 												</td>
 												<td class="center"><a
 													href="{:U('edit',array('id'=>$val['id']))}">修改</a></td>

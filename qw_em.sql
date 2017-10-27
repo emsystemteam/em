@@ -213,3 +213,103 @@ CREATE TABLE `qw_em_village` (
   `OPERATOR` int(11) DEFAULT NULL,
   PRIMARY KEY (`VILLAGE_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区表';
+
+
+
+
+
+
+
+
+
+
+
+-- phpMyAdmin SQL Dump
+-- version 4.7.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: 2017-10-27 14:06:26
+-- 服务器版本： 5.6.36-log
+-- PHP Version: 5.6.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Database: `qwadmin`
+--
+
+-- --------------------------------------------------------
+
+ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;
+
+--
+-- 表的结构 `qw_smslog`
+--
+
+CREATE TABLE `qw_smslog` (
+  `id` int(11) NOT NULL,
+  `t` int(10) NOT NULL COMMENT '发送时间',
+  `phone` varchar(11) NOT NULL COMMENT '手机号码',
+  `code` varchar(6) NOT NULL COMMENT '验证码'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='短信验证码日志';
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `qw_smslog`
+--
+ALTER TABLE `qw_smslog`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 在导出的表使用AUTO_INCREMENT
+--
+
+--
+-- 使用表AUTO_INCREMENT `qw_smslog`
+--
+ALTER TABLE `qw_smslog`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
+
+
+
+
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : localhost
+Source Server Version : 50714
+Source Host           : localhost:3306
+Source Database       : qwadmin
+
+Target Server Type    : MYSQL
+Target Server Version : 50714
+File Encoding         : 65001
+
+Date: 2017-10-27 14:44:20
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for qw_em_smsmodel
+-- ----------------------------
+DROP TABLE IF EXISTS `qw_em_smsmodel`;
+CREATE TABLE `qw_em_smsmodel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `smscontent` text COMMENT '短信内容',
+  `creater` int(11) DEFAULT NULL COMMENT '创建人',
+  `createtime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `modifier` int(11) DEFAULT NULL COMMENT '修改人',
+  `modifytime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `status` tinyint(1) NOT NULL COMMENT '状态1：正常；0：禁用',
+  `smstype` varchar(10) DEFAULT NULL COMMENT '类型1：短信模板2：微信模板',
+  `isapprove` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否审核通过0：未通过 1：通过',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;

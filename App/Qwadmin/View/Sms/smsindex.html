@@ -45,13 +45,13 @@
 							<div class="row">
 								<form class="form-inline" action="" method="post">
 									<a class="btn btn-info" href="{:U('add')}" value="">新增</a> <label
-										class="inline">&nbsp;&nbsp;消息类型：</label> 
-										<select name="smstype" class="form-control">
-										<option <if condition="I('smstype') eq 0">selected</if>
-											value="0">短信
-										</option>
+										class="inline">&nbsp;&nbsp;消息类型：</label> <select
+										name="smstype" class="form-control">
 										<option <if condition="I('smstype') eq 1">selected</if>
-											value="1">微信
+											value="1">短信
+										</option>
+										<option <if condition="I('smstype') eq 2">selected</if>
+											value="2">微信
 										</option>
 									</select>
 									<button type="submit" class="btn btn-purple btn-sm">
@@ -81,7 +81,8 @@
 												<td>
 													<?php if($val['smstype']==1){echo '微信';}else{echo '手机短信';} ?>
 												</td>
-												<td> <?php if($val['status']==1){echo '启用';}else{echo '禁用';} ?>
+												<td>
+													<?php if($val['status']==1){echo '启用';}else{echo '禁用';} ?>
 												</td>
 												<td class="center"><a
 													href="{:U('edit',array('id'=>$val['id']))}">修改</a></td>
@@ -90,10 +91,11 @@
 										</tbody>
 									</table>
 								</form>
-								{$page}
+
 							</div>
 							<!-- PAGE CONTENT ENDS -->
 						</div>
+						{$page}
 						<!-- /.col -->
 					</div>
 					<!-- /.row -->
@@ -110,43 +112,7 @@
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
-		$(function() {
-			$(".check-all").click(function() {
-				$(".uids").prop("checked", this.checked);
-			});
-			$(".uids").click(function() {
-				var option = $(".ids");
-				option.each(function(i) {
-					if (!this.checked) {
-						$(".check-all").prop("checked", false);
-						return false;
-					} else {
-						$(".check-all").prop("checked", true);
-					}
-				});
-			});
-			$(".del").click(function() {
-				var url = $(this).attr('val');
-				bootbox.confirm({
-					title : "系统提示",
-					message : "是否要删除该用户?",
-					callback : function(result) {
-						if (result) {
-							window.location.href = url;
-						}
-					},
-					buttons : {
-						"cancel" : {
-							"label" : "取消"
-						},
-						"confirm" : {
-							"label" : "确定",
-							"className" : "btn-danger"
-						}
-					}
-				});
-			});
-		})
+		
 	</script>
 </body>
 </html>

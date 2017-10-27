@@ -25,7 +25,7 @@ class SmsController extends ComController {
 		$page = $page->show ();
 		$this->assign ( 'list', $list );
 		$this->assign ( 'smstype', $data ['smstype'] );
-		$this->assign('page', $page);
+		$this->assign ( 'page', $page );
 		$this->display ();
 	}
 	// 编辑短信
@@ -48,10 +48,11 @@ class SmsController extends ComController {
 		if (! empty ( $model->id )) { // 更新
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
 			$model->modifier = session ( 'uid' );
-			$model->status=I('post.status', '', 'intval');
+			$model->status = I ( 'post.status', '', 'intval' );
 			$flag = $model->save ();
 			if ($flag) {
 				$this->success ( "保存成功" );
+				addlog ( '信息模板保存成功，ID：' . $model->id);
 			} else {
 				$this->success ( "保存失败" );
 			}
@@ -62,6 +63,7 @@ class SmsController extends ComController {
 			$flag = $model->add ();
 			if ($flag) {
 				$this->success ( "创建成功" );
+				addlog ( '信息模板创建成功，ID：' . $model->id);
 			} else {
 				$this->success ( "创建失败" );
 			}
@@ -78,14 +80,11 @@ class SmsController extends ComController {
 		$this->display ( 'form' );
 	}
 	
-	
 	/**
-	 * 审核短信
+	 * 审核短信列表
 	 */
 	public function approveindex() {
-		$res=sendSmsMessage(array('13615517375'), '请各位业主及时参加下午3点的会议。【乐助科技】');
-		dump($res);
-	/* 	$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
+		$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
 		$pagesize = 10; // 每页数量
 		$offset = $pagesize * ($p - 1); // 计算记录偏移量
 		$m = M ( 'em_smsmodel' );
@@ -94,7 +93,24 @@ class SmsController extends ComController {
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
 		$this->assign ( 'list', $list );
-		$this->assign('page', $page);
-		$this->display (); */
+		$this->assign ( 'page', $page );
+		$this->display ();
+	}
+	
+	/**
+	 * *
+	 * 审核通过
+	 */
+	public function approve() {
+		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
+		if ($id) {
+			$model = M ( 'em_smsmodel' );
+			$model->isapprove=1;
+			$model->where ( 'id=' . $id )->save ();
+			addlog ( '信息模板审核通过，ID：' . $id );
+			die('1');
+		} else {
+			die ( '0' );
+		}
 	}
 }

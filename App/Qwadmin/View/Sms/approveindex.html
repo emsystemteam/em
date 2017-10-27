@@ -70,8 +70,9 @@
 												<td>
 													<?php if($val['isapprove']==1){echo '是';}else{echo '否';} ?>
 												</td>
-												<td class="center"><a class="approve"
-													href="{:U('approve',array('id'=>$val['id']))}">审核</a></td>
+												<td class="center">
+                                           		  <php> echo '<a class="blue approve" href="javascript:void(0);" val="'.$val['id'].'"
+                                                     title="审核"><i class="ace-icon fa fa-plus-circle bigger-100"></i>审核</a>';</php>
 											</tr>
 											</volist>
 										</tbody>
@@ -98,9 +99,58 @@
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
-		$('.approve').click(function(id){
-			
-		})
+	 $(function () {
+	  $(".approve").on('click', function () {
+          var obj = $(this);
+          var id = obj.attr('val');
+          bootbox.confirm({
+              title: "系统提示",
+              message: "是否要审核通过？",
+              callback: function (result) {
+                  if (result) {
+                      $.get("{:U('approve')}?id=" + id, function (result) {
+                         if (result == 1) {
+                              bootbox.alert({
+                                  buttons: {
+                                      ok: {
+                                          label: '确定',
+                                          className: 'btn-danger'
+                                      }
+                                  },
+                                  message: '恭喜，审核成功！',
+                                  callback: function () {
+                                      window.location.reload(true);
+                                  },
+                                  title: "友情提示",
+                              });
+                              return;
+                          }else{
+                        	  bootbox.dialog({
+                                  message: "抱歉，系统错误，请稍后再试。",
+                                  buttons: {
+                                      "success": {
+                                          "label": "确定",
+                                          "className": "btn-danger"
+                                      }
+                                  }
+                              });
+                              return;
+                          } 
+                      });
+                  } else {
+                      return true;
+                  }
+              },
+              buttons: {
+                  "cancel": {"label": "取消"},
+                  "confirm": {
+                      "label": "确定",
+                      "className": "btn-danger"
+                  }
+              }
+          });
+      })
+	 });
 	</script>
 </body>
 </html>

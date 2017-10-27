@@ -83,7 +83,7 @@ class WechatController extends Controller
                         $this->ajaxReturn($result, 'json');
                     } else {
                         $result['status'] = - 1;
-                        $result['message'] = "验证码发送失败！";
+                        $result['message'] = "验证码发送失败，请稍后再试！";
                         $this->ajaxReturn($result, 'json');
                     }
                 } else {

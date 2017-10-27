@@ -42,17 +42,16 @@ function member($uid, $field = false) {
 	}
 }
 
-/**
- * *
- * 发送短信消息
- *
- * @param $mobileArray 电话号码数组        	
- * @param $content 短信消息        	
+/***
+ * 发送短信
+ * @param  $mobileArray 电话号码集合
+ * @param  $content 短信内容
+ * @return 返回null则代表传入数据有问题，否则返回数组，对应每条电话记录是否发送成功{'130000000'->'0','18900000000'->1},0代表成功
  */
 function sendSmsMessage($mobileArray, $content) {
-	$resultArray = array (); // 返回信息格式：
 	if (! empty ( $content ) && is_array ( $mobileArray ) && count ( $mobileArray ) > 0) { // 判断传值是否正确
 		foreach ( $mobileArray as $mobile ) {
+			$resultArray = array (); // 返回信息格式：
 			$post_data = array ();
 			$post_data ['sn'] = 'SDK_AAA_00227'; // 序列号
 			$post_data ['password'] = '852172777'; // 密码
@@ -73,12 +72,13 @@ function sendSmsMessage($mobileArray, $content) {
 			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_data );
 			$result = curl_exec ( $ch );
 			$jsonObject=json_decode($result);
-			array_push ( $resultArray, array($jsonObject->status->code) );
+			array_push ( $resultArray, array($mobileArray->$jsonObject->status->code) );
+			return $resultArray;
 		}
 	} else {
-		array_push($resultArray,'0');
+		return  null;
 	}
-	return $resultArray;
+	
 }
 /**
  * *

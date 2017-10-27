@@ -50,8 +50,8 @@ function member($uid, $field = false) {
  * @param $content 短信消息        	
  */
 function sendSmsMessage($mobileArray, $content) {
+	$resultArray = array (); // 返回信息格式：
 	if (! empty ( $content ) && is_array ( $mobileArray ) && count ( $mobileArray ) > 0) { // 判断传值是否正确
-		$resultArray = array (); // 返回信息格式：
 		foreach ( $mobileArray as $mobile ) {
 			$post_data = array ();
 			$post_data ['sn'] = 'SDK_AAA_00227'; // 序列号
@@ -72,12 +72,13 @@ function sendSmsMessage($mobileArray, $content) {
 			curl_setopt ( $ch, CURLOPT_URL, $url );
 			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_data );
 			$result = curl_exec ( $ch );
-			array_push ( $resultArray, $result );
+			$jsonObject=json_decode($result);
+			array_push ( $resultArray, array($jsonObject->status->code) );
 		}
-		return $resultArray;
 	} else {
-		return null;
+		array_push($resultArray,'0');
 	}
+	return $resultArray;
 }
 /**
  * *

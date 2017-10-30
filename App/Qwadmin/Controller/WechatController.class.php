@@ -83,7 +83,7 @@ class WechatController extends Controller
                         $this->ajaxReturn($result, 'json');
                     } else {
                         $result['status'] = - 1;
-                        $result['message'] = "验证码发送失败！";
+                        $result['message'] = "验证码发送失败，请稍后再试！";
                         $this->ajaxReturn($result, 'json');
                     }
                 } else {
@@ -194,14 +194,28 @@ class WechatController extends Controller
     {
         try {
             $content = sprintf("尊敬的客户，您的验证码为%s,1分钟内有效，您正在进行微信登录身份认证操作。【乐助科技】", $code);
-            $res = sendSmsMessage(array(
-                $phone
-            ), $content);
-            $json = json_decode(json_encode($res));
-            if ($json) {
-                if ($json->status->code == 0) {
-                    return true;
-                }
+            $post_data['sn'] = 'SDK_AAA_00227'; // 序列号
+            $post_data['password'] = '852172777'; // 密码
+            $post_data['content'] = $content;
+            $post_data['mobile'] = $phone; // 手机号
+            $post_data['sendTime'] = date("YYYYMMDDHHmmss", time()); // 定时发送，输入格式YYYYMMDDHHmmss的日期值
+            $post_data['ext'] = ''; // 接入码
+            $url = 'http://123.56.233.239:8080/msg-core-web/msg/sendMsg';
+            $o = '';
+            foreach ($post_data as $k => $v) {
+                $o .= "$k=" . urlencode($v) . '&';
+            }
+            $post_data = substr($o, 0, - 1);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+            $result = curl_exec($ch);
+            $json = json_decode($result);
+            if ($json->status->code == 0) {
+                return true;
             }
         } catch (Exception $ex) {}
         return false;

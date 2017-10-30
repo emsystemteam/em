@@ -311,5 +311,6 @@ CREATE TABLE `qw_em_smsmodel` (
   `status` tinyint(1) NOT NULL COMMENT '状态1：正常；0：禁用',
   `smstype` varchar(10) DEFAULT NULL COMMENT '类型1：短信模板2：微信模板',
   `isapprove` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否审核通过0：未通过 1：通过',
+  `smstital` varchar(255) DEFAULT NULL COMMENT '标题',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;

@@ -20,7 +20,7 @@ class SmsController extends ComController {
 		$offset = $pagesize * ($p - 1); // 计算记录偏移量
 		$m = M ( 'em_smsmodel' );
 		$count = $m->where ( 'smstype=' . $data ['smstype'] )->count ();
-		$list = $m->where ( 'smstype=' . $data ['smstype'] )->limit ( $offset . ',' . $pagesize )->select ();
+		$list = $m->where ( 'smstype=' . $data ['smstype'] )->order('createtime desc')->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
 		$this->assign ( 'list', $list );

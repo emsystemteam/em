@@ -27,6 +27,14 @@
 								<input name="id" value="{$model.id}" type="hidden">
 								<div class="form-group">
 									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-10">短信标题</label>
+									<div class="col-sm-6">
+									<input type="text" name="smstitle" id="smstitle" placeholder="短信标题"
+                                           class="col-xs-12 col-sm-12" value="{$model.smstitle}">	
+                                    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label no-padding-right"
 										for="form-field-10">短信内容</label>
 									<div class="col-sm-6">
 										<textarea name="smscontent" id="smscontent"
@@ -94,10 +102,11 @@
     $(function () {
 	 $(".submit").click(function () {
          var smscontent = $("#smscontent").val();
-         if (smscontent == '') {
+         var smstitle = $("#smstitle").val();
+         if (smscontent == ''||smstitle=='') {
              bootbox.dialog({
                  title: '友情提示：',
-                 message: "短信内容不能为空。",
+                 message: "短信内容或短信标题不能为空。",
                  buttons: {
                      "success": {
                          "label": "确定",

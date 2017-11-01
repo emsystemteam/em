@@ -50,8 +50,8 @@ function member($uid, $field = false) {
  */
 function sendSmsMessage($mobileArray, $content) {
 	if (! empty ( $content ) && is_array ( $mobileArray ) && count ( $mobileArray ) > 0) { // 判断传值是否正确
+		$resultArray = array (); // 返回信息格式：
 		foreach ( $mobileArray as $mobile ) {
-			$resultArray = array (); // 返回信息格式：
 			$post_data = array ();
 			$post_data ['sn'] = 'SDK_AAA_00227'; // 序列号
 			$post_data ['password'] = '852172777'; // 密码
@@ -74,8 +74,8 @@ function sendSmsMessage($mobileArray, $content) {
 			$result = curl_exec ( $ch );
 			$jsonObject=json_decode($result);
 			$resultArray[$mobile]=$jsonObject->status->code; 
-			return $resultArray;
 		}
+		return $resultArray;
 	} else {
 		return  null;
 	}

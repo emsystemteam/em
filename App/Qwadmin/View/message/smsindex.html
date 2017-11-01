@@ -1,0 +1,199 @@
+<include file="Public/head" />
+<body class="no-skin">
+
+	<include file="Public/header" />
+	<div class="main-container" id="main-container">
+		<script type="text/javascript">
+			try {
+				ace.settings.check('main-container', 'fixed')
+			} catch (e) {
+			}
+		</script>
+		<include file="Public/sidebar" />
+		<div class="main-content">
+			<div class="main-content-inner">
+				<!-- #section:basics/content.breadcrumbs -->
+				<include file="Public/breadcrumbs" />
+
+				<!-- /section:basics/content.breadcrumbs -->
+				<div class="page-content">
+					<include file="Public/set" />
+
+					<!-- /section:settings.box -->
+					<div class="row">
+						<div class="col-xs-12">
+							<form class="form-horizontal" id="form" method="post" onsubmit="return false;"
+								action="{:U('update')}">
+
+								<!-- PAGE CONTENT BEGINS -->
+								<div class="form-group">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-0"> 短信模板</label>
+									<div class="col-sm-9">
+										<select id="smstitle" name="smstitle"
+											class="col-xs-10 col-sm-5">
+											<volist name="titlelist" id="vo" empty="暂时无数据">
+											<option value='{$vo.id}'>{$vo.smstitle}</option>
+											<!-- <option value="${vo.id}">${vo.id}</option> --> </volist>
+										</select>
+									</div>
+								</div>
+
+								<div class="space-4"></div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-1"> 发送内容 </label>
+									<div class="col-sm-9">
+										<select id="smsmodel" name="smsmodel"
+											class="col-xs-10 col-sm-5">
+											<option value="0">指定身份发送</option>
+											<option value="1">指定号码发送</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group" id="mobileModel" style="display: none">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-10">短信内容</label>
+									<div class="col-sm-9">
+										<textarea name="smscontent" id="smscontent"
+											class="col-xs-10 col-sm-5" placeholder="请输入手机号码,多号码用逗号隔开 "
+											style="height: 200px">{$model.smscontent}</textarea>
+									</div>
+								</div>
+								<div id="moreModel">
+									<div class="form-group">
+										<label class="col-sm-1 control-label no-padding-right"
+											for="form-field-1"> 发送对象 </label>
+										<div class="col-sm-9 checkbox">
+											<button class="btn btn-info" id="btnOpenModal">
+												请选择小区或楼宇 <i
+													class="ace-icon fa fa-search  align-top bigger-125 icon-on-right"></i>
+											</button>
+										</div>
+									</div>
+
+									<div class="space-4"></div>
+
+									<div class="form-group">
+										<label class="col-sm-1 control-label no-padding-right"
+											for="form-field-2"> 住户状态</label>
+										<div class="col-sm-9">
+											<div class="checkbox">
+												<input name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120"> 已迁入</span> <input
+													name="form-field-checkbox" type="checkbox"
+													class="ace input-lg"> <span class="lbl bigger-120">
+													待审核</span> <input name="form-field-checkbox" type="checkbox"
+													class="ace input-lg"> <span class="lbl bigger-120">
+													未通过</span> <input name="form-field-checkbox" type="checkbox"
+													class="ace input-lg"> <span class="lbl bigger-120">
+													已迁出</span>
+											</div>
+										</div>
+									</div>
+
+									<div class="space-4"></div>
+									<div class="form-group">
+										<label class="col-sm-1 control-label no-padding-right"
+											for="form-field-2"> 住户身份</label>
+										<div class="col-sm-9">
+											<div class="checkbox">
+												<input name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span>
+													业主本人</span> <input name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120"> 亲属</span> <input
+													name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120"> 租客</span> <input
+													name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120"> 其他</span>
+											</div>
+										</div>
+									</div>
+									<div class="space-4"></div>
+									<div class="form-group">
+										<label class="col-sm-1 control-label no-padding-right"
+											for="form-field-2"> 微信登录记录</label>
+										<div class="col-sm-9">
+											<div class="checkbox">
+												<input name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120"> 无登录记录</span> <input
+													name="form-field-checkbox" type="checkbox"
+													checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120"> 有登录记录</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-offset-2 col-md-9">
+									<button class="btn btn-info submit" type="button">
+										<i class="icon-ok bigger-110"></i> 立即发送
+									</button>
+
+									&nbsp; &nbsp; &nbsp;
+									<button class="btn" type="reset">
+										<i class="icon-undo bigger-110"></i> 重置
+									</button>
+								</div>
+							</form>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+					<!-- /.row -->
+					
+				</div>
+				<!-- 模态框（Modal） -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+					aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">选择楼宇</h4>
+							</div>
+							<div class="modal-body" style="height:100%; overflow:scroll;"><include file="Public/buildingselected" /></div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+								<button type="button" class="btn btn-primary">确定</button>
+							</div>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.page-content -->
+				</div>
+			</div>
+		</div>
+		<!-- /.main-content -->
+		<include file="Public/footer" />
+
+	</div>
+	<!-- /.main-container -->
+	<include file="Public/footerjs" />
+	<script type="text/javascript">
+	//打开模态框
+	$('#btnOpenModal').click(function(){
+		$('#myModal').modal({});
+	});
+		$(function() {
+			//发送内容选中改变后
+			$('#smsmodel').change(function() {
+				if ($('#smsmodel').val() == "0") {
+					$('#moreModel').show();
+					$('#mobileModel').hide();
+				} else {
+					$('#moreModel').hide();
+					$('#mobileModel').show();
+				}
+			});
+
+		});
+	</script>
+</body>
+</html>

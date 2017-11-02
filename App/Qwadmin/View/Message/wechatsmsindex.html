@@ -106,20 +106,6 @@
 										</div>
 									</div>
 									<div class="space-4"></div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2">微信登录记录</label>
-										<div class="col-sm-9">
-											<div class="wechatlog">
-												<input name="form-field-checkbox" type="checkbox" 
-													checked="checked" value="0" class="ace input-lg"> <span
-													class="lbl bigger-120"> 无登录记录</span> <input
-													name="form-field-checkbox" value="1" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
-													class="lbl bigger-120"> 有登录记录</span>
-											</div>
-										</div>
-									</div>
 								</div>
 								<div class="col-md-offset-3 col-md-9">
 									<button class="btn btn-info submit" id="btnsend" type="button">
@@ -206,24 +192,6 @@
 					return;
 				}
 				//微信登录记录
-				var wechatlog=new Array();
-				var w=$('.wechatlog input[type=checkbox]:checked');
-				$.each(w,function(i,v){
-					wechatlog.push(v.value);
-				});
-				if(wechatlog.length==0){
-					bootbox.dialog({
-		                title: '友情提示：',
-		                message: '请选择微信登录记录',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-info"
-		                    }
-		                }
-		            });
-					return;
-				}
 				var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
 				var checkedNodes = zTreeObj.getCheckedNodes(); 
 				 if(checkedNodes.length==0){
@@ -247,10 +215,10 @@
 						}
 					} 
 				//立即发送
-				 var sendData={smsmodelid:$('#smstitle').val(),totalselect:totalselect,authresult:authresult,householdtype:householdtype,wechatlog:wechatlog};				
+				 var sendData={smsmodelid:$('#smstitle').val(),totalselect:totalselect,authresult:authresult,householdtype:householdtype};				
 				 $.ajax({
 					 type : "post",
-					 url: "__URL__/sendSms",
+					 url: "__URL__/sendWechatSms",
 					 dataType : "json",
 					 data:sendData,
 					 success : function(data) {
@@ -275,7 +243,6 @@
 						            });
 								}
 						 }else{
-							 debugger;
 							 bootbox.dialog({
 				                title: '友情提示：',
 				                message: data.message,
@@ -310,7 +277,7 @@
 				var sendData={smsmodelid:$('#smstitle').val(),phonenumbers:$('#phoneNumber').val()};				
 				 $.ajax({
 					 type : "post",
-					 url: "__URL__/sendSmsByPhoneNumber",
+					 url: "__URL__/sendWechatSmsByPhoneNumber",
 					 dataType : "json",
 					 data:sendData,
 					 success : function(data) {

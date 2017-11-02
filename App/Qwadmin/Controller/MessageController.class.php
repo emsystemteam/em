@@ -12,6 +12,16 @@
 namespace Qwadmin\Controller;
 
 class MessageController extends ComController {
+	
+	// 微信模板管理
+	public function wechatsmsindex() {
+		$m = M ( 'em_smsmodel' );
+		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"住户身份"' )->order ( 'CREATE_TIME desc' )->select ();
+		$list = $m->where ( 'smstype=2 and status=1 and isapprove=1' )->order ( 'createtime desc' )->select ();
+		$this->assign ( 'titlelist', $list );
+		$this->assign ( 'holdtype', $holdtype );
+		$this->display ();
+	}
 	// 短信模板管理
 	public function smsindex() {
 		$m = M ( 'em_smsmodel' );
@@ -20,6 +30,101 @@ class MessageController extends ComController {
 		$this->assign ( 'titlelist', $list );
 		$this->assign ( 'holdtype', $holdtype );
 		$this->display ();
+	}
+	// 指定号码发送微信
+	public function sendWechatSmsByPhoneNumber() {
+		$smsmodelid = I ( 'smsmodelid' );
+		$phonenumbers = I ( 'phonenumbers' );
+		if ($smsmodelid == '') {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '未选择短信模板'
+			) );
+		} else {
+			if ($phonenumbers == '') {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '没有手机号'
+				) );
+			} else {
+				$smsmodel = M ( 'em_smsmodel' )->where ( "id='$smsmodelid'" )->find ();
+				$mobileArray = explode ( ",", $phonenumbers );
+				//后期替换为微信发送方法
+				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => $result
+				) );
+			}
+		}
+	}
+	// 指定身份发送微信
+	public function sendWechatSms() {
+		$smsmodelid = I ( 'smsmodelid' ); // 短信模板
+		$totalselect = I ( 'totalselect' ); // 选择楼宇
+		$authresult = I ( 'authresult' ); // 住户状态
+		$householdtype = I ( 'householdtype' ); // 住户身份
+		if ($smsmodelid) {
+			if ($totalselect && count ( $totalselect ) > 0) {
+				if ($authresult && count ( $authresult ) > 0) {
+					if ($householdtype && count ( $householdtype ) > 0) {
+							$condition = array (); // 查询条件
+							$condition ['HOUSE'] = array (
+									'in',
+									$totalselect 
+							);
+							$condition ['AUTH_RESULT'] = array (
+									'in',
+									$authresult 
+							);
+							$House = M ( 'em_household' );
+							$result = $House->where ( $condition )->select ();
+							if ($result) {
+								// 查询短信模板
+								$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
+								if ($smsmodel) {
+									$mobileArray = array ();
+									foreach ( $result as $v ) {
+										array_push ( $mobileArray, $v ['TEL'] );
+									}
+									//微信发送方法需要替换
+									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
+									$this->ajaxReturn ( array (
+											'status' => 1,
+											'message' => $smsresult 
+									) );
+								}
+							} else {
+								$this->ajaxReturn ( array (
+										'status' => 0,
+										'message' => '没有查询到楼宇中符合发送条件的住户信息' 
+								) );
+							}
+							
+					} else {
+						$this->ajaxReturn ( array (
+								'status' => 0,
+								'message' => '没有选择住户身份' 
+						) );
+					}
+				} else {
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '没有选择住户状态' 
+					) );
+				}
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '没有选择楼宇' 
+				) );
+			}
+		} else {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '没有选择短信模板' 
+			) );
+		}
 	}
 	
 	// 指定身份发送短信
@@ -30,39 +135,48 @@ class MessageController extends ComController {
 		$householdtype = I ( 'householdtype' ); // 住户身份
 		$wechatlog = I ( 'wechatlog' ); // 微信登录记录
 		if ($smsmodelid) {
-			if ($totalselect&&count($totalselect)>0) {
-				if ($authresult&&count($authresult)>0) {
-					if ($householdtype&&count($householdtype)>0) {
+			if ($totalselect && count ( $totalselect ) > 0) {
+				if ($authresult && count ( $authresult ) > 0) {
+					if ($householdtype && count ( $householdtype ) > 0) {
 						if ($wechatlog) {
 							$condition = array (); // 查询条件
-							$condition['HOUSE']=array('in',$totalselect);
-							$condition['AUTH_RESULT']=array('in',$authresult);
-							$condition['WECHATSIGININ']=array('in',$wechatlog);
-							$House=M('em_household');
-							$result=$House->where($condition)->select(); 
-							if($result){
-								//查询短信模板
-								$smsmodel=M('em_smsmodel')->where('id='.$smsmodelid)->find();
-								if($smsmodel){
-								
-									$mobileArray=array();
-									foreach($result as $v){
-										array_push($mobileArray,$v['TEL']);
-									} 
-									$smsresult=sendSmsMessage($mobileArray, $smsmodel['smscontent']);
+							$condition ['HOUSE'] = array (
+									'in',
+									$totalselect 
+							);
+							$condition ['AUTH_RESULT'] = array (
+									'in',
+									$authresult 
+							);
+							$condition ['WECHATSIGININ'] = array (
+									'in',
+									$wechatlog 
+							);
+							$House = M ( 'em_household' );
+							$result = $House->where ( $condition )->select ();
+							if ($result) {
+								// 查询短信模板
+								$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
+								if ($smsmodel) {
+									
+									$mobileArray = array ();
+									foreach ( $result as $v ) {
+										array_push ( $mobileArray, $v ['TEL'] );
+									}
+									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
 									$this->ajaxReturn ( array (
 											'status' => 1,
-											'message' => $smsresult
+											'message' => $smsresult 
 									) );
 								}
-							}else {
+							} else {
 								$this->ajaxReturn ( array (
 										'status' => 0,
-										'message' => '没有查询到楼宇中符合发送条件的住户信息'
+										'message' => '没有查询到楼宇中符合发送条件的住户信息' 
 								) );
 							}
 							
-							//$condition['AUTH_RESULT']=array('in',$wechatlog);
+							// $condition['AUTH_RESULT']=array('in',$wechatlog);
 						} else {
 							$this->ajaxReturn ( array (
 									'status' => 0,

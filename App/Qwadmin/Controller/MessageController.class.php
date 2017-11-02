@@ -19,15 +19,32 @@ class MessageController extends ComController {
 		$this->assign ( 'titlelist', $list);
 		$this->display ();
 	}
-	// 编辑短信
-	public function edit() {
-		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
-		if (! $id) {
-			$this->error ( '参数错误！' );
+	// 发送短信
+	public function sendSmsByPhoneNumber() {
+		$smsmodelid=I('smsmodelid');
+		$phonenumbers=I('phonenumbers');
+		if($smsmodelid==''){
+			$this->ajaxReturn(array(
+					'status' =>0,
+					'message'=>'未选择短信模板'
+			));
+		}else{
+			if($phonenumbers==''){
+				$this->ajaxReturn(array(
+						'status' =>0,
+						'message'=>'没有手机号'
+				));
+			}else{
+				$smsmodel=M ( 'em_smsmodel' )->where("id='$smsmodelid'")->find();
+				$mobileArray=explode(",",$phonenumbers);
+				$result=sendSmsMessage($mobileArray, $smsmodel['smscontent']);
+				$this->ajaxReturn(array(
+						'status' =>1,
+						'message'=>$result
+				));
+			}
 		}
-		$model = M ( 'em_smsmodel' )->where ( 'id=' . $id )->find ();
-		$this->assign ( 'model', $model );
-		$this->display ( 'form' );
+	
 	}
 	
 	//选择楼宇树

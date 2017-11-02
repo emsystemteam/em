@@ -53,11 +53,11 @@
 								</div>
 								<div class="form-group" id="mobileModel" style="display: none">
 									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-10">短信内容</label>
+										for="form-field-10">手机号码</label>
 									<div class="col-sm-9">
-										<textarea name="smscontent" id="smscontent"
+										<textarea name="phoneNumber" id="phoneNumber"
 											class="col-xs-10 col-sm-5" placeholder="请输入手机号码,多号码用逗号隔开 "
-											style="height: 200px">{$model.smscontent}</textarea>
+											style="height: 200px"></textarea>
 									</div>
 								</div>
 								<div id="moreModel">
@@ -129,14 +129,9 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-offset-2 col-md-9">
-									<button class="btn btn-info submit" type="button">
+								<div class="col-md-offset-3 col-md-9">
+									<button class="btn btn-info submit" id="btnsend" type="button">
 										<i class="icon-ok bigger-110"></i> 立即发送
-									</button>
-
-									&nbsp; &nbsp; &nbsp;
-									<button class="btn" type="reset">
-										<i class="icon-undo bigger-110"></i> 重置
 									</button>
 								</div>
 							</form>
@@ -161,7 +156,7 @@
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal">关闭</button>
-								<button type="button" class="btn btn-primary">确定</button>
+								<button type="button" id="btnok" class="btn btn-primary">确定</button>
 							</div>
 						</div>
 						<!-- /.modal-content -->
@@ -177,9 +172,102 @@
 	<!-- /.main-container -->
 	<include file="Public/footerjs" />
 	<script type="text/javascript">
+	$('#btnsend').click(function(){
+		if($('#smstitle').val()!=""){
+			if($('#smsmodel').val()=="0"){
+				//指定身份发送	
+			}else{
+				if($('#phoneNumber').val()==""){
+					 bootbox.dialog({
+			                title: '友情提示：',
+			                message: '请填写手机号',
+			                buttons: {
+			                    "success": {
+			                        "label": "确定",
+			                        "className": "btn-danger"
+			                    }
+			                }
+			            });
+					return false;
+				}
+				var sendData={smsmodelid:$('#smstitle').val(),phonenumbers:$('#phoneNumber').val()};				
+				 $.ajax({
+					 type : "post",
+					 url: "__URL__/sendSmsByPhoneNumber",
+					 dataType : "json",
+					 data:sendData,
+					 success : function(data) {
+						 if(data.status=="1"){
+							var result=data.message;
+							var error="";
+							for (let i in result) { 
+								if(result[i]!='0'){
+									error=error+i+","
+								}
+							}
+							if(error!=""){
+								bootbox.dialog({
+					                title: '短信发送失败提示：',
+					                message: error,
+					                buttons: {
+					                    "success": {
+					                        "label": "确定",
+					                        "className": "btn-danger"
+					                    }
+					                }
+					            });
+							}
+						 }else{
+							 bootbox.dialog({
+				                title: '友情提示：',
+				                message: data.message,
+				                buttons: {
+				                    "success": {
+				                        "label": "确定",
+				                        "className": "btn-danger"
+				                    }
+				                }
+				            });
+						 }
+						
+					 },
+					 error : function(XMLHttpRequest, textStatus, errorThrown) {
+					 }
+					 });  
+			}
+		}else{
+			bootbox.dialog({
+                title: '友情提示：',
+                message: "请选择短信模板",
+                buttons: {
+                    "success": {
+                        "label": "确定",
+                        "className": "btn-info"
+                    }
+                }
+            });
+		}
+	
+	});
+	
 	//打开模态框
 	$('#btnOpenModal').click(function(){
+		bindtreeview();
 		$('#myModal').modal({});
+		
+	});
+	$('#btnok').click(function(){
+		var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+		var checkedNodes = zTreeObj.getCheckedNodes(); 
+		 if(checkedNodes.length>0){
+			for(var i = 0;i < checkedNodes.length; i++) {
+				var totalselect = new Array();
+				var first=checkedNodes[i].id.substr(0,1);
+				if(first!="p"){
+					totalselect.push(checkedNodes[i].id);
+				}
+			}
+		} 
 	});
 		$(function() {
 			//发送内容选中改变后

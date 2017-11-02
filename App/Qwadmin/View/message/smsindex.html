@@ -78,17 +78,16 @@
 										<label class="col-sm-1 control-label no-padding-right"
 											for="form-field-2"> 住户状态</label>
 										<div class="col-sm-9">
-											<div class="checkbox">
+											<div class="auth_result">
+												<input name="form-field-checkbox" type="checkbox" 
+												value="已迁入" checked="checked" class="ace input-lg"> <span
+													class="lbl bigger-120">已迁入</span>
 												<input name="form-field-checkbox" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
-													class="lbl bigger-120"> 已迁入</span> <input
-													name="form-field-checkbox" type="checkbox"
-													class="ace input-lg"> <span class="lbl bigger-120">
-													待审核</span> <input name="form-field-checkbox" type="checkbox"
-													class="ace input-lg"> <span class="lbl bigger-120">
-													未通过</span> <input name="form-field-checkbox" type="checkbox"
-													class="ace input-lg"> <span class="lbl bigger-120">
-													已迁出</span>
+												value="待审核" 	class="ace input-lg"> <span class="lbl bigger-120">待审核</span>
+												<input name="form-field-checkbox" type="checkbox" 
+												value="未通过" 	class="ace input-lg"> <span class="lbl bigger-120">未通过</span>
+												<input name="form-field-checkbox" type="checkbox" 
+												value="已迁出" 	class="ace input-lg"> <span class="lbl bigger-120">已迁出</span>
 											</div>
 										</div>
 									</div>
@@ -98,31 +97,24 @@
 										<label class="col-sm-1 control-label no-padding-right"
 											for="form-field-2"> 住户身份</label>
 										<div class="col-sm-9">
-											<div class="checkbox">
-												<input name="form-field-checkbox" type="checkbox"
-													checked="checked" class="ace input-lg"> <span>
-													业主本人</span> <input name="form-field-checkbox" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
-													class="lbl bigger-120"> 亲属</span> <input
-													name="form-field-checkbox" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
-													class="lbl bigger-120"> 租客</span> <input
-													name="form-field-checkbox" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
-													class="lbl bigger-120"> 其他</span>
+											<div class="holdtype">
+											<volist name="holdtype" id="vo" empty="暂时无数据">
+										<input name="form-field-checkbox" type="checkbox" checked="checked"
+												value="{$vo.DICT_ID}" 	class="ace input-lg"> <span class="lbl bigger-120">{$vo.DICT_VALUE}</span>
+											 </volist>
 											</div>
 										</div>
 									</div>
 									<div class="space-4"></div>
 									<div class="form-group">
 										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2"> 微信登录记录</label>
+											for="form-field-2">微信登录记录</label>
 										<div class="col-sm-9">
-											<div class="checkbox">
-												<input name="form-field-checkbox" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
+											<div class="wechatlog">
+												<input name="form-field-checkbox" type="checkbox" 
+													checked="checked" value="0" class="ace input-lg"> <span
 													class="lbl bigger-120"> 无登录记录</span> <input
-													name="form-field-checkbox" type="checkbox"
+													name="form-field-checkbox" value="1" type="checkbox"
 													checked="checked" class="ace input-lg"> <span
 													class="lbl bigger-120"> 有登录记录</span>
 											</div>
@@ -156,7 +148,6 @@
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal">关闭</button>
-								<button type="button" id="btnok" class="btn btn-primary">确定</button>
 							</div>
 						</div>
 						<!-- /.modal-content -->
@@ -176,6 +167,132 @@
 		if($('#smstitle').val()!=""){
 			if($('#smsmodel').val()=="0"){
 				//指定身份发送	
+				//住户状态
+				var authresult=new Array();
+				var c=$('.auth_result input[type=checkbox]:checked');
+				$.each(c,function(i,v){
+					authresult.push(v.value);
+				});
+				if(authresult.length==0){
+					bootbox.dialog({
+		                title: '友情提示：',
+		                message: '请选择住户状态',
+		                buttons: {
+		                    "success": {
+		                        "label": "确定",
+		                        "className": "btn-info"
+		                    }
+		                }
+		            });
+					return;
+				}
+				//住户身份
+				var householdtype=new Array();
+				var h=$('.holdtype input[type=checkbox]:checked');
+				$.each(h,function(i,v){
+					householdtype.push(v.value);
+				});
+				if(householdtype.length==0){
+					bootbox.dialog({
+		                title: '友情提示：',
+		                message: '请选择住户身份',
+		                buttons: {
+		                    "success": {
+		                        "label": "确定",
+		                        "className": "btn-info"
+		                    }
+		                }
+		            });
+					return;
+				}
+				//微信登录记录
+				var wechatlog=new Array();
+				var w=$('.wechatlog input[type=checkbox]:checked');
+				$.each(w,function(i,v){
+					wechatlog.push(v.value);
+				});
+				if(wechatlog.length==0){
+					bootbox.dialog({
+		                title: '友情提示：',
+		                message: '请选择微信登录记录',
+		                buttons: {
+		                    "success": {
+		                        "label": "确定",
+		                        "className": "btn-info"
+		                    }
+		                }
+		            });
+					return;
+				}
+				var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+				var checkedNodes = zTreeObj.getCheckedNodes(); 
+				 if(checkedNodes.length==0){
+					 bootbox.dialog({
+			                title: '友情提示：',
+			                message: '请选择楼宇',
+			                buttons: {
+			                    "success": {
+			                        "label": "确定",
+			                        "className": "btn-info"
+			                    }
+			                }
+			            });
+					 return;
+				 }
+					var totalselect = new Array();//选中多少楼宇
+					for(var i = 0;i < checkedNodes.length; i++) {
+						var first=checkedNodes[i].id.substr(0,1);
+						if(first!="p"){
+							totalselect.push(checkedNodes[i].id);
+						}
+					} 
+				//立即发送
+				 var sendData={smsmodelid:$('#smstitle').val(),totalselect:totalselect,authresult:authresult,householdtype:householdtype,wechatlog:wechatlog};				
+				 $.ajax({
+					 type : "post",
+					 url: "__URL__/sendSms",
+					 dataType : "json",
+					 data:sendData,
+					 success : function(data) {
+						 if(data.status=="1"){
+							 var result=data.message;
+								var error="";
+								for (let i in result) { 
+									if(result[i]!='0'){
+										error=error+i+","
+									}
+								}
+								if(error!=""){
+									bootbox.dialog({
+						                title: '短信发送失败提示：',
+						                message: error,
+						                buttons: {
+						                    "success": {
+						                        "label": "确定",
+						                        "className": "btn-danger"
+						                    }
+						                }
+						            });
+								}
+						 }else{
+							 debugger;
+							 bootbox.dialog({
+				                title: '友情提示：',
+				                message: data.message,
+				                buttons: {
+				                    "success": {
+				                        "label": "确定",
+				                        "className": "btn-danger"
+				                    }
+				                }
+				            });
+						 }
+						
+					 },
+					 error : function(XMLHttpRequest, textStatus, errorThrown) {
+					 }
+					 });  
+				
 			}else{
 				if($('#phoneNumber').val()==""){
 					 bootbox.dialog({
@@ -252,22 +369,7 @@
 	
 	//打开模态框
 	$('#btnOpenModal').click(function(){
-		bindtreeview();
 		$('#myModal').modal({});
-		
-	});
-	$('#btnok').click(function(){
-		var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
-		var checkedNodes = zTreeObj.getCheckedNodes(); 
-		 if(checkedNodes.length>0){
-			for(var i = 0;i < checkedNodes.length; i++) {
-				var totalselect = new Array();
-				var first=checkedNodes[i].id.substr(0,1);
-				if(first!="p"){
-					totalselect.push(checkedNodes[i].id);
-				}
-			}
-		} 
 	});
 		$(function() {
 			//发送内容选中改变后

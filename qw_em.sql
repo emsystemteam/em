@@ -108,8 +108,10 @@ CREATE TABLE `qw_em_household` (
   `LOGIN_TIMES` int(11) DEFAULT NULL COMMENT '登录次数',
   `LAST_LOGIN_TIME` timestamp NULL DEFAULT NULL COMMENT '最后一次登录时间',
   `HOUSEHOLD_TYPE` int(11) DEFAULT NULL COMMENT '住户类型，关联字典表',
+  `WECHATSIGININ` tinyint(4) DEFAULT '0' COMMENT '是否微信登录0：无；1：有',
   PRIMARY KEY (`HOUSEHOLD_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='房屋住户信息表';
+
 
 -- ----------------------------
 -- Table structure for qw_em_parking_lot

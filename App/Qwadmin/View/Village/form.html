@@ -1,0 +1,276 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <form class="form-horizontal" action="{:U('update')}" method="post">
+							<input name="village_id" value="{$em_village.village_id}" type="hidden">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 小区名 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="VILLAGE_NAME" id="VILLAGE_NAME" placeholder="小区名称" class="col-xs-10 col-sm-5" value="{$em_village['village_name']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 组织机构 </label>
+                                <div class="col-sm-2">
+                                    <select id="province" name="province" class="rcol-xs-10 col-sm-11">
+                                        <volist name="provinces" id="val">
+                                            <option value="{$val['org_id']}"
+                                            <if condition="$val['org_id'] eq $em_village['province']">selected="selected"
+                                            </if>
+                                            >{$val.org_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select id="city" name="city" class="rcol-xs-10 col-sm-11">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="citys" id="val">
+                                            <option value="{$val['org_id']}"
+                                            <if condition="$val['org_id'] eq $em_village['city']">selected="selected"
+                                            </if>
+                                            >{$val.org_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select id="county" name="county" class="rcol-xs-10 col-sm-11">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="countys" id="val">
+                                            <option value="{$val['org_id']}"
+                                            <if condition="$val['org_id'] eq $em_village['county']">selected="selected"
+                                            </if>
+                                            >{$val.org_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                               		<select id="street" name="street" class="rcol-xs-10 col-sm-11">
+                               			<option value="">--请选择--</option>
+                                        <volist name="streets" id="val">
+                                            <option value="{$val['org_id']}"
+                                            <if condition="$val['org_id'] eq $em_village['street']">selected="selected"
+                                            </if>
+                                            >{$val.org_name}</option>
+                                        </volist>
+                                    </select>
+                              	</div>
+                                <div class="col-sm-2">
+                                    <select id="committee" name="committee" class="rcol-xs-10 col-sm-11">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="committees" id="val">
+                                            <option value="{$val['org_id']}"
+                                            <if condition="$val['org_id'] eq $em_village['committee']">selected="selected"
+                                            </if>
+                                            >{$val.org_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                                <span class="help-inline col-xs-12 col-sm-11">
+									<span class="middle">请选择组织机构</span>
+								</span>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 物业服务公司 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="PROPERTY_COMPANY" id="PROPERTY_COMPANY" placeholder="物业服务公司" class="col-xs-10 col-sm-5" value="{$em_village['property_company']}">
+                            	</div>
+                            </div>
+							
+							<div class="space-4"></div>
+							
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 物业客服电话 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="PROPERTY_CUSTOMER_TEL" id="PROPERTY_CUSTOMER_TEL" placeholder="物业客服电话" class="col-xs-10 col-sm-5" value="{$em_village['property_customer_tel']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 物业负责人 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="PROPERTY_CHARGE_PERSON" id="PROPERTY_CHARGE_PERSON" placeholder="物业负责人" class="col-xs-10 col-sm-5" value="{$em_village['property_charge_person']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 物业负责人电话 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="PROPERTY_CHARGE_PERSON_TEL" id="PROPERTY_CHARGE_PERSON_TEL" placeholder="物业负责人电话" class="col-xs-10 col-sm-5" value="{$em_village['property_charge_person_tel']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 业主委员会联系人 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="OWNERS_COMMITTEE_CONTACTS" id="OWNERS_COMMITTEE_CONTACTS" placeholder="业主委员会联系人" class="col-xs-10 col-sm-5" value="{$em_village['owners_committee_contacts']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 业主委员会电话 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="OWNERS_COMMITTEE_TEL" id="OWNERS_COMMITTEE_TEL" placeholder="业主委员会电话" class="col-xs-10 col-sm-5" value="{$em_village['owners_committee_tel']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 联系人 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="VILLAGE_CONTACTS" id="VILLAGE_CONTACTS" placeholder="联系人" class="col-xs-10 col-sm-5" value="{$em_village['village_contacts']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 联系人电话 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="VILLAGE_CONTACTS_TEL" id="VILLAGE_CONTACTS_TEL" placeholder="联系人电话" class="col-xs-10 col-sm-5" value="{$em_village['village_contacts_tel']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-4"> 小区logo </label>
+                                <div class="col-sm-9">
+                                    <div class="col-xs-10 col-sm-5">{:UpImage("VILLAGE_LOGO",100,100,$em_village['village_logo'])}</div>
+                                    <span class="help-inline col-xs-12 col-sm-7">
+												<span class="middle">仅支持jpg、gif、png、bmp、jpeg，且小于1MB。</span>
+											</span>
+                                </div>
+
+                            </div>
+                            <div class="space-4"></div>
+
+                            <div class="col-md-offset-2 col-md-9">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="icon-ok bigger-110"></i>
+                                    提交
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="icon-undo bigger-110"></i>
+                                    重置
+                                </button>
+                            </div>
+                        </form>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script src="__PUBLIC__/qwadmin/js/date-time/bootstrap-datepicker.js"></script>
+<script src="__PUBLIC__/qwadmin/js/function.js"></script>
+<script type="text/javascript">
+	$("#province").on("change", function () {
+		$("#city").empty();
+		$("#county").empty();
+    	$("#street").empty();
+    	$("#committee").empty();
+	    var ob = $(this);
+	    var orgId = ob.val();
+	    var orgType = 2;//市
+	    $("#city").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var city = document.getElementById("city");
+	    $.get("{:U('changeOrg')}?orgType=" + orgType + "&orgId=" + orgId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		city.options[index+1] = new Option(obj.org_name,obj.org_id);
+	        	//$("#city").append("<option value='"+obj.org_id+"'>" + obj.org_name + "<option/>");
+	        });
+	    });
+	})
+	
+	$("#city").on("change", function () {
+       	$("#county").empty();
+    	$("#street").empty();
+    	$("#committee").empty();
+	    var ob = $(this);
+	    var orgId = ob.val();
+	    var orgType = 3;//县区
+	    $("#county").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var county = document.getElementById("county");
+	    $.get("{:U('changeOrg')}?orgType=" + orgType + "&orgId=" + orgId, function (data) {
+	        $(data).each(function(index,obj){
+	        	county.options[index+1] = new Option(obj.org_name,obj.org_id);
+	        });
+	    });
+	})
+	
+	$("#county").on("change", function () {
+    	$("#street").empty();
+    	$("#committee").empty();
+	    var ob = $(this);
+	    var orgId = ob.val();
+	    var orgType = 4;//街道
+	    $("#street").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var street = document.getElementById("street");
+	    $.get("{:U('changeOrg')}?orgType=" + orgType + "&orgId=" + orgId, function (data) {
+	        $(data).each(function(index,obj){
+	        	street.options[index+1] = new Option(obj.org_name,obj.org_id);
+	        });
+	    });
+	})
+	
+	$("#street").on("change", function () {
+    	$("#committee").empty();
+	    var ob = $(this);
+	    var orgId = ob.val();
+	    var orgType = 5;//社区
+	    $("#committee").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var committee = document.getElementById("committee");
+	    $.get("{:U('changeOrg')}?orgType=" + orgType + "&orgId=" + orgId, function (data) {
+	        $(data).each(function(index,obj){
+	        	committee.options[index+1] = new Option(obj.org_name,obj.org_id);
+	        });
+	    });
+	})
+</script>
+</body>
+</html>

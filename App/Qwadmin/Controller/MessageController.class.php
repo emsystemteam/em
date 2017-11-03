@@ -173,14 +173,14 @@ class MessageController extends ComController {
 									foreach ( $result as $v ) {
 										array_push ( $mobileArray, $v ['TEL'] );
 									}
-									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
+									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
 									// 保存发送短信日志
 									$model = D ( 'em_smslog' );
 									$model->create ();
 									$model->createtime = date ( 'y-m-d H:i:s', time () );
 									$model->creater = session ( 'uid' );
-									$model->smscontent=$smsmodel ['smscontent'] ;
-									$model->amount=count($mobileArray);
+									$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
+									$model->amount = count ( $mobileArray );
 									$flag = $model->add ();
 									$this->ajaxReturn ( array (
 											'status' => 1,
@@ -227,8 +227,8 @@ class MessageController extends ComController {
 		}
 	}
 	
-	//短信发送记录
-	public function smslogindex(){
+	// 短信发送记录
+	public function smslogindex() {
 		$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
 		$pagesize = 10; // 每页数量
 		$offset = $pagesize * ($p - 1); // 计算记录偏移量
@@ -236,6 +236,27 @@ class MessageController extends ComController {
 		$list = $m->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
+		
+		$post_data = array ();
+		$post_data ['sn'] = 'SDK_AAA_00227'; // 序列号
+		$post_data ['password'] = '852172777'; // 密码
+		$url = 'http://123.56.233.239:8080/msg-core-web/msg/balance';
+		$o = '';
+		foreach ( $post_data as $k => $v ) {
+			$o .= "$k=" . urlencode ( $v ) . '&';
+		}
+		$post_data = substr ( $o, 0, - 1 );
+		$ch = curl_init ();
+		curl_setopt ( $ch, CURLOPT_POST, 1 );
+		curl_setopt ( $ch, CURLOPT_HEADER, 0 );
+		curl_setopt ( $ch, CURLOPT_URL, $url );
+		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_data );
+		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 ); // 如果需要将结果直接返回到变量里，那加上这句。
+		$result = curl_exec ( $ch );
+		$jsonObject = json_decode ( $result );
+		$code = $jsonObject->status->code;
+		$data = $jsonObject->status->data;
+		$this->assign ( 'data', $jsonObject->data);
 		$this->assign ( 'list', $list );
 		$this->assign ( 'page', $page );
 		$this->display ();
@@ -259,18 +280,18 @@ class MessageController extends ComController {
 			} else {
 				$smsmodel = M ( 'em_smsmodel' )->where ( "id='$smsmodelid'" )->find ();
 				$mobileArray = explode ( ",", $phonenumbers );
-				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
+				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
 				// 保存发送短信日志
 				$model = D ( 'em_smslog' );
 				$model->create ();
 				$model->createtime = date ( 'y-m-d H:i:s', time () );
 				$model->creater = session ( 'uid' );
-				$model->smscontent=$smsmodel ['smscontent'] ;
-				$model->amount=count($mobileArray);
+				$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
+				$model->amount = count ( $mobileArray );
 				$flag = $model->add ();
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => $flag 
+						'message' => $result 
 				) );
 			}
 		}

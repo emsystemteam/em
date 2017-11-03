@@ -37,7 +37,7 @@
 									<label class="col-sm-1 control-label no-padding-right"
 										for="form-field-10">短信内容</label>
 									<div class="col-sm-6">
-										<textarea name="smscontent" id="smscontent"
+										<textarea name="smscontent" id="smscontent" maxlength="400"
 											placeholder="短信内容 " style="width: 100%; height: 200px">{$model.smscontent}</textarea>
 									</div>
 								</div>
@@ -66,7 +66,15 @@
 											value="2">微信
 										</option>
 									</select>
+									</div>
 								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-10">签名</label>
+									<div class="col-sm-6">
+									<input type="text" name="signname" id="signname"  maxlength="50" placeholder="签名"
+                                           class="col-xs-12 col-sm-12" value="{$model.signname}">	
+                                    </div>
 								</div>
 								 <div class="col-md-offset-2 col-md-9">
                                 <button class="btn btn-info submit" type="button">

@@ -174,14 +174,23 @@ class MessageController extends ComController {
 										array_push ( $mobileArray, $v ['TEL'] );
 									}
 									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
-									// 保存发送短信日志
-									$model = D ( 'em_smslog' );
-									$model->create ();
-									$model->createtime = date ( 'y-m-d H:i:s', time () );
-									$model->creater = session ( 'uid' );
-									$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
-									$model->amount = count ( $mobileArray );
-									$flag = $model->add ();
+									$amount=0;
+									foreach($smsresult as $key=>$value){
+										if($value=='0'){//成功的记录
+											$amount++;
+										}
+									}
+									if($amount>0){
+										// 保存发送短信日志
+										$model = D ( 'em_smslog' );
+										$model->create ();
+										$model->createtime = date ( 'y-m-d H:i:s', time () );
+										$model->creater = session ( 'uid' );
+										$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
+										$model->amount = $amount;
+										$flag = $model->add ();
+									}
+									
 									$this->ajaxReturn ( array (
 											'status' => 1,
 											'message' => $smsresult 
@@ -281,14 +290,24 @@ class MessageController extends ComController {
 				$smsmodel = M ( 'em_smsmodel' )->where ( "id='$smsmodelid'" )->find ();
 				$mobileArray = explode ( ",", $phonenumbers );
 				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
-				// 保存发送短信日志
-				$model = D ( 'em_smslog' );
-				$model->create ();
-				$model->createtime = date ( 'y-m-d H:i:s', time () );
-				$model->creater = session ( 'uid' );
-				$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
-				$model->amount = count ( $mobileArray );
-				$flag = $model->add ();
+				
+				$amount=0;
+				foreach($smsresult as $key=>$value){
+					if($value=='0'){//成功的记录
+						$amount++;
+					}
+				}
+				if($amount>0){
+					// 保存发送短信日志
+					$model = D ( 'em_smslog' );
+					$model->create ();
+					$model->createtime = date ( 'y-m-d H:i:s', time () );
+					$model->creater = session ( 'uid' );
+					$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
+					$model->amount = $amount;
+					$flag = $model->add ();
+				}
+				
 				$this->ajaxReturn ( array (
 						'status' => 1,
 						'message' => $result 

@@ -78,14 +78,21 @@ class VillageController extends ComController
             }
         }
         $map['VILLAGE_ID'] = array('in', $villageIds);
-        
-        for ($i=0;$i<count($villageIds);$i++){
-        	$villageId = $villageIds[$i];
-        	$emBuilding = M('em_building')->where("village = $villageId")->select();
+        if (is_array($villageIds)) {
+        	for ($i=0;$i<count($villageIds);$i++){
+        		$villageId = $villageIds[$i];
+        		$emBuilding = M('em_building')->where("village = $villageId")->select();
+        		if(!empty($emBuilding)){
+        			$this->error('小区：' . $villageId. '下包含楼宇信息，不能删除!');
+        		}
+        	}
+        }else{
+        	$emBuilding = M('em_building')->where("village = $villageIds")->select();
         	if(!empty($emBuilding)){
-        		$this->error('小区：' . $villageId. '下包含楼宇信息，不能删除!');
+        		$this->error('小区：' . $villageIds. '下包含楼宇信息，不能删除!');
         	}
         }
+        
         
         if (M('em_village')->where($map)->delete()) {
         	addlog('删除小区UID：' . $villageIds);
@@ -133,7 +140,11 @@ class VillageController extends ComController
         } */
 
         $villageId = isset($_POST['village_id']) ? intval($_POST['village_id']) : false;
-    	$data['VILLAGE_NAME'] = isset($_POST['VILLAGE_NAME']) ? trim($_POST['VILLAGE_NAME'], ENT_QUOTES) : '';
+    	$data['VILLAGE_NAME'] = isset($_POST['VILLAGE_NAME']) ? trim($_POST['VILLAGE_NAME']) : '';
+    	if ($data['VILLAGE_NAME']== '') {
+    		$this->error('小区名称不能为空！');
+    	}
+    	
     	$data['PROPERTY_COMPANY']= isset($_POST['PROPERTY_COMPANY']) ? trim($_POST['PROPERTY_COMPANY']) : false;
         $logo = I('post.VILLAGE_LOGO', '', 'strip_tags');
         $data['VILLAGE_LOGO'] = $logo? $logo: '';
@@ -183,9 +194,6 @@ class VillageController extends ComController
         if (!$villageId) {
         	$data['CREATE_TIME'] = $timenow;
         	$data['MODIFY_TIME'] = $timenow;
-        	if (village_name== '') {
-                $this->error('小区名称不能为空！');
-            }
             $uid = M('em_village')->data($data)->add();
             addlog('新增小区，小区ID：' . $villageId);
         } else {

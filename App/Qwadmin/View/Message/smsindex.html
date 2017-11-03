@@ -273,6 +273,17 @@
 						                    }
 						                }
 						            });
+								}else{
+									bootbox.dialog({
+						                title: '短信发送成功提示：',
+						                message: '短信发送成功',
+						                buttons: {
+						                    "success": {
+						                        "label": "确定",
+						                        "className": "btn-info"
+						                    }
+						                }
+						            });
 								}
 						 }else{
 							 debugger;
@@ -322,6 +333,7 @@
 									error=error+i+","
 								}
 							}
+						
 							if(error!=""){
 								bootbox.dialog({
 					                title: '短信发送失败提示：',
@@ -330,6 +342,17 @@
 					                    "success": {
 					                        "label": "确定",
 					                        "className": "btn-danger"
+					                    }
+					                }
+					            });
+							}else{
+								bootbox.dialog({
+					                title: '短信发送成功提示：',
+					                message: '短信发送成功',
+					                buttons: {
+					                    "success": {
+					                        "label": "确定",
+					                        "className": "btn-info"
 					                    }
 					                }
 					            });

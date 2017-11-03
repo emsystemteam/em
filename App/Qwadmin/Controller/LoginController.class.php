@@ -82,6 +82,7 @@ class LoginController extends ComController
             'imageW' => 100,
             'imageH' => 30,
         );
+        ob_clean();
         $verify = new \Think\Verify($config);
         $verify->entry('login');
     }

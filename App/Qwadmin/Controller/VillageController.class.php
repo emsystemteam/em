@@ -60,6 +60,7 @@ class VillageController extends ComController
 //         var_dump($list);
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
+//         trace($list);
         $this->assign('list', $list);
         $this->assign('page', $page);
         $this->display();

@@ -194,9 +194,9 @@ class UnitController extends ComController
     }
     
     /**
-     * 组织机构级联
-     * @param string $orgId 组织机构id
-     * @param string $orgType 组织机构类型，1.省，2.市，3.县（区），4.街道（社区），5.社居委
+     * 小区、楼宇级联，根据选择的小区查找楼宇
+     * @param string $villageId 小区id
+     * 
      */
     public function changeVillage($villageId= FALSE)
     {

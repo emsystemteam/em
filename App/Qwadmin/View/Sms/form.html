@@ -111,10 +111,11 @@
 	 $(".submit").click(function () {
          var smscontent = $("#smscontent").val();
          var smstitle = $("#smstitle").val();
-         if (smscontent == ''||smstitle=='') {
+         var signname = $("#signname").val();
+         if (smscontent == ''||smstitle==''||signname=='') {
              bootbox.dialog({
                  title: '友情提示：',
-                 message: "短信内容或短信标题不能为空。",
+                 message: "短信内容,签名,短信标题不能为空。",
                  buttons: {
                      "success": {
                          "label": "确定",

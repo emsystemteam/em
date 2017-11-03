@@ -292,8 +292,8 @@ class MessageController extends ComController {
 				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
 				
 				$amount=0;
-				foreach($smsresult as $key=>$value){
-					if($value=='0'){//成功的记录
+				foreach($result as $key=>$value){
+					if($value=="0"){//成功的记录
 						$amount++;
 					}
 				}
@@ -310,7 +310,7 @@ class MessageController extends ComController {
 				
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => $result 
+						'message' => $v2
 				) );
 			}
 		}

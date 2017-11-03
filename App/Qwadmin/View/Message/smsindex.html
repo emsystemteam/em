@@ -286,7 +286,6 @@
 						            });
 								}
 						 }else{
-							 debugger;
 							 bootbox.dialog({
 				                title: '友情提示：',
 				                message: data.message,
@@ -392,10 +391,10 @@
 	
 	//打开模态框
 	$('#btnOpenModal').click(function(){
-		bindtreeview();
 		$('#myModal').modal({});
 	});
 		$(function() {
+			bindtreeview();
 			//发送内容选中改变后
 			$('#smsmodel').change(function() {
 				if ($('#smsmodel').val() == "0") {

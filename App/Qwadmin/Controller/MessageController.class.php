@@ -147,12 +147,17 @@ class MessageController extends ComController {
 									'in',
 									$authresult 
 							);
-							$condition ['WECHATSIGININ'] = array (
-									'in',
-									$wechatlog 
-							);
+							if(count($wechatlog)<2){
+								// 有微信记录
+								if($wechatlog[0]=='0'){
+									$condition ['openid'] = array('exp',' is NULL');
+								}else{
+									$condition ['openid'] = array('exp',' is not NULL');
+								}
+							}
+						
 							$House = M ( 'em_household' );
-							$result = $House->where ( $condition )->select ();
+							$result = $House->join ( ' LEFT JOIN qw_member ON qw_em_household.TEL = qw_member.phone' )->field('qw_member.openid,qw_em_household.*')->where ( $condition )->select ();
 							if ($result) {
 								// 查询短信模板
 								$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
@@ -165,7 +170,7 @@ class MessageController extends ComController {
 									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
 									$this->ajaxReturn ( array (
 											'status' => 1,
-											'message' => $smsresult 
+											'message' => $smsresult
 									) );
 								}
 							} else {

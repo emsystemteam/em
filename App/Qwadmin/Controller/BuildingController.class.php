@@ -82,8 +82,17 @@ class BuildingController extends ComController
             }
         }
         $map['BUILDING_ID'] = array('in', $buildingIds);
+        
+        for ($i=0;$i<count($buildingIds);$i++){
+        	$buildingId = $buildingIds[$i];
+        	$emUnit = M('em_unit')->where("building = $buildingId")->select();
+        	if(!empty($emUnit)){
+        		$this->error('楼宇：' . $buildingId . '下包含单元信息，不能删除!');
+        	}
+        }
+        
         if (M('em_building')->where($map)->delete()) {
-        	addlog('删除楼宇UID：' . $villageIds);
+        	addlog('删除楼宇ID：' . $buildingIds);
             $this->success('恭喜，楼宇删除成功！');
         } else {
             $this->error('参数错误！');
@@ -130,7 +139,9 @@ class BuildingController extends ComController
     		$data['VILLAGE']= $village;
     	}
         
-        $data['UNIT_NUMBER'] = isset($_POST['UNIT_NUMBER']) ? trim($_POST['UNIT_NUMBER']) : '';
+    	$unitNumber = isset($_POST['UNIT_NUMBER']) ? trim($_POST['UNIT_NUMBER']) : '';
+    	
+    	$data['UNIT_NUMBER'] = $unitNumber;
         $data['FLOOR_NUMBER'] = isset($_POST['FLOOR_NUMBER']) ? trim($_POST['FLOOR_NUMBER']) : '';
         $data['BUILDING_TYPE'] = isset($_POST['building_type']) ? trim($_POST['building_type']) : '';
         $data['BUILDING_STRUCTURE'] = isset($_POST['building_structure']) ? trim($_POST['building_structure']) : '';
@@ -139,19 +150,33 @@ class BuildingController extends ComController
         $data['OPERATOR'] = session('uid');
         
         $timenow=date('Y-m-d H:i:s',time());
+        
+        
         if (!$buildingId) {
         	$data['CREATE_TIME'] = $timenow;
         	$data['MODIFY_TIME'] = $timenow;
         	if (village_name== '') {
                 $this->error('小区名称不能为空！');
             }
-            $uid = M('em_building')->data($data)->add();
+            $buildingId = M('em_building')->data($data)->add();
             addlog('新增楼宇，楼宇ID：' . $buildingId);
+            //如果单元数不为空，插入楼宇的同时插入单元
+            if($unitNumber != ''){
+            	for($i=1;$i<=$unitNumber;$i++){
+            		$unitData['UNIT_NAME'] = $i."单元";
+            		$unitData['VILLAGE'] = $village;
+            		$unitData['BUILDING'] = $buildingId;
+            		$unitData['CREATE_TIME'] = $timenow;
+            		$unitData['MODIFY_TIME'] = $timenow;
+            		$unitData['OPERATOR'] = session('uid');
+            		$unitId = M('em_unit')->data($unitData)->add();
+            		addlog('新增单元，单元ID：' . $unitId);
+            	}
+            }
         } else {
         	$data['MODIFY_TIME'] = $timenow;
         	M('em_building')->data($data)->where("building_id=$buildingId")->save();
         	addlog('编辑楼宇信息，楼宇ID：' . $buildingId);
-
         }
         $this->success('操作成功！');
     }
@@ -214,6 +239,7 @@ class BuildingController extends ComController
     	
 //     	$em_village = $emVillage->field("{$prefix}em_village.*")->select();
 //     	var_dump($list);
+    	addlog('导出楼宇信息');
     	$this->exportExcel($xlsName,$xlsCell,$list);
     }
     
@@ -290,8 +316,9 @@ class BuildingController extends ComController
     			$this->error("小区名称：".$villageName."不存在");
     		}
     		$data['VILLAGE'] = $em_village['village_id'];
-    			
-    		$data['UNIT_NUMBER'] = trim($buildingData[2]);
+    	
+    		$unitNumber = trim($buildingData[2]);
+    		$data['UNIT_NUMBER'] = $unitNumber;
     		$data['FLOOR_NUMBER'] = trim($buildingData[3]);
     		
     		//楼宇类型
@@ -315,7 +342,23 @@ class BuildingController extends ComController
     		
     		$data['CREATE_TIME'] = $timenow;
     		$data['MODIFY_TIME'] = $timenow;
-    		$emBuilding->data($data)->add();
+    		$buildingId = $emBuilding->data($data)->add();
+    		addlog('导入楼宇信息,所属小区:' . $villageName . ',楼宇名称：' . $buildingName);
+    		
+    		//如果单元数不为空，插入楼宇的同时插入单元
+    		if($unitNumber != ''){
+    			for($j=1;$j<=$unitNumber;$j++){
+    				$unitData['UNIT_NAME'] = $j."单元";
+    				$unitData['VILLAGE'] = $em_village['village_id'];
+    				$unitData['BUILDING'] = $buildingId;
+    				$unitData['CREATE_TIME'] = $timenow;
+    				$unitData['MODIFY_TIME'] = $timenow;
+    				$unitData['OPERATOR'] = session('uid');
+    				$unitId = M('em_unit')->data($unitData)->add();
+    				addlog('新增单元，单元ID：' . $unitId);
+    			}
+    		}
+    		
     	}
     }
     

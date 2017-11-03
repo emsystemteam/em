@@ -78,6 +78,15 @@ class VillageController extends ComController
             }
         }
         $map['VILLAGE_ID'] = array('in', $villageIds);
+        
+        for ($i=0;$i<count($villageIds);$i++){
+        	$villageId = $villageIds[$i];
+        	$emBuilding = M('em_building')->where("village = $villageId")->select();
+        	if(!empty($emBuilding)){
+        		$this->error('小区：' . $villageId. '下包含楼宇信息，不能删除!');
+        	}
+        }
+        
         if (M('em_village')->where($map)->delete()) {
         	addlog('删除小区UID：' . $villageIds);
             $this->success('恭喜，小区删除成功！');

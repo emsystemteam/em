@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_building`;
 CREATE TABLE `qw_em_building` (
-  `BUILDING_ID` int(11) NOT NULL,
+  `BUILDING_ID` int(11) NOT NULL AUTO_INCREMENT,
   `BUILDING_NAME` varchar(255) DEFAULT NULL COMMENT '楼宇名称',
   `VILLAGE` int(11) NOT NULL COMMENT '所属小区',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -39,7 +39,7 @@ CREATE TABLE `qw_em_building` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_dictionary`;
 CREATE TABLE `qw_em_dictionary` (
-  `DICT_ID` int(11) NOT NULL,
+  `DICT_ID` int(11) NOT NULL AUTO_INCREMENT,
   `DICT_NAME` varchar(64) DEFAULT NULL COMMENT '字典名称',
   `DICT_KEY` varchar(64) NOT NULL COMMENT '字典KEY',
   `DICT_VALUE` varchar(64) NOT NULL COMMENT '字典值',
@@ -54,7 +54,7 @@ CREATE TABLE `qw_em_dictionary` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_house`;
 CREATE TABLE `qw_em_house` (
-  `HOUSE_ID` int(11) NOT NULL,
+  `HOUSE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `HOUSE_NAME` varchar(255) DEFAULT NULL COMMENT '房屋名称',
   `VILLAGE` int(11) NOT NULL COMMENT '所属小区',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -81,7 +81,7 @@ CREATE TABLE `qw_em_house` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_household`;
 CREATE TABLE `qw_em_household` (
-  `HOUSEHOLD_ID` int(11) NOT NULL,
+  `HOUSEHOLD_ID` int(11) NOT NULL AUTO_INCREMENT,
   `HOUSEHOLD_NAME` varchar(255) DEFAULT NULL COMMENT '住户名称',
   `VILLAGE` int(11) NOT NULL COMMENT '所属小区',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -118,7 +118,7 @@ CREATE TABLE `qw_em_household` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_parking_lot`;
 CREATE TABLE `qw_em_parking_lot` (
-  `PARKING_LOT_ID` int(11) NOT NULL,
+  `PARKING_LOT_ID` int(11) NOT NULL AUTO_INCREMENT,
   `PARKING_LOT_CODE` varchar(255) NOT NULL COMMENT '车位号',
   `VILLAGE` int(11) NOT NULL COMMENT '所属小区',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -137,7 +137,7 @@ CREATE TABLE `qw_em_parking_lot` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_sys_org`;
 CREATE TABLE `qw_em_sys_org` (
-  `ORG_ID` int(11) NOT NULL,
+  `ORG_ID` int(11) NOT NULL AUTO_INCREMENT,
   `ORG_NAME` varchar(255) DEFAULT NULL COMMENT '组织机构名称',
   `ORG_CODE` varchar(255) NOT NULL COMMENT '组织机构编码',
   `ORG_DESC` varchar(1000) DEFAULT NULL COMMENT '描述',
@@ -155,7 +155,7 @@ CREATE TABLE `qw_em_sys_org` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_unit`;
 CREATE TABLE `qw_em_unit` (
-  `UNIT_ID` int(11) NOT NULL,
+  `UNIT_ID` int(11) NOT NULL AUTO_INCREMENT,
   `UNIT_NAME` varchar(255) DEFAULT NULL COMMENT '单元名称',
   `VILLAGE` int(11) NOT NULL COMMENT '所属小区',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -173,7 +173,7 @@ CREATE TABLE `qw_em_unit` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_vehicle`;
 CREATE TABLE `qw_em_vehicle` (
-  `VEHICLE_ID` int(11) NOT NULL,
+  `VEHICLE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `PLATE_NUMBER` varchar(20) NOT NULL COMMENT '车牌号',
   `PARKING_LOT_CODE` varchar(255) NOT NULL COMMENT '所属车位',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -194,7 +194,7 @@ CREATE TABLE `qw_em_vehicle` (
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_village`;
 CREATE TABLE `qw_em_village` (
-  `VILLAGE_ID` int(11) NOT NULL,
+  `VILLAGE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `VILLAGE_NAME` varchar(255) NOT NULL COMMENT '小区名称',
   `PROVINCE` int(11) NOT NULL COMMENT '所属省',
   `CITY` int(11) NOT NULL COMMENT '所属市',

@@ -359,12 +359,13 @@
 	
 	//打开模态框
 	$('#btnOpenModal').click(function(){
-		bindtreeview();
 		$('#myModal').modal({});
 	});
 		$(function() {
+			bindtreeview();
 			//发送内容选中改变后
 			$('#smsmodel').change(function() {
+				bindtreeview();
 				if ($('#smsmodel').val() == "0") {
 					$('#moreModel').show();
 					$('#mobileModel').hide();

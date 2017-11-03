@@ -45,34 +45,22 @@
 							<div class="space-4"></div>
 							<div class="row">
 								<form id="form" method="post" action="{:U('del')}">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-0"> 短信余额{$data}</label>
 									<table class="table table-striped table-bordered table-hover">
 										<thead>
 											<tr>
 												<th style="width: 60%">短信内容</th>
-												<th>创建时间</th>
-												<th>类型</th>
-												<th>状态</th>
-												<th>是否通审核过</th>
-												<th class="center">操作</th>
+												<th>条数</th>
+												<th>发送时间</th>
 											</tr>
 										</thead>
 										<tbody>
 											<volist name="list" id="val">
 											<tr>
 												<td>{$val['smscontent']}</td>
+												<td>{$val['amount']}</td>
 												<td>{$val['createtime']}</td>
-												<td>
-													<?php if($val['smstype']==1){echo '微信';}else{echo '手机短信';} ?>
-												</td>
-												<td>
-													<?php if($val['status']==1){echo '启用';}else{echo '禁用';} ?>
-												</td>
-												<td>
-													<?php if($val['isapprove']==1){echo '是';}else{echo '否';} ?>
-												</td>
-												<td class="center">
-                                           		  <php> echo '<a class="blue approve" href="javascript:void(0);" val="'.$val['id'].'"
-                                                     title="审核"><i class="ace-icon fa fa-plus-circle bigger-100"></i>审核</a>';</php></td>
 											</tr>
 											</volist>
 										</tbody>

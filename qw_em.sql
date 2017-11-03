@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : em
+Source Server         : localhost
 Source Server Version : 50714
 Source Host           : localhost:3306
 Source Database       : qwadmin
@@ -10,10 +10,11 @@ Target Server Type    : MYSQL
 Target Server Version : 50714
 File Encoding         : 65001
 
-Date: 2017-10-25 18:26:38
+Date: 2017-11-03 12:45:39
 */
 
-SET FOREIGN_KEY_CHECKS=0;
+
+
 
 -- ----------------------------
 -- Table structure for qw_em_building
@@ -35,6 +36,10 @@ CREATE TABLE `qw_em_building` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区楼宇';
 
 -- ----------------------------
+-- Records of qw_em_building
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for qw_em_dictionary
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_dictionary`;
@@ -47,7 +52,26 @@ CREATE TABLE `qw_em_dictionary` (
   `MODIFY_TIME` timestamp NULL DEFAULT NULL COMMENT '修改时间',
   `DICT_ORDER_BY` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`DICT_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='系统字典表';
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='系统字典表';
+
+-- ----------------------------
+-- Records of qw_em_dictionary
+-- ----------------------------
+INSERT INTO `qw_em_dictionary` VALUES ('1', 'buildingType', '住宅', '1', null, '2017-11-02 17:12:12', null);
+INSERT INTO `qw_em_dictionary` VALUES ('2', 'buildingType', '公寓', '2', null, '2017-11-02 17:12:43', null);
+INSERT INTO `qw_em_dictionary` VALUES ('3', 'buildingType', '商铺', '3', '2017-11-02 17:13:34', '2017-11-02 17:12:43', null);
+INSERT INTO `qw_em_dictionary` VALUES ('4', 'buildingOrientation', '朝南', '1', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('5', 'buildingOrientation', '朝北', '2', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('6', 'buildingOrientation', '朝东', '3', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('7', 'buildingOrientation', '朝西', '4', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('8', 'buildingType', '写字楼', '5', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('9', 'buildingStructure', '砖混', '1', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('10', 'buildingStructure', '混泥土', '2', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('11', 'buildingStructure', '钢结构', '3', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
+INSERT INTO `qw_em_dictionary` VALUES ('12', '住户身份', '1', '业主本人', '2017-11-02 11:27:14', null, null);
+INSERT INTO `qw_em_dictionary` VALUES ('13', '住户身份', '2', '亲属', '2017-11-02 11:27:45', null, null);
+INSERT INTO `qw_em_dictionary` VALUES ('14', '住户身份', '3', '租户', '2017-11-02 11:27:59', null, null);
+INSERT INTO `qw_em_dictionary` VALUES ('15', '住户身份', '4', '其他', '2017-11-02 11:28:13', null, null);
 
 -- ----------------------------
 -- Table structure for qw_em_house
@@ -75,6 +99,10 @@ CREATE TABLE `qw_em_house` (
   `REMARK` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`HOUSE_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区楼宇单元房屋';
+
+-- ----------------------------
+-- Records of qw_em_house
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for qw_em_household
@@ -112,6 +140,9 @@ CREATE TABLE `qw_em_household` (
   PRIMARY KEY (`HOUSEHOLD_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='房屋住户信息表';
 
+-- ----------------------------
+-- Records of qw_em_household
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for qw_em_parking_lot
@@ -133,6 +164,29 @@ CREATE TABLE `qw_em_parking_lot` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区车位信息表';
 
 -- ----------------------------
+-- Records of qw_em_parking_lot
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for qw_em_smsmodel
+-- ----------------------------
+DROP TABLE IF EXISTS `qw_em_smsmodel`;
+CREATE TABLE `qw_em_smsmodel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `smscontent` text COMMENT '短信内容',
+  `creater` int(11) DEFAULT NULL COMMENT '创建人',
+  `createtime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `modifier` int(11) DEFAULT NULL COMMENT '修改人',
+  `modifytime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `status` tinyint(1) NOT NULL COMMENT '状态1：正常；0：禁用',
+  `smstype` varchar(10) DEFAULT NULL COMMENT '类型1：短信模板2：微信模板',
+  `isapprove` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否审核通过0：未通过 1：通过',
+  `smstitle` varchar(255) DEFAULT NULL COMMENT '标题',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
 -- Table structure for qw_em_sys_org
 -- ----------------------------
 DROP TABLE IF EXISTS `qw_em_sys_org`;
@@ -148,7 +202,21 @@ CREATE TABLE `qw_em_sys_org` (
   `CONTACTS` varchar(100) DEFAULT NULL COMMENT '联系人',
   `TEL` varchar(20) DEFAULT NULL COMMENT '联系电话',
   PRIMARY KEY (`ORG_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='组织机构表';
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='组织机构表';
+
+-- ----------------------------
+-- Records of qw_em_sys_org
+-- ----------------------------
+INSERT INTO `qw_em_sys_org` VALUES ('1', '安徽省', '340000', null, '1', '0', '2017-10-28 20:14:34', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('2', '合肥市', '340100', null, '2', '1', '2017-10-28 20:15:07', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('3', '安庆市', '340800', null, '2', '1', '2017-10-28 20:15:33', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('4', '合肥市辖区', '340101', null, '3', '2', '2017-10-28 20:16:16', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('5', '瑶海区', '340102', null, '3', '2', '2017-10-28 20:17:06', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('6', '庐阳区', '340103', null, '3', '2', '2017-10-28 20:17:30', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('7', '蜀山区', '340104', null, '3', '2', '2017-10-28 20:18:48', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('8', '梦城街道', '34010401', null, '4', '7', '2017-10-28 20:19:34', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('9', '天乐社区', '3401040101', null, '5', '8', '2017-10-28 20:19:58', null, null, null);
+INSERT INTO `qw_em_sys_org` VALUES ('10', '宿松县', '340826', null, '3', '3', '2017-10-30 01:26:58', null, null, null);
 
 -- ----------------------------
 -- Table structure for qw_em_unit
@@ -167,6 +235,10 @@ CREATE TABLE `qw_em_unit` (
   `ENTRY_AND_EXIT_NUMBER` int(11) DEFAULT NULL COMMENT '单元出入口数量',
   PRIMARY KEY (`UNIT_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区楼宇单元';
+
+-- ----------------------------
+-- Records of qw_em_unit
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for qw_em_vehicle
@@ -188,6 +260,10 @@ CREATE TABLE `qw_em_vehicle` (
   `USER` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`VEHICLE_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区车辆信息表';
+
+-- ----------------------------
+-- Records of qw_em_vehicle
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for qw_em_village
@@ -216,103 +292,4 @@ CREATE TABLE `qw_em_village` (
   PRIMARY KEY (`VILLAGE_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区表';
 
-
-
-
-
-
-
-
-
-
-
--- phpMyAdmin SQL Dump
--- version 4.7.1
--- https://www.phpmyadmin.net/
---
--- Host: localhost
--- Generation Time: 2017-10-27 14:06:26
--- 服务器版本： 5.6.36-log
--- PHP Version: 5.6.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
---
--- Database: `qwadmin`
---
-
--- --------------------------------------------------------
-
 ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;
-
---
--- 表的结构 `qw_smslog`
---
-
-CREATE TABLE `qw_smslog` (
-  `id` int(11) NOT NULL,
-  `t` int(10) NOT NULL COMMENT '发送时间',
-  `phone` varchar(11) NOT NULL COMMENT '手机号码',
-  `code` varchar(6) NOT NULL COMMENT '验证码'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='短信验证码日志';
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `qw_smslog`
---
-ALTER TABLE `qw_smslog`
-  ADD PRIMARY KEY (`id`);
-
---
--- 在导出的表使用AUTO_INCREMENT
---
-
---
--- 使用表AUTO_INCREMENT `qw_smslog`
---
-ALTER TABLE `qw_smslog`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
-
-
-
-
-/*
-Navicat MySQL Data Transfer
-
-Source Server         : localhost
-Source Server Version : 50714
-Source Host           : localhost:3306
-Source Database       : qwadmin
-
-Target Server Type    : MYSQL
-Target Server Version : 50714
-File Encoding         : 65001
-
-Date: 2017-10-27 14:44:20
-*/
-
-SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for qw_em_smsmodel
--- ----------------------------
-DROP TABLE IF EXISTS `qw_em_smsmodel`;
-CREATE TABLE `qw_em_smsmodel` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `smscontent` text COMMENT '短信内容',
-  `creater` int(11) DEFAULT NULL COMMENT '创建人',
-  `createtime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
-  `modifier` int(11) DEFAULT NULL COMMENT '修改人',
-  `modifytime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  `status` tinyint(1) NOT NULL COMMENT '状态1：正常；0：禁用',
-  `smstype` varchar(10) DEFAULT NULL COMMENT '类型1：短信模板2：微信模板',
-  `isapprove` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否审核通过0：未通过 1：通过',
-  `smstitle` varchar(255) DEFAULT NULL COMMENT '标题',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;

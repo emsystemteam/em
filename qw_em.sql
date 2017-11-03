@@ -136,7 +136,6 @@ CREATE TABLE `qw_em_household` (
   `LOGIN_TIMES` int(11) DEFAULT NULL COMMENT '登录次数',
   `LAST_LOGIN_TIME` timestamp NULL DEFAULT NULL COMMENT '最后一次登录时间',
   `HOUSEHOLD_TYPE` int(11) DEFAULT NULL COMMENT '住户类型，关联字典表',
-  `WECHATSIGININ` tinyint(4) DEFAULT '0' COMMENT '是否微信登录0：无；1：有',
   PRIMARY KEY (`HOUSEHOLD_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='房屋住户信息表';
 
@@ -182,6 +181,7 @@ CREATE TABLE `qw_em_smsmodel` (
   `smstype` varchar(10) DEFAULT NULL COMMENT '类型1：短信模板2：微信模板',
   `isapprove` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否审核通过0：未通过 1：通过',
   `smstitle` varchar(255) DEFAULT NULL COMMENT '标题',
+  `signname` varchar(255) DEFAULT '' COMMENT '签名',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
@@ -292,4 +292,18 @@ CREATE TABLE `qw_em_village` (
   PRIMARY KEY (`VILLAGE_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='小区表';
 
+
+DROP TABLE IF EXISTS `qw_em_smslog`;
+CREATE TABLE `qw_em_smslog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `smscontent` text COMMENT '短信内容',
+  `creater` int(11) DEFAULT NULL COMMENT '创建人',
+  `createtime` datetime DEFAULT NULL COMMENT '创建时间',
+  `amount` int(11) DEFAULT NULL COMMENT '发送消息数量',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='短信发送记录';
+
+
+
 ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;
+

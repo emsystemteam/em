@@ -3,3 +3,5 @@ https://vip.weixiaoqu.com
 
 手机号:13329042671
 密码:Z59661944
+2.验证码不显示问题
+http://www.thinkphp.cn/topic/23636.html

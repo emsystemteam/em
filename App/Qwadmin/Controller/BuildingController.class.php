@@ -27,7 +27,7 @@ class BuildingController extends ComController
         } elseif (($order == 'desc')) {
         	$order = "{$prefix}em_building.MODIFY_TIME desc";
         } else {
-        	$order = "{$prefix}em_building.BUILDING_ID asc";
+        	$order = "{$prefix}em_building.VILLAGE asc,{$prefix}em_building.BUILDING_ID asc";
         }
         if ($keyword <> '') {
             if ($field == 'building_name') {
@@ -39,15 +39,15 @@ class BuildingController extends ComController
         }
 
 
-        $emVillage = M('em_building');
+        $emBuilding = M('em_building');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
-        $count = $emVillage->field("{$prefix}em_building.*")
+        $count = $emBuilding->field("{$prefix}em_building.*")
             ->order($order)
             ->where($where)
             ->count();
 
-            $list = $emVillage->field("{$prefix}em_building.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
+            $list = $emBuilding->field("{$prefix}em_building.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
@@ -83,13 +83,21 @@ class BuildingController extends ComController
         }
         $map['BUILDING_ID'] = array('in', $buildingIds);
         
-        for ($i=0;$i<count($buildingIds);$i++){
-        	$buildingId = $buildingIds[$i];
-        	$emUnit = M('em_unit')->where("building = $buildingId")->select();
+        if (is_array($buildingIds)) {
+        	for ($i=0;$i<count($buildingIds);$i++){
+        		$buildingId = $buildingIds[$i];
+        		$emUnit = M('em_unit')->where("building = $buildingId")->select();
+        		if(!empty($emUnit)){
+        			$this->error('楼宇：' . $buildingId . '下包含单元信息，不能删除!');
+        		}
+        	}
+        }else{
+        	$emUnit = M('em_unit')->where("building = $buildingIds")->select();
         	if(!empty($emUnit)){
-        		$this->error('楼宇：' . $buildingId . '下包含单元信息，不能删除!');
+        		$this->error('楼宇：' . $buildingIds. '下包含单元信息，不能删除!');
         	}
         }
+        
         
         if (M('em_building')->where($map)->delete()) {
         	addlog('删除楼宇ID：' . $buildingIds);
@@ -131,7 +139,7 @@ class BuildingController extends ComController
     public function update($ajax = '')
     {
     	$buildingId = isset($_POST['building_id']) ? intval($_POST['building_id']) : false;
-    	$data['BUILDING_NAME'] = isset($_POST['BUILDING_NAME']) ? trim($_POST['BUILDING_NAME'], ENT_QUOTES) : '';
+    	$data['BUILDING_NAME'] = isset($_POST['BUILDING_NAME']) ? trim($_POST['BUILDING_NAME']) : '';
     	$village = isset($_POST['village']) ? trim($_POST['village']) : false;
     	if(!$village){
     		$this->error('所属小区不能为空！');
@@ -155,9 +163,6 @@ class BuildingController extends ComController
         if (!$buildingId) {
         	$data['CREATE_TIME'] = $timenow;
         	$data['MODIFY_TIME'] = $timenow;
-        	if (village_name== '') {
-                $this->error('小区名称不能为空！');
-            }
             $buildingId = M('em_building')->data($data)->add();
             addlog('新增楼宇，楼宇ID：' . $buildingId);
             //如果单元数不为空，插入楼宇的同时插入单元
@@ -360,17 +365,5 @@ class BuildingController extends ComController
     		}
     		
     	}
-    }
-    
-    /**
-     * array类型组织机构数据转换成二维数组形式的map，key为组织机构名称
-     * @param unknown $em_sys_org 组织机构数组
-     * @return unknown
-     */
-    private function arrayToMap($em_sys_org){
-    	for($i=0;$i<count($em_sys_org);$i++){
-    		$emSysOrgMap[$em_sys_org[$i]['org_name']] = $em_sys_org[$i];
-		}
-		return $emSysOrgMap;
     }
 }

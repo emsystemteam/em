@@ -5,3 +5,9 @@ https://vip.weixiaoqu.com
 密码:Z59661944
 2.验证码不显示问题
 http://www.thinkphp.cn/topic/23636.html
+
+3.测试服务器地址
+远程桌面： 
+115.28.26.209
+帐号：administrator
+XCijoy59661944

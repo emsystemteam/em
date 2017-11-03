@@ -38,22 +38,22 @@ class MessageController extends ComController {
 		if ($smsmodelid == '') {
 			$this->ajaxReturn ( array (
 					'status' => 0,
-					'message' => '未选择短信模板'
+					'message' => '未选择短信模板' 
 			) );
 		} else {
 			if ($phonenumbers == '') {
 				$this->ajaxReturn ( array (
 						'status' => 0,
-						'message' => '没有手机号'
+						'message' => '没有手机号' 
 				) );
 			} else {
 				$smsmodel = M ( 'em_smsmodel' )->where ( "id='$smsmodelid'" )->find ();
 				$mobileArray = explode ( ",", $phonenumbers );
-				//后期替换为微信发送方法
+				// 后期替换为微信发送方法
 				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => $result
+						'message' => $result 
 				) );
 			}
 		}
@@ -68,39 +68,38 @@ class MessageController extends ComController {
 			if ($totalselect && count ( $totalselect ) > 0) {
 				if ($authresult && count ( $authresult ) > 0) {
 					if ($householdtype && count ( $householdtype ) > 0) {
-							$condition = array (); // 查询条件
-							$condition ['HOUSE'] = array (
-									'in',
-									$totalselect 
-							);
-							$condition ['AUTH_RESULT'] = array (
-									'in',
-									$authresult 
-							);
-							$House = M ( 'em_household' );
-							$result = $House->where ( $condition )->select ();
-							if ($result) {
-								// 查询短信模板
-								$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
-								if ($smsmodel) {
-									$mobileArray = array ();
-									foreach ( $result as $v ) {
-										array_push ( $mobileArray, $v ['TEL'] );
-									}
-									//微信发送方法需要替换
-									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
-									$this->ajaxReturn ( array (
-											'status' => 1,
-											'message' => $smsresult 
-									) );
+						$condition = array (); // 查询条件
+						$condition ['HOUSE'] = array (
+								'in',
+								$totalselect 
+						);
+						$condition ['AUTH_RESULT'] = array (
+								'in',
+								$authresult 
+						);
+						$House = M ( 'em_household' );
+						$result = $House->where ( $condition )->select ();
+						if ($result) {
+							// 查询短信模板
+							$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
+							if ($smsmodel) {
+								$mobileArray = array ();
+								foreach ( $result as $v ) {
+									array_push ( $mobileArray, $v ['TEL'] );
 								}
-							} else {
+								// 微信发送方法需要替换
+								$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
 								$this->ajaxReturn ( array (
-										'status' => 0,
-										'message' => '没有查询到楼宇中符合发送条件的住户信息' 
+										'status' => 1,
+										'message' => $smsresult 
 								) );
 							}
-							
+						} else {
+							$this->ajaxReturn ( array (
+									'status' => 0,
+									'message' => '没有查询到楼宇中符合发送条件的住户信息' 
+							) );
+						}
 					} else {
 						$this->ajaxReturn ( array (
 								'status' => 0,
@@ -281,81 +280,6 @@ class MessageController extends ComController {
 			return $list; // 一次性返回子节点数组，他们成为同级子节点。
 		} else {
 			return null;
-		}
-	}
-	
-	// 添加或更新
-	public function update() {
-		$model = D ( 'em_smsmodel' );
-		if (! empty ( $_POST )) {
-			$model->create (); // 收集表单数据
-		}
-		if (! empty ( $model->id )) { // 更新
-			$model->modifytime = date ( 'y-m-d H:i:s', time () );
-			$model->modifier = session ( 'uid' );
-			$model->status = I ( 'post.status', '', 'intval' );
-			$flag = $model->save ();
-			if ($flag) {
-				$this->success ( "保存成功" );
-				addlog ( '信息模板保存成功，ID：' . $model->id );
-			} else {
-				$this->success ( "保存失败" );
-			}
-		} else { // 新增
-			$model->createtime = date ( 'y-m-d H:i:s', time () );
-			$model->creater = session ( 'uid' );
-			$model->status = 1;
-			$flag = $model->add ();
-			if ($flag) {
-				$this->success ( "创建成功" );
-				addlog ( '信息模板创建成功，ID：' . $model->id );
-			} else {
-				$this->success ( "创建失败" );
-			}
-		}
-	}
-	/**
-	 * 添加短信模板
-	 */
-	public function add() {
-		$model = M ( 'em_smsmodel' )->create ();
-		$model ['status'] = 1;
-		$model ['smstype'] = 1;
-		$this->assign ( 'model', $model );
-		$this->display ( 'form' );
-	}
-	
-	/**
-	 * 审核短信列表
-	 */
-	public function approveindex() {
-		$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
-		$pagesize = 10; // 每页数量
-		$offset = $pagesize * ($p - 1); // 计算记录偏移量
-		$m = M ( 'em_smsmodel' );
-		$count = $m->where ( 'status=1 and isapprove=0' )->count ();
-		$list = $m->where ( 'status=1 and isapprove=0' )->limit ( $offset . ',' . $pagesize )->select ();
-		$page = new \Think\Page ( $count, $pagesize );
-		$page = $page->show ();
-		$this->assign ( 'list', $list );
-		$this->assign ( 'page', $page );
-		$this->display ();
-	}
-	
-	/**
-	 * *
-	 * 审核通过
-	 */
-	public function approve() {
-		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
-		if ($id) {
-			$model = M ( 'em_smsmodel' );
-			$model->isapprove = 1;
-			$model->where ( 'id=' . $id )->save ();
-			addlog ( '信息模板审核通过，ID：' . $id );
-			die ( '1' );
-		} else {
-			die ( '0' );
 		}
 	}
 }

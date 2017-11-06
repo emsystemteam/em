@@ -42,6 +42,7 @@ CREATE TABLE `qw_em_building` (
 -- ----------------------------
 -- Table structure for qw_em_dictionary
 -- ----------------------------
+-- ----------------------------
 DROP TABLE IF EXISTS `qw_em_dictionary`;
 CREATE TABLE `qw_em_dictionary` (
   `DICT_ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -52,7 +53,7 @@ CREATE TABLE `qw_em_dictionary` (
   `MODIFY_TIME` timestamp NULL DEFAULT NULL COMMENT '修改时间',
   `DICT_ORDER_BY` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`DICT_ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='系统字典表';
+) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='系统字典表';
 
 -- ----------------------------
 -- Records of qw_em_dictionary
@@ -68,10 +69,26 @@ INSERT INTO `qw_em_dictionary` VALUES ('8', 'buildingType', '写字楼', '5', '2
 INSERT INTO `qw_em_dictionary` VALUES ('9', 'buildingStructure', '砖混', '1', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
 INSERT INTO `qw_em_dictionary` VALUES ('10', 'buildingStructure', '混泥土', '2', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
 INSERT INTO `qw_em_dictionary` VALUES ('11', 'buildingStructure', '钢结构', '3', '2017-11-02 17:14:37', '2017-11-02 17:14:35', null);
-INSERT INTO `qw_em_dictionary` VALUES ('12', '住户身份', '1', '业主本人', '2017-11-02 11:27:14', null, null);
-INSERT INTO `qw_em_dictionary` VALUES ('13', '住户身份', '2', '亲属', '2017-11-02 11:27:45', null, null);
-INSERT INTO `qw_em_dictionary` VALUES ('14', '住户身份', '3', '租户', '2017-11-02 11:27:59', null, null);
-INSERT INTO `qw_em_dictionary` VALUES ('15', '住户身份', '4', '其他', '2017-11-02 11:28:13', null, null);
+INSERT INTO `qw_em_dictionary` VALUES ('12', 'houseType', '住宅', '1', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('13', 'houseType', '公寓', '2', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('14', 'houseType', '办公', '3', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('15', 'houseType', '厂房', '4', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('16', 'houseType', '仓库', '5', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('17', 'houseType', '商铺', '6', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('18', 'houseType', '酒店', '7', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('19', 'houseType', '别墅', '8', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('20', 'houseType', '其他', '9', '2017-11-03 23:32:18', '2017-11-03 23:32:21', null);
+INSERT INTO `qw_em_dictionary` VALUES ('21', 'householdType', '集体户口', '1', '2017-11-06 15:02:08', '2017-11-06 15:02:10', null);
+INSERT INTO `qw_em_dictionary` VALUES ('22', 'householdType', '城镇户口', '2', '2017-11-06 15:02:45', '2017-11-06 15:02:47', null);
+INSERT INTO `qw_em_dictionary` VALUES ('23', 'householdType', '农村居民户口', '3', '2017-11-06 15:02:45', '2017-11-06 15:02:47', null);
+INSERT INTO `qw_em_dictionary` VALUES ('24', 'householdStatus', '业主本人', '1', '2017-11-06 15:12:44', '2017-11-06 15:12:46', null);
+INSERT INTO `qw_em_dictionary` VALUES ('25', 'householdStatus', '亲属', '2', '2017-11-06 15:13:15', '2017-11-06 15:13:17', null);
+INSERT INTO `qw_em_dictionary` VALUES ('26', 'householdStatus', '租客', '3', '2017-11-06 15:13:15', '2017-11-06 15:13:17', null);
+INSERT INTO `qw_em_dictionary` VALUES ('27', 'householdStatus', '其他', '4', '2017-11-06 15:13:15', '2017-11-06 15:13:17', null);
+INSERT INTO `qw_em_dictionary` VALUES ('28', 'authResult', '已迁入', '1', '2017-11-06 15:14:59', '2017-11-06 15:15:01', null);
+INSERT INTO `qw_em_dictionary` VALUES ('29', 'authResult', '待审核', '2', '2017-11-06 15:15:26', '2017-11-06 15:15:28', null);
+INSERT INTO `qw_em_dictionary` VALUES ('30', 'authResult', '未通过', '3', '2017-11-06 15:15:26', '2017-11-06 15:15:28', null);
+INSERT INTO `qw_em_dictionary` VALUES ('31', 'authResult', '已迁出', '4', '2017-11-06 15:15:26', '2017-11-06 15:15:28', null);
 
 -- ----------------------------
 -- Table structure for qw_em_house
@@ -132,10 +149,11 @@ CREATE TABLE `qw_em_household` (
   `FIRST_LOGIN_TIME` timestamp NULL DEFAULT NULL COMMENT '注册/首次登陆时间',
   `AUTH_TIME` timestamp NULL DEFAULT NULL COMMENT '迁入/认证时间',
   `MOVE_REASON` varchar(255) DEFAULT NULL COMMENT '迁入原因',
-  `AUTH_RESULT` varchar(100) DEFAULT NULL COMMENT '认证结果',
+  `AUTH_RESULT` int(11) DEFAULT NULL COMMENT '认证结果',
   `LOGIN_TIMES` int(11) DEFAULT NULL COMMENT '登录次数',
   `LAST_LOGIN_TIME` timestamp NULL DEFAULT NULL COMMENT '最后一次登录时间',
   `HOUSEHOLD_TYPE` int(11) DEFAULT NULL COMMENT '住户类型，关联字典表',
+  `HOUSEHOLD_STATUS` int(11) DEFAULT NULL COMMENT '住户身份（1.业主本人，2.亲属，3.租客，4.其他）',
   PRIMARY KEY (`HOUSEHOLD_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='房屋住户信息表';
 

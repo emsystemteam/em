@@ -87,7 +87,7 @@ CREATE TABLE `qw_em_house` (
   `BUILDING` int(11) NOT NULL COMMENT '所属楼宇',
   `UNIT` int(11) NOT NULL COMMENT '所属单元',
   `FLOOR` int(11) DEFAULT NULL COMMENT '所在楼层',
-  `BUILT_UP_AREA` double DEFAULT NULL COMMENT '建筑面积',
+  `BUILD_UP_AREA` double DEFAULT NULL COMMENT '建筑面积',
   `SET_IN_AREA` double DEFAULT NULL COMMENT '套内面积',
   `POLL_AREA` double DEFAULT NULL COMMENT '公摊面积',
   `HOUSE_TYPE` int(11) DEFAULT NULL COMMENT '房屋类型',

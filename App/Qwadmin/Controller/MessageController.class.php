@@ -16,18 +16,22 @@ class MessageController extends ComController {
 	// 微信模板管理
 	public function wechatsmsindex() {
 		$m = M ( 'em_smsmodel' );
-		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"住户身份"' )->order ( 'CREATE_TIME desc' )->select ();
+		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"householdStatus"' )->order ( 'CREATE_TIME desc' )->select ();
+		$authResult = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"authResult"' )->order ( 'CREATE_TIME desc' )->select ();
 		$list = $m->where ( 'smstype=2 and status=1 and isapprove=1' )->order ( 'createtime desc' )->select ();
 		$this->assign ( 'titlelist', $list );
 		$this->assign ( 'holdtype', $holdtype );
+		$this->assign ( 'authResults', $authResult );
 		$this->display ();
 	}
 	// 短信模板管理
 	public function smsindex() {
 		$m = M ( 'em_smsmodel' );
-		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"住户身份"' )->order ( 'CREATE_TIME desc' )->select ();
+		$authResult = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"authResult"' )->order ( 'CREATE_TIME desc' )->select ();
+		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"householdStatus"' )->order ( 'CREATE_TIME desc' )->select ();
 		$list = $m->where ( 'smstype=1 and status=1 and isapprove=1' )->order ( 'createtime desc' )->select ();
 		$this->assign ( 'titlelist', $list );
+		$this->assign ( 'authResults', $authResult );
 		$this->assign ( 'holdtype', $holdtype );
 		$this->display ();
 	}
@@ -143,6 +147,10 @@ class MessageController extends ComController {
 									'in',
 									$totalselect 
 							);
+							$condition ['HOUSEHOLD_STATUS'] = array (
+									'in',
+									$householdtype
+							);
 							$condition ['AUTH_RESULT'] = array (
 									'in',
 									$authresult 
@@ -174,13 +182,13 @@ class MessageController extends ComController {
 										array_push ( $mobileArray, $v ['TEL'] );
 									}
 									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
-									$amount=0;
-									foreach($smsresult as $key=>$value){
-										if($value=='0'){//成功的记录
-											$amount++;
+									$amount = 0;
+									foreach ( $smsresult as $key => $value ) {
+										if ($value == '0') { // 成功的记录
+											$amount ++;
 										}
 									}
-									if($amount>0){
+									if ($amount > 0) {
 										// 保存发送短信日志
 										$model = D ( 'em_smslog' );
 										$model->create ();
@@ -265,7 +273,7 @@ class MessageController extends ComController {
 		$jsonObject = json_decode ( $result );
 		$code = $jsonObject->status->code;
 		$data = $jsonObject->status->data;
-		$this->assign ( 'data', $jsonObject->data);
+		$this->assign ( 'data', $jsonObject->data );
 		$this->assign ( 'list', $list );
 		$this->assign ( 'page', $page );
 		$this->display ();
@@ -291,13 +299,13 @@ class MessageController extends ComController {
 				$mobileArray = explode ( ",", $phonenumbers );
 				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
 				
-				$amount=0;
-				foreach($result as $key=>$value){
-					if($value=="0"){//成功的记录
-						$amount++;
+				$amount = 0;
+				foreach ( $result as $key => $value ) {
+					if ($value == "0") { // 成功的记录
+						$amount ++;
 					}
 				}
-				if($amount>0){
+				if ($amount > 0) {
 					// 保存发送短信日志
 					$model = D ( 'em_smslog' );
 					$model->create ();
@@ -310,7 +318,7 @@ class MessageController extends ComController {
 				
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => $v2
+						'message' => $v2 
 				) );
 			}
 		}

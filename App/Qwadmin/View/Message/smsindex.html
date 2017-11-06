@@ -24,7 +24,6 @@
 						<div class="col-xs-12">
 							<form class="form-horizontal" id="form" method="post" onsubmit="return false;"
 								action="{:U('update')}">
-
 								<!-- PAGE CONTENT BEGINS -->
 								<div class="form-group">
 									<label class="col-sm-1 control-label no-padding-right"
@@ -33,8 +32,8 @@
 										<select id="smstitle" name="smstitle"
 											class="col-xs-10 col-sm-5">
 											<volist name="titlelist" id="vo" empty="暂时无数据">
-											<option value='{$vo.id}'>{$vo.smstitle}</option>
-											<!-- <option value="${vo.id}">${vo.id}</option> --> </volist>
+												<option value='{$vo.id}'>{$vo.smstitle}</option>
+											</volist>
 										</select>
 									</div>
 								</div>
@@ -79,15 +78,10 @@
 											for="form-field-2"> 住户状态</label>
 										<div class="col-sm-9">
 											<div class="auth_result">
-												<input name="form-field-checkbox" type="checkbox" 
-												value="已迁入" checked="checked" class="ace input-lg"> <span
-													class="lbl bigger-120">已迁入</span>
-												<input name="form-field-checkbox" type="checkbox"
-												value="待审核" 	class="ace input-lg"> <span class="lbl bigger-120">待审核</span>
-												<input name="form-field-checkbox" type="checkbox" 
-												value="未通过" 	class="ace input-lg"> <span class="lbl bigger-120">未通过</span>
-												<input name="form-field-checkbox" type="checkbox" 
-												value="已迁出" 	class="ace input-lg"> <span class="lbl bigger-120">已迁出</span>
+												<volist name="authResults" id="vo" empty="暂时无数据">
+												<input name="form-field-checkbox" type="checkbox" checked="checked"
+												value="{$vo.DICT_VALUE}" 	class="ace input-lg"> <span class="lbl bigger-120">{$vo.DICT_KEY}</span>
+											 	</volist>
 											</div>
 										</div>
 									</div>
@@ -99,8 +93,8 @@
 										<div class="col-sm-9">
 											<div class="holdtype">
 											<volist name="holdtype" id="vo" empty="暂时无数据">
-										<input name="form-field-checkbox" type="checkbox" checked="checked"
-												value="{$vo.DICT_ID}" 	class="ace input-lg"> <span class="lbl bigger-120">{$vo.DICT_VALUE}</span>
+												<input name="form-field-checkbox" type="checkbox" checked="checked"
+												value="{$vo.DICT_VALUE}" 	class="ace input-lg"> <span class="lbl bigger-120">{$vo.DICT_KEY}</span>
 											 </volist>
 											</div>
 										</div>

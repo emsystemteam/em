@@ -318,6 +318,27 @@
 			            });
 					return false;
 				}
+				var phoneArray=$('#phoneNumber').val().split(',');
+				var isphone=true;
+				for(var i=0;i<phoneArray.length;i++ ){
+					if(validatemobile(phoneArray[i])==false){
+						isphone=false;
+						break;
+					}
+				}
+				if(isphone==false){
+					bootbox.dialog({
+		                title: '短信发送失败提示：',
+		                message: '有非法手机号',
+		                buttons: {
+		                    "success": {
+		                        "label": "确定",
+		                        "className": "btn-danger"
+		                    }
+		                }
+		            });
+					return;
+				}
 				var sendData={smsmodelid:$('#smstitle').val(),phonenumbers:$('#phoneNumber').val()};				
 				 $.ajax({
 					 type : "post",
@@ -408,6 +429,24 @@
 			});
 
 		});
+		
+		//判断是不是手机号
+		function validatemobile(mobile) 
+		   { 
+		       if(mobile.length==0) 
+		       { 
+		          return false; 
+		       }     
+		       if(mobile.length!=11) 
+		       { 
+		           return false; 
+		       } 
+		       var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
+		       if(!myreg.test(mobile)) 
+		       { 
+		           return false; 
+		       } 
+		   } 
 	</script>
 </body>
 </html>

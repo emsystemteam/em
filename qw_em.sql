@@ -351,6 +351,17 @@ CREATE TABLE `qw_em_notice` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='文章列表';
 
+DROP TABLE IF EXISTS `qw_em_noticetovillage`;
+CREATE TABLE `qw_em_noticetovillage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `noticeid` int(11) DEFAULT NULL COMMENT '关联文章',
+  `villageid` int(11) DEFAULT NULL COMMENT '文章关联小区id',
+  `creater` int(11) DEFAULT NULL COMMENT '创建人',
+  `createtime` datetime DEFAULT NULL COMMENT '创建时间',
+  `modifier` int(11) DEFAULT NULL COMMENT '修改人',
+  `modifytime` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章管理哪些小区';
 
 
 ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;

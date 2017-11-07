@@ -29,22 +29,23 @@ class ContentController extends ComController {
 	
 	// 模块管理明细-文章列表
 	public function detail() {
-		$m = M ( 'em_contentmanager' );
-		$count = $m->where ( 'status=1' )->count ();
 		if (isset ( $_GET ['id'] )) {
 			$id = intval ( $_GET ['id'] );
 			$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
 			$pagesize = 10; // 每页数量
 			$offset = $pagesize * ($p - 1); // 计算记录偏移量
 			$m=M('em_notice');
-			$count = $m->where ( 'stauts=1 and id='.$id )->count ();
-			$list = $m->where ( 'stauts=1 and id='.$id )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+			$count = $m->where ( 'stauts=1 and contentid='.$id )->count ();
+			$list = $m->where ( 'stauts=1 and contentid='.$id )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 			if(!$list){
 				$this->error('没有找到任何文章信息');
 			}
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
+			$content=M('em_contentmanager')->where('id='.$id)->find();
 			$this->assign ( 'list', $list );
+			$this->assign ( 'model', $content);
+			$this->display ();
 		}else{
 			$this->error('没有找到任何文章信息');
 		}

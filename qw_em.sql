@@ -322,6 +322,36 @@ CREATE TABLE `qw_em_smslog` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='短信发送记录';
 
 
+DROP TABLE IF EXISTS `qw_em_contentmanager`;
+CREATE TABLE `qw_em_contentmanager` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `contenttitile` varchar(255) DEFAULT NULL COMMENT '模块名称',
+  `contenttype` int(11) DEFAULT NULL COMMENT '模块类型',
+  `createtime` datetime DEFAULT NULL COMMENT '创建时间',
+  `creater` int(11) DEFAULT NULL COMMENT '创建人',
+  `modifier` int(11) DEFAULT NULL COMMENT '修改人id',
+  `modifytime` datetime DEFAULT NULL COMMENT '最后一次修改时间',
+  `status` int(11) DEFAULT '1' COMMENT '状态1生效，0失效',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='内容管理';
+
+DROP TABLE IF EXISTS `qw_em_notice`;
+CREATE TABLE `qw_em_notice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `noticetitle` varchar(255) DEFAULT NULL,
+  `noticepicture` mediumblob,
+  `noticecontent` text,
+  `contentid` int(11) DEFAULT NULL COMMENT '关联到内容模块id(em_contentmanager)',
+  `istop` tinyint(4) DEFAULT '0' COMMENT '是否置顶0不置顶1置顶',
+  `creater` int(11) DEFAULT NULL COMMENT '创建人id',
+  `createtime` datetime DEFAULT NULL COMMENT '创建时间',
+  `modifier` int(11) DEFAULT NULL COMMENT '最后修改人id',
+  `modifytime` datetime DEFAULT NULL COMMENT '最后一次修改时间',
+  `stauts` int(11) DEFAULT '1' COMMENT '状态1正常0不显示',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='文章列表';
+
+
 
 ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;
 

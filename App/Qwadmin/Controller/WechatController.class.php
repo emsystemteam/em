@@ -238,7 +238,7 @@ class WechatController extends Controller
     function get_authorize_url($state)
     {
         $redirect_uri = urlencode($this->redirect_uri);
-        return "https://open.weixin.qq.com/connect/qrconnect?appid={$this->app_id}&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_login&state={$state}#wechat_redirect";
+        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid={$this->app_id}&redirect_uri={$redirect_uri}&response_type=code&scope=snsapi_base&state={$state}#wechat_redirect";
     }
 
     /**

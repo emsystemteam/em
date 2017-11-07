@@ -144,7 +144,6 @@ function send_wechat_message($openids, $message)
     $parameters = array();
     $parameters['touser'] = $openids;
     $parameters['msgtype'] = 'text';
-    $parameters['touser'] = $openids;
     $parameters['text']['content'] = $message;
     $res = http_call($url, json_encode($parameters));
     $json = json_decode($res);

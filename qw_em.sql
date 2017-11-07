@@ -360,6 +360,7 @@ CREATE TABLE `qw_em_noticetovillage` (
   `createtime` datetime DEFAULT NULL COMMENT '创建时间',
   `modifier` int(11) DEFAULT NULL COMMENT '修改人',
   `modifytime` datetime DEFAULT NULL COMMENT '修改时间',
+  `status` int(11) DEFAULT NULL COMMENT '状态1显示0不显示',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章管理哪些小区';
 

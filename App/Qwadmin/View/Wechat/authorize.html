@@ -22,7 +22,7 @@
                                 <label class="col-sm-3 control-label no-padding-right" for="form-field-2"> 手机号码 </label>
                                 <div class="col-sm-9">
 	                                    <input type="text" name="phone" id="phone" placeholder="手机号码" class="col-xs-8" value="{$phone}" maxlength=11 style="margin-top:5px;" required="required">
-	                                    <button class="btn" type="button" id="sendCode">发送短信</button>
+	                                    <button class="btn btn-warning" type="button" id="sendCode">发送短信</button>
                                     <span class="help-inline"></span>
                                 </div>
                             </div>
@@ -42,11 +42,8 @@
                             <input type="hidden" name="openid" id="openid"  class="col-xs-10 col-sm-5" value="{$openid}">
                             
                             <div class="col-md-offset-2 col-md-9">
-                                <button class="btn btn-info col-sm-3 submit" type="button" style="margin-left:150px;">
-                                    <i class="fa fa-paper-plane"></i>
-                                    提交
-                                </button>
-                                <span class="middle" style="color:red;">{$error}</span>
+                                <button class="btn btn-info col-sm-3 submit" type="button"><i class="fa fa-paper-plane"></i> 提交</button>
+                                <span class="help-inline" style="color:red;">{$error}</span>
                             </div>
                         </form>
                         <!-- PAGE CONTENT ENDS -->

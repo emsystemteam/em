@@ -339,7 +339,7 @@ DROP TABLE IF EXISTS `qw_em_notice`;
 CREATE TABLE `qw_em_notice` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `noticetitle` varchar(255) DEFAULT NULL,
-  `noticepicture` mediumblob,
+  `noticepicture` varchar(255) DEFAULT NULL,
   `noticecontent` text,
   `contentid` int(11) DEFAULT NULL COMMENT '关联到内容模块id(em_contentmanager)',
   `istop` tinyint(4) DEFAULT '0' COMMENT '是否置顶0不置顶1置顶',
@@ -349,7 +349,8 @@ CREATE TABLE `qw_em_notice` (
   `modifytime` datetime DEFAULT NULL COMMENT '最后一次修改时间',
   `stauts` int(11) DEFAULT '1' COMMENT '状态1正常0不显示',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='文章列表';
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='文章';
+
 
 DROP TABLE IF EXISTS `qw_em_noticetovillage`;
 CREATE TABLE `qw_em_noticetovillage` (

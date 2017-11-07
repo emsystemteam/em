@@ -71,7 +71,7 @@
 												<td>{$val['createtime']}</td>
 												<td><a href="{:U('edit',array('id'=>$val['id']))}">查看小区</a></td>
 												<td class="center">
-												<a href="{:U('edit',array('id'=>$val['id']))}"><i class="fa fa-plus"></i>关联小区</a>
+												 <php>echo '<a class="linkOpenModal" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-plus"></i>关联小区</a>';</php>
 												<a href="{:U('edit',array('id'=>$val['id']))}"><i class="fa fa-edit"></i>编辑</a>
 												<a href="{:U('edit',array('id'=>$val['id']))}"><i class="fa fa-trash"></i>删除</a>
 												</td>
@@ -89,6 +89,29 @@
 					</div>
 					<!-- /.row -->
 				</div>
+				<!-- 模态框（Modal） -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+					aria-labelledby="myModalLabel" aria-hidden="true">
+					<input type="hidden" id="hdfnoticeid"/>
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">选择楼宇</h4>
+							</div>
+							<div class="modal-body" style="height:100%; overflow:scroll;"><include file="Public/buildingselected" /></div>
+							<div class="modal-footer">
+							<button type="button" class="btn btn-info" id="btnSave" 
+									data-dismiss="modal">保存</button>
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+							</div>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.page-content -->
+				</div>
 				<!-- /.page-content -->
 			</div>
 		</div>
@@ -101,7 +124,81 @@
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
-		
+	//打开模态框
+	$('.linkOpenModal').click(function(){
+		var noticeid=$(this).attr('val');
+		$('#hdfnoticeid').val(noticeid);
+		bindtreeview();
+		removeChild();
+		$('#myModal').modal({});
+	});
+	//关联小区 	
+	$('#btnSave').click(function(){
+		var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+		var checkedNodes = zTreeObj.getCheckedNodes(); 
+		 if(checkedNodes.length==0){
+			 bootbox.dialog({
+	                title: '友情提示：',
+	                message: '请选择楼宇',
+	                buttons: {
+	                    "success": {
+	                        "label": "确定",
+	                        "className": "btn-info"
+	                    }
+	                }
+	            });
+			 return;
+		 }else{
+			//文章关联小区
+			var totalselect = new Array();//选中多少小区
+			for (var i = 0; i < checkedNodes.length; i++) {
+					totalselect.push(checkedNodes[i].id.substr(1,checkedNodes[i].id.length));
+				}
+				var sendData = {
+					noticeid : $('#hdfnoticeid').val(),
+					totalselect:totalselect
+				};
+				$.ajax({
+					type : "post",
+					url : "__URL__/addvillagetonotice",
+					dataType : "json",
+					data : sendData,
+					success : function(data) {
+						if (data.status == "1") {
+
+						} else {
+							bootbox.dialog({
+								title : '友情提示：',
+								message : data.message,
+								buttons : {
+									"success" : {
+										"label" : "确定",
+										"className" : "btn-danger"
+									}
+								}
+							});
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+					}
+				});
+			}
+		});
+
+		//删除楼宇只保留小区信息
+		function removeChild() {
+			var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			var nodes = zTreeObj.getNodes();
+			if (nodes && nodes.length > 0) {
+				for (var i = 0; i < nodes.length; i++) {
+					var first = nodes[i].id.substr(0, 1);
+					if (first == "p") {
+						zTreeObj.removeChildNodes(nodes[i]);
+					}
+
+				}
+			}
+		}
 	</script>
 </body>
 </html>

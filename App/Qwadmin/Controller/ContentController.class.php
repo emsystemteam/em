@@ -42,12 +42,56 @@ class ContentController extends ComController {
 			}
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
-			$content=M('em_contentmanager')->where('id='.$id)->find();
+			$content=M('em_contentmanager')->where('status=1 and id='.$id)->find();
 			$this->assign ( 'list', $list );
 			$this->assign ( 'model', $content);
 			$this->display ();
 		}else{
 			$this->error('没有找到任何文章信息');
+		}
+		
+	}
+	//文章关联小区
+	public function addvillagetonotice(){
+		$totalselect =  $_POST ['totalselect']; // 选择小区
+		$noticeid= $_POST['noticeid'] ;//文章id
+		if (isset ($totalselect)&&isset ($noticeid)) {
+			//之前的关联信息删除
+			$m=M('em_noticetovillage');
+			$m->status=0;
+			$m->modifytime= date ( 'y-m-d H:i:s', time () );
+			$m->modifier= session ( 'uid' );
+			$m-> where('noticeid='.$noticeid)->save();
+			//添加新的关联信息
+			$m->startTrans();
+			$result=true;
+			foreach ($totalselect as $villageid) {
+				$m->create();
+				$m->noticeid=$noticeid;
+				$m->villageid=$villageid;
+				$m->status=1;
+				$m->createtime = date ( 'y-m-d H:i:s', time () );
+				$m->creater = session ( 'uid' );
+				if($m->add ()==0){
+					$result=false;
+				}
+			} 
+			if ($flag){
+				// 提交事务
+				$m->commit();
+			}else{
+				// 事务回滚
+				$m->rollback();
+			}
+			$this->ajaxReturn ( array (
+					'status' =>1,
+					'message' => '保存成功'
+			) );
+		}else{
+			$this->ajaxReturn ( array (
+					'status' =>0,
+					'message' => '参数传递错误'
+			) );
 		}
 	}
 }

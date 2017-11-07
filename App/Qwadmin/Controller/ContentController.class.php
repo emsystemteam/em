@@ -138,4 +138,54 @@ class ContentController extends ComController {
 			) );
 		}
 	}
+	//编辑文章
+	public function addnotice() {
+		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
+		if (! $id) {
+			$this->error ( '参数错误！' );
+		}
+		$model = M ( 'em_noticetovillage' )->where ( 'id=' . $id )->find ();
+		$this->assign ( 'model', $model );
+		$this->display ( 'form' );
+	}
+	//编辑文章
+	public function editnotice() {
+		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
+		if (! $id) {
+			$this->error ( '参数错误！' );
+		}
+		$model = M ( 'em_notice' )->where ( 'id=' . $id )->find ();
+		$this->assign ( 'model', $model );
+		$this->display ( 'form' );
+	}
+	// 添加或更新文章
+	public function updatenotice() {
+		$model = D ( 'em_notice' );
+		if (! empty ( $_POST )) {
+			$model->create (); // 收集表单数据
+		}
+		if (! empty ( $model->id )) { // 更新
+			$model->modifytime = date ( 'y-m-d H:i:s', time () );
+			$model->modifier = session ( 'uid' );
+			$model->status = I ( 'post.status', '', 'intval' );
+			$flag = $model->save ();
+			if ($flag) {
+				$this->success ( "保存成功" );
+				addlog ( '信息模板保存成功，ID：' . $model->id);
+			} else {
+				$this->success ( "保存失败" );
+			}
+		} else { // 新增
+			$model->createtime = date ( 'y-m-d H:i:s', time () );
+			$model->creater = session ( 'uid' );
+			$model->status = 1;
+			$flag = $model->add ();
+			if ($flag) {
+				$this->success ( "创建成功" );
+				addlog ( '文章创建成功，ID：' . $model->id);
+			} else {
+				$this->error ( "创建失败" );
+			}
+		}
+	}
 }

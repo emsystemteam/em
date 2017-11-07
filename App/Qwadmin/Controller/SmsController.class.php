@@ -65,7 +65,7 @@ class SmsController extends ComController {
 				$this->success ( "创建成功" );
 				addlog ( '信息模板创建成功，ID：' . $model->id);
 			} else {
-				$this->success ( "创建失败" );
+				$this->error ( "创建失败" );
 			}
 		}
 	}

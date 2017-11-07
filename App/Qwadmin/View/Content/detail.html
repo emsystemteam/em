@@ -69,7 +69,7 @@
 											<tr>
 												<td>{$val['noticetitle']}</td>
 												<td>{$val['createtime']}</td>
-												<td><a href="{:U('edit',array('id'=>$val['id']))}">查看小区</a></td>
+												<td><php>echo '<a class="linkShowModal" href="javascript:void(0);" val="'.$val['id'].'">查看小区</a>';</php></td>
 												<td class="center">
 												 <php>echo '<a class="linkOpenModal" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-plus"></i>关联小区</a>';</php>
 												<a href="{:U('edit',array('id'=>$val['id']))}"><i class="fa fa-edit"></i>编辑</a>
@@ -112,6 +112,25 @@
 					</div>
 					<!-- /.page-content -->
 				</div>
+				<div class="modal fade" id="theModal" tabindex="-1" role="dialog"
+					aria-labelledby="theModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">已关联的小区</h4>
+							</div>
+							<div id="bingdvillagelist" class="modal-body" style="height:100%; overflow:scroll;">
+						</div>
+						<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+							</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.page-content -->
+				</div>
 				<!-- /.page-content -->
 			</div>
 		</div>
@@ -124,7 +143,72 @@
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
-	//打开模态框
+	//打开模态框(查看小区)
+	$('.linkShowModal').click(function(){
+		var noticeid=$(this).attr('val');
+		$('#theModal').modal({});
+		var sendData = {
+				noticeid :noticeid
+			};
+		$.ajax({
+			type : "post",
+			url : "__URL__/getvillagetonoticebyid",
+			dataType : "json",
+			data : sendData,
+			success : function(data) {
+				if (data.status == "1") {
+					if(data.message.length>0){
+						for(var i=0;i<data.message.length;i++){
+							var insertHtml='<button id=v'+data.message[i].id+' class="btn btn-primary btn-sm btn-icon-text"'+
+							 'title="'+data.message[i].VILLAGE_NAME+'"><i class="fa fa-home"></i>'+
+							 '<span>'+data.message[i].VILLAGE_NAME+'</span>'+
+							 '<a onclick="deleteVillage('+data.message[i].id+')" href="javascript:;" class="deleteVillage" var='+data.message[i].id+'>'+
+							 '<i class="fa fa-times"></i>'+
+							 '</a>'+
+							 '</button>';
+							$('#bingdvillagelist').append(insertHtml);
+						}
+					}
+				} 
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	});
+	//删除文章关联
+	function deleteVillage(id){
+		alert(id);
+		debugger;
+		var sendData = {
+				id : id
+			};
+			$.ajax({
+				type : "post",
+				url : "__URL__/deleteVillage",
+				dataType : "json",
+				data : sendData,
+				success : function(data) {
+					debugger;
+					if (data.status == "1") {
+						$('#v'+id).remove();
+					} else {
+						bootbox.dialog({
+							title : '友情提示：',
+							message : data.message,
+							buttons : {
+								"success" : {
+									"label" : "确定",
+									"className" : "btn-danger"
+								}
+							}
+						});
+					}
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+	}
+	//打开模态框(关联小区)
 	$('.linkOpenModal').click(function(){
 		var noticeid=$(this).attr('val');
 		$('#hdfnoticeid').val(noticeid);

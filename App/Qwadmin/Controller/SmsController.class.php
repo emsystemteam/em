@@ -49,6 +49,7 @@ class SmsController extends ComController {
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
 			$model->modifier = session ( 'uid' );
 			$model->status = I ( 'post.status', '', 'intval' );
+			$model->isapprove=0;//编辑后重新审核
 			$flag = $model->save ();
 			if ($flag) {
 				$this->success ( "保存成功" );

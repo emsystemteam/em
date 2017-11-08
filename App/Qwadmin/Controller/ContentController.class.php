@@ -32,13 +32,20 @@ class ContentController extends ComController {
 	// 模块管理明细-文章列表
 	public function detail() {
 		if (isset ( $_GET ['id'] )) {
+			
+			$data ['noticetitle'] = isset ( $_POST ['smstype'] ) ? trim ( $_POST ['smstype'] ) : 1; // 默认短信
 			$id = intval ( $_GET ['id'] );
 			$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
 			$pagesize = 10; // 每页数量
 			$offset = $pagesize * ($p - 1); // 计算记录偏移量
 			$m = M ( 'em_notice' );
-			$count = $m->where ( 'stauts=1 and contentid=' . $id )->count ();
-			$list = $m->where ( 'stauts=1 and contentid=' . $id )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+			$condition['stauts'] = 1;
+			$condition['contentid'] = $id;
+			if(I('noticetitle')){
+				$condition['noticetitle']=I('noticetitle');
+			}
+			$count = $m->where ($condition)->count ();
+			$list = $m->where ($condition)->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
@@ -144,7 +151,7 @@ class ContentController extends ComController {
 			$this->error ( '参数错误！' );
 		}
 		$model = M ( 'em_contentmanager' )->where ( 'id=' . $id )->find ();
-		$this->assign ( 'contentmodel', $model );
+		$this->assign ( 'contentid',$id);
 		$this->display ( 'form' );
 	}
 	// 编辑文章
@@ -167,10 +174,9 @@ class ContentController extends ComController {
 		if (! empty ( $model->id )) { // 更新
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
 			$model->modifier = session ( 'uid' );
-			$model->status = I ( 'post.status', '', 'intval' );
 			$flag = $model->save ();
 			if ($flag) {
-				$this->success ( "保存成功",'/Content/detail/'.$model->contentid);
+				$this->success ( "保存成功",'detail/id/'.I('contentid'));
 				addlog ( '信息模板保存成功，ID：' . $model->id );
 			} else {
 				$this->success ( "保存失败" );
@@ -181,7 +187,7 @@ class ContentController extends ComController {
 			$model->status = 1;
 			$flag = $model->add ();
 			if ($flag) {
-				$this->success ( "创建成功" ,'detail/id/1');
+				$this->success ( "创建成功" ,'detail/id/'.I('contentid'));
 				addlog ( '文章创建成功，ID：' . $model->id );
 			} else {
 				$this->error ( "创建失败" );

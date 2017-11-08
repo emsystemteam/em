@@ -45,7 +45,7 @@
 							<div class="row">
 								<form class="form-inline" action="" method="post">
 									<a class="btn btn-info" href="{:U('addnotice',array('contentid'=>$model['id']))}" value="">添加{$model.contenttitile}</a>
-										<input type="text" name="keyword" value="" placeholder="请输入文章名称" class="search-keywords">
+										<input type="text" name="noticetitle" value="" placeholder="请输入文章名称" class="search-keywords">
 									<button type="submit" class="btn btn-purple btn-sm">
 										<span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
 										Search
@@ -325,6 +325,9 @@
 		//删除楼宇只保留小区信息
 		function removeChild() {
 			var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			if(zTreeObj!=null){
+				
+			
 			var nodes = zTreeObj.getNodes();
 			if (nodes && nodes.length > 0) {
 				for (var i = 0; i < nodes.length; i++) {
@@ -334,7 +337,7 @@
 					}
 
 				}
-			}
+			}}
 		}
 	</script>
 </body>

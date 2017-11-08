@@ -33,25 +33,41 @@
 			<div class="main-content-inner">
 				<include file="Public/breadcrumbs" />
 				<include file="Public/set" />
+				<h2>内容模块管理</h2>
 				<div class="row">
 					<div class="col-xs-12">
 						<!-- PAGE CONTENT BEGINS -->
 						<div>
 							<ul class="ace-thumbnails clearfix">
+							<li>
+								<a href="javascript:void(0);" id="addcontent"
+									data-rel="colorbox">
+									 <img width="200" height="200" 
+										src="__PUBLIC__/qwadmin/images/add.jpg" />
+										<div class="text">
+											<div class="inner"></div>
+										</div>
+									</a>
+									</li>
 								<volist name="list" id="vo" empty="暂时无数据">
 								<li>
 								<a href="{:U('detail',array('id'=>$vo['id']))}"
 									data-rel="colorbox">
-									 <img width="150" height="150"
-										src="__PUBLIC__/qwadmin/images/gallery/thumb-3.jpg" />
+									<div style="position: relative; width: 200px; height: 200px;">
+											<img width="200" height="200" src="__PUBLIC__/qwadmin/images/book.jpg"/>
+											<div
+												style="width:200px; height:200px;text-align: center;position: absolute; z-indent: 20; top:0px;">
+												<h2>{$vo.contenttitile}</h2></div>
+										</div> <!--  <img width="200" height="200"
+										src="__PUBLIC__/qwadmin/images/book.jpg" />
 										<div class="text">
-											<div class="inner">{$vo.contenttitile}</div>
-										</div>
+											<div class="inner" style="padding:4px 0;margin:0;vertical-align: middle;max-width: 90%;"><h2>{$vo.contenttitile}</h2></div>
+										</div> -->
 								</a>
 									<div class="tools tools-bottom">
-										 <a href="{:U('detail',array('id'=>$val['id']))}"> <i class="ace-icon fa fa-pencil"></i></a> 
-										  <php> echo '<a href="javascript:void(0);" val="'.$val['id'].'"
-                                                     title="审核"><i class="ace-icon fa fa-times red"></i></a>';</php>
+										 <a href="{:U('detail',array('id'=>$vo['id']))}"> <i class="ace-icon fa fa-pencil"></i></a> 
+										  <php> echo '<a href="javascript:void(0);" class="deletecontent" val="'.$vo['id'].'"
+                                                     title="删除"><i class="ace-icon fa fa-times red"></i></a>';</php>
 									</div></li>
 								</volist>
 							</ul>
@@ -61,6 +77,51 @@
 					<!-- /.col -->
 				</div>
 				<!-- /.row -->
+				<div class="modal fade" id="theModal" tabindex="-1" role="dialog"
+					aria-labelledby="theModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">添加模块</h4>
+							</div>
+							<div class="modal-body" style="height:100%">
+								<div class="row">
+									<div class="form-group">
+										<label class="col-sm-2 control-label no-padding-right"
+											for="form-field-10">模块名称：</label>
+										<div class="col-sm-6">
+											<input type="text" name="contenttitile" id="contenttitile"
+												placeholder="模块名称" class="col-xs-12 col-sm-12" value="">
+										</div>
+									</div>
+								</div>
+								<div style="height:20px"></div>
+								<div class="row">
+									<div class="form-group">
+										<label class="col-sm-2 control-label no-padding-right"
+											for="form-field-10">模块类型：</label>
+										<div class="col-sm-6">
+											<select id="contenttype" name="contenttype"
+												class="col-xs-10 col-sm-5">
+												<volist name="contenttype" id="vo" empty="暂时无数据">
+												<option value='{$vo.dict_name}'>{$vo.dict_key}</option>
+												</volist>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+							<button type="button" class="btn btn-info submit" id="savecontent"
+									data-dismiss="modal">保存</button>
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+				</div>
+			</div>
 			</div>
 		</div>
 	</div>
@@ -71,6 +132,98 @@
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
+		$(function(){
+			//保存文章
+			$('#savecontent').click(function(){
+				var contenttitile=$('#contenttitile').val();
+				var contenttype=$('contenttype').val();
+				var sendData = {
+						contenttitile :contenttitile,
+						contenttype:contenttype
+					};
+				$.ajax({
+					type : "post",
+					url : "__URL__/updatecontent",
+					dataType : "json",
+					data : sendData,
+					success : function(data) {
+						if (data.status == "1") {
+							bootbox.alert({
+                                buttons: {
+                                    ok: {
+                                        label: '确定',
+                                        className: 'btn-danger'
+                                    }
+                                },
+                                message: '恭喜，添加成功！',
+                                callback: function () {
+                                    window.location.reload(true);
+                                },
+                                title: "友情提示",
+                            });
+						} 
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+					}
+				});
+			});
+			//模态框
+			$('#addcontent').click(function(){
+				$('#theModal').modal({});
+			});
+			//删除文章
+			 $(".deletecontent").on('click', function () {
+		          var obj = $(this);
+		          var id = obj.attr('val');
+		          bootbox.confirm({
+		              title: "系统提示",
+		              message: "是否要删除内容？",
+		              callback: function (result) {
+		                  if (result) {
+		                      $.get("{:U('deletecontent')}?id=" + id, function (response) {
+		                    	  if (response.status == 1) {
+		                              bootbox.alert({
+		                                  buttons: {
+		                                      ok: {
+		                                          label: '确定',
+		                                          className: 'btn-danger'
+		                                      }
+		                                  },
+		                                  message: '恭喜，删除成功！',
+		                                  callback: function () {
+		                                	
+		                                      window.location.reload(true);
+		                                  },
+		                                  title: "友情提示",
+		                              });
+		                              return;
+		                          }else{
+		                        	  bootbox.dialog({
+		                                  message: response.message,
+		                                  buttons: {
+		                                      "success": {
+		                                          "label": "确定",
+		                                          "className": "btn-danger"
+		                                      }
+		                                  }
+		                              });
+		                              return;
+		                          } 
+		                      });
+		                  } else {
+		                      return true;
+		                  }
+		              },
+		              buttons: {
+		                  "cancel": {"label": "取消"},
+		                  "confirm": {
+		                      "label": "确定",
+		                      "className": "btn-danger"
+		                  }
+		              }
+		          });
+		      });
+		});
 		
 	</script>
 </body>

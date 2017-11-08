@@ -22,6 +22,8 @@ class ContentController extends ComController {
 		$list = $m->where ( 'status=1' )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
+		$contenttype=M('em_dictionary')->where('dict_name=' . '"contenttype"' )->select();
+		$this->assign ( 'contenttype', $contenttype);
 		$this->assign ( 'list', $list );
 		$this->assign ( 'page', $page );
 		$this->display ();
@@ -37,9 +39,6 @@ class ContentController extends ComController {
 			$m = M ( 'em_notice' );
 			$count = $m->where ( 'stauts=1 and contentid=' . $id )->count ();
 			$list = $m->where ( 'stauts=1 and contentid=' . $id )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
-			if (! $list) {
-				$this->error ( '没有找到任何文章信息' );
-			}
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
@@ -205,7 +204,7 @@ class ContentController extends ComController {
 			$m->modifier = session ( 'uid' );
 			$flag = $m->where ( 'id=' . $id )->save ();
 			if ($flag) {
-				addlog ( '删除成功成功，ID：' . $m->id );
+				addlog ( '删除成功，ID：' . $m->id );
 				$this->ajaxReturn ( array (
 						'status' => 1,
 						'message' => '删除成功' 
@@ -214,6 +213,82 @@ class ContentController extends ComController {
 				$this->ajaxReturn ( array (
 						'status' => 0,
 						'message' => '删除错误' 
+				) );
+			}
+		}
+	}
+	
+	
+	// 删除内容
+	public function deletecontent() {
+		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
+		if (! $id) {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '参数传递错误'
+			) );
+		} else {
+			$m = M ( 'em_contentmanager' );
+			$m->status = 0;
+			$m->modifytime = date ( 'y-m-d H:i:s', time () );
+			$m->modifier = session ( 'uid' );
+			$flag = $m->where ( 'id=' . $id )->save ();
+			if ($flag) {
+				addlog ( '删除成功，ID：' . $m->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '删除成功'
+				) );
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '删除错误'
+				) );
+			}
+		}
+	}
+	
+	//保存内容
+	public function updatecontent(){
+		$model = D ( 'em_contentmanager' );
+		if (! empty ( $_POST )) {
+			$model->create (); // 收集表单数据
+		}
+		if (! empty ( $model->id )) { // 更新
+			$model->modifytime = date ( 'y-m-d H:i:s', time () );
+			$model->modifier = session ( 'uid' );
+			$model->contenttitile= I('contenttitile');
+			$model->contenttype = I('contenttype');
+			$flag = $model->save ();
+			if ($flag) {
+				addlog ( '内容管理保存成功，ID：' . $model->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '创建内容成功'
+				) );
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '创建内容失败'
+				) );
+			}
+		} else { // 新增
+			$model->createtime = date ( 'y-m-d H:i:s', time () );
+			$model->creater = session ( 'uid' );
+			$model->status = 1;
+			$model->contenttitile= I('contenttitile');
+			$model->contenttype = I('contenttype');
+			$flag = $model->add ();
+			if ($flag) {
+				addlog ( '创建内容成功，ID：' . $model->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '创建内容成功'
+				) );
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '创建内容失败'
 				) );
 			}
 		}

@@ -30,7 +30,6 @@ function bindtreeview(){
 	 dataType : "json",
 	 success : function(data) {
 		 if(data.status=="1"){
-			 debugger;
 			 var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
 			 if(zTreeObj!=null){
 				 zTreeObj.destroy();

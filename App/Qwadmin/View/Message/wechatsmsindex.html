@@ -288,50 +288,17 @@
 					 dataType : "json",
 					 data:sendData,
 					 success : function(data) {
-						 if(data.status=="1"){
 							var result=data.message;
-							var error="";
-							for (let i in result) { 
-								if(result[i]!='0'){
-									error=error+i+","
-								}
-							}
-							if(error!=""){
-								bootbox.dialog({
-					                title: '短信发送失败提示：',
-					                message: error,
-					                buttons: {
-					                    "success": {
-					                        "label": "确定",
-					                        "className": "btn-danger"
-					                    }
-					                }
-					            });
-							}else{
-								bootbox.dialog({
-					                title: '短信发送成功提示：',
-					                message: '短信发送成功',
-					                buttons: {
-					                    "success": {
-					                        "label": "确定",
-					                        "className": "btn-info"
-					                    }
-					                }
-					            });
-							}
-						 }else{
-							 bootbox.dialog({
-				                title: '友情提示：',
-				                message: data.message,
-				                buttons: {
-				                    "success": {
-				                        "label": "确定",
-				                        "className": "btn-danger"
-				                    }
-				                }
-				            });
-						 }
-						
+							bootbox.alert({
+                                buttons: {
+                                    ok: {
+                                        label: '确定',
+                                        className: 'btn-myStyle'
+                                    }
+                                },
+                                message: data.message,
+                                title: "提示信息",
+                            });
 					 },
 					 error : function(XMLHttpRequest, textStatus, errorThrown) {
 					 }

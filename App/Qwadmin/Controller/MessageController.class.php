@@ -54,11 +54,33 @@ class MessageController extends ComController {
 				$smsmodel = M ( 'em_smsmodel' )->where ( "id='$smsmodelid'" )->find ();
 				$mobileArray = explode ( ",", $phonenumbers );
 				// 后期替换为微信发送方法
-				$result = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] );
-				$this->ajaxReturn ( array (
-						'status' => 1,
-						'message' => $result 
-				) );
+				//根据号码查询openid号
+				$condition['phone']=array('in',$mobileArray);
+				$openids=M('member')->where($condition)->getField('openid',true);
+				if($openids){
+					if(count($openids)==1){
+						array_push($openids, '');
+					}
+					$result = send_wechat_message( $openids, $smsmodel ['smscontent'] );
+					if($result==0){//成功
+						$this->ajaxReturn ( array (
+								'status' => 1,
+								'message' => '微信发送成功'
+						) );
+					}else{
+						$this->ajaxReturn ( array (
+								'status' => 0,
+								'message' =>'微信发送失败,失败码:'.$result
+						) );
+					}
+					
+				}else{
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '没有任何手机号关注过公众号'
+					) );
+				}
+			
 			}
 		}
 	}

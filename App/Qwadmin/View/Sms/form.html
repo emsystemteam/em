@@ -37,8 +37,8 @@
 									<label class="col-sm-1 control-label no-padding-right"
 										for="form-field-10">短信内容</label>
 									<div class="col-sm-6">
-										<textarea name="smscontent" id="smscontent" maxlength="400"
-											placeholder="短信内容 " style="width: 100%; height: 200px">{$model.smscontent}</textarea>
+									  <textarea name="smscontent" id="smscontent"
+                                                  style="width:100%;height:400px;visibility:hidden;">{$model['smscontent']}</textarea>
 									</div>
 								</div>
 								<div class="form-group">
@@ -108,6 +108,14 @@
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
     $(function () {
+    	 var editor = KindEditor.create('textarea[name="smscontent"]', {
+             uploadJson: '__PUBLIC__/kindeditor/php/upload_json.php',
+             fileManagerJson: '__PUBLIC__/kindeditor/php/file_manager_json.php',
+             allowFileManager: true,
+             afterBlur: function () {
+                 this.sync();
+             }
+         });
 	 $(".submit").click(function () {
          var smscontent = $("#smscontent").val();
          var smstitle = $("#smstitle").val();

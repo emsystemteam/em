@@ -156,6 +156,7 @@ class ContentController extends ComController {
 		}
 		$model = M ( 'em_notice' )->where ( 'id=' . $id )->find ();
 		$this->assign ( 'model', $model );
+		$this->assign ( 'contentid',$_GET ['contentid']);
 		$this->display ( 'form' );
 	}
 	// 添加或更新文章
@@ -170,7 +171,7 @@ class ContentController extends ComController {
 			$model->status = I ( 'post.status', '', 'intval' );
 			$flag = $model->save ();
 			if ($flag) {
-				$this->success ( "保存成功" );
+				$this->success ( "保存成功",'/Content/detail/'.$model->contentid);
 				addlog ( '信息模板保存成功，ID：' . $model->id );
 			} else {
 				$this->success ( "保存失败" );
@@ -181,7 +182,7 @@ class ContentController extends ComController {
 			$model->status = 1;
 			$flag = $model->add ();
 			if ($flag) {
-				$this->success ( "创建成功" );
+				$this->success ( "创建成功" ,'detail/id/1');
 				addlog ( '文章创建成功，ID：' . $model->id );
 			} else {
 				$this->error ( "创建失败" );

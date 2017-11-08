@@ -332,11 +332,11 @@ class MessageController extends ComController {
 			for($i = 0; $i < count ( $list ); $i ++) {
 				$main = array ();
 				array_push ( $main, array (
-						'id' => 'p' . $list [$i] ['VILLAGE_ID'],
-						'name' => $list [$i] ['VILLAGE_NAME'] 
+						'id' => 'p' . $list [$i] ['village_id'],
+						'name' => $list [$i] ['village_name'] 
 				) );
 				// 查找子节点
-				$arry = $this->selectSon ( 'p' . $list [$i] ['VILLAGE_ID'], $list [$i] ['VILLAGE_ID'] );
+				$arry = $this->selectSon ( 'p' . $list [$i] ['village_id'], $list [$i] ['village_id'] );
 				$merge = array_merge ( $main, $arry );
 				$treeArray = array_merge ( $treeArray, $merge );
 			}
@@ -356,14 +356,14 @@ class MessageController extends ComController {
 	// 查找子节点 Pid=父节点ID (楼宇id),2个表id可能重复，所有根目录id前加p
 	private function selectSon($Pid, $fid) {
 		$m = M ( 'em_building' );
-		if (($info = $m->where ( "VILLAGE='$fid'" )->select ())) // 查找该父ID下的子ID
+		if (($info = $m->where ( "village='$fid'" )->select ())) // 查找该父ID下的子ID
 {
 			$list = array ();
 			for($i = 0; $i < count ( $info ); $i ++) {
 				$data = array ();
-				$data ["id"] = $info [$i] ['BUILDING_ID'];
+				$data ["id"] = $info [$i] ['building_id'];
 				$data ["pId"] = $Pid;
-				$data ["name"] = $info [$i] ['BUILDING_NAME'];
+				$data ["name"] = $info [$i] ['building_name'];
 				array_push ( $list, $data ); // 加入子节点数组
 			}
 			;

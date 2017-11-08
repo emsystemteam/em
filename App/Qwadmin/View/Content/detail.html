@@ -44,7 +44,7 @@
 							<!-- PAGE CONTENT BEGINS -->
 							<div class="row">
 								<form class="form-inline" action="" method="post">
-									<a class="btn btn-info" href="{:U('addnotice',array('id'=>$model['id']))}" value="">添加{$model.contenttitile}</a>
+									<a class="btn btn-info" href="{:U('addnotice',array('contentid'=>$model['id']))}" value="">添加{$model.contenttitile}</a>
 										<input type="text" name="keyword" value="" placeholder="请输入文章名称" class="search-keywords">
 									<button type="submit" class="btn btn-purple btn-sm">
 										<span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
@@ -72,8 +72,8 @@
 												<td><php>echo '<a class="linkShowModal" href="javascript:void(0);" val="'.$val['id'].'">查看小区</a>';</php></td>
 												<td class="center">
 												 <php>echo '<a class="linkOpenModal" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-plus"></i>关联小区</a>';</php>
-												<a href="{:U('editnotice',array('id'=>$val['id']))}"><i class="fa fa-edit"></i>编辑</a>
-												<a href="{:U('deletenotice',array('id'=>$val['id']))}"><i class="fa fa-trash"></i>删除</a>
+												<a href="{:U('editnotice',array('contentid'=>$model['id'],'id'=>$val['id']))}"><i class="fa fa-edit"></i>编辑</a>
+												 <php>echo '<a class="deletenotice" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-trash"></i>删除</a>';</php>
 												</td>
 											</tr>
 											</volist>
@@ -143,6 +143,60 @@
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
+	$(function(){
+		//删除文章
+		 $(".deletenotice").on('click', function () {
+	          var obj = $(this);
+	          var id = obj.attr('val');
+	          bootbox.confirm({
+	              title: "系统提示",
+	              message: "是否要删除文章？",
+	              callback: function (result) {
+	                  if (result) {
+	                      $.get("{:U('deletenotice')}?id=" + id, function (response) {
+	                         if (response.status == 1) {
+	                              bootbox.alert({
+	                                  buttons: {
+	                                      ok: {
+	                                          label: '确定',
+	                                          className: 'btn-danger'
+	                                      }
+	                                  },
+	                                  message: '恭喜，删除成功！',
+	                                  callback: function () {
+	                                	
+	                                      window.location.reload(true);
+	                                  },
+	                                  title: "友情提示",
+	                              });
+	                              return;
+	                          }else{
+	                        	  bootbox.dialog({
+	                                  message: result.message,
+	                                  buttons: {
+	                                      "success": {
+	                                          "label": "确定",
+	                                          "className": "btn-danger"
+	                                      }
+	                                  }
+	                              });
+	                              return;
+	                          } 
+	                      });
+	                  } else {
+	                      return true;
+	                  }
+	              },
+	              buttons: {
+	                  "cancel": {"label": "取消"},
+	                  "confirm": {
+	                      "label": "确定",
+	                      "className": "btn-danger"
+	                  }
+	              }
+	          });
+	      });
+	});
 	//打开模态框(查看小区)
 	$('.linkShowModal').click(function(){
 		var noticeid=$(this).attr('val');
@@ -206,6 +260,7 @@
 				}
 			});
 	}
+	
 	//打开模态框(关联小区)
 	$('.linkOpenModal').click(function(){
 		var noticeid=$(this).attr('val');

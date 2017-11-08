@@ -138,17 +138,17 @@ class ContentController extends ComController {
 			) );
 		}
 	}
-	//编辑文章
+	// 新增文章
 	public function addnotice() {
-		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
+		$id = isset ( $_GET ['contentid'] ) ? intval ( $_GET ['contentid'] ) : false; // 内容管理id-contentid
 		if (! $id) {
 			$this->error ( '参数错误！' );
 		}
-		$model = M ( 'em_noticetovillage' )->where ( 'id=' . $id )->find ();
-		$this->assign ( 'model', $model );
+		$model = M ( 'em_contentmanager' )->where ( 'id=' . $id )->find ();
+		$this->assign ( 'contentmodel', $model );
 		$this->display ( 'form' );
 	}
-	//编辑文章
+	// 编辑文章
 	public function editnotice() {
 		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
 		if (! $id) {
@@ -171,7 +171,7 @@ class ContentController extends ComController {
 			$flag = $model->save ();
 			if ($flag) {
 				$this->success ( "保存成功" );
-				addlog ( '信息模板保存成功，ID：' . $model->id);
+				addlog ( '信息模板保存成功，ID：' . $model->id );
 			} else {
 				$this->success ( "保存失败" );
 			}
@@ -182,9 +182,38 @@ class ContentController extends ComController {
 			$flag = $model->add ();
 			if ($flag) {
 				$this->success ( "创建成功" );
-				addlog ( '文章创建成功，ID：' . $model->id);
+				addlog ( '文章创建成功，ID：' . $model->id );
 			} else {
 				$this->error ( "创建失败" );
+			}
+		}
+	}
+	
+	// 删除文章
+	public function deletenotice() {
+		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
+		if (! $id) {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '参数传递错误' 
+			) );
+		} else {
+			$m = M ( 'em_notice' );
+			$m->stauts =0;
+			$m->modifytime = date ( 'y-m-d H:i:s', time () );
+			$m->modifier = session ( 'uid' );
+			$flag = $m->where ( 'id=' . $id )->save ();
+			if ($flag) {
+				addlog ( '删除成功成功，ID：' . $m->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '删除成功' 
+				) );
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '删除错误' 
+				) );
 			}
 		}
 	}

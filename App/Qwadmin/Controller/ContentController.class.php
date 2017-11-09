@@ -300,4 +300,24 @@ class ContentController extends ComController {
 			}
 		}
 	}
+	
+	/**
+	 * webuploader 上传文件
+	 */
+	public function ajax_upload(){
+		// 根据自己的业务调整上传路径、允许的格式、文件大小
+		$resulut=ajax_upload('/Upload/image/');
+		if(count($resulut)>0){
+			$this->ajaxReturn ( array (
+					'status' => 1,
+					'message' => $resulut
+			) );
+		}else{
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '附件上传失败'
+			) );
+		}
+		
+	}
 }

@@ -1,3 +1,4 @@
+
 <include file="Public/head" />
 <body class="no-skin">
 	<include file="Public/header" />
@@ -26,6 +27,7 @@
 								method="post">
 								<input name="contentid" value="{$contentid}" type="hidden">
 								<input name="id" value="{$model.id}" type="hidden">
+								<input type="hidden" name="noticepicture" id="hdfnoticepicture" value="{$model.noticepicture}">
 								<div class="form-group">
 									<label class="col-sm-1 control-label no-padding-right"
 										for="form-field-10">标题</label>
@@ -38,12 +40,20 @@
 									<label class="col-sm-1 control-label no-padding-right"
 										for="form-field-10">文章封面图</label>
 									<div class="col-sm-6">
-										 <div class="col-xs-10 col-sm-5">
+								
+									<div id="uploader-demo">
+									<!--用来存放item-->
+									<div id="thelist" class="uploader-list"></div>
+									<div>
+										<div id="filePicker">选择图片</div>
+									</div>
+									</div>
+										<!--  <div class="col-xs-10 col-sm-5">
                                         {:UpImage("noticepicture",100,100,$model['noticepicture'])}
                                     </div>
                                     <span class="help-inline col-xs-12 col-sm-7">
 												<span class="middle">仅支持jpg、gif、png、bmp、jpeg，且小于1MB。</span>
-											</span>
+											</span> -->
 									</div>
 								</div>
 								<div class="form-group">
@@ -87,18 +97,141 @@
 					</div>
 					<!-- /.row -->
 				</div>
-				<!-- /.page-content -->
-			</div>
-		</div>
 		<!-- /.main-content -->
 		<include file="Public/footer" />
 
 	</div>
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/js/webupload/webuploader.css">
 	<!-- /.main-container -->
 	<include file="Public/footerjs" />
+	<script src="__PUBLIC__/qwadmin/js/webupload/webuploader.min.js"></script>
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
     $(function () {
+    	if($('#hdfnoticepicture').val()!=''){
+    		 var $list=$("#thelist"); 
+    		 var $li = $(  
+  	               '<div class="file-item thumbnail">' +  
+  	                   '<img width="200" height="200">' +  
+  	                   '<div class="info"></div>' +  
+  	               '</div>'  
+  	               ),  
+  	            
+  	          $img = $li.find('img');  
+    		  $list.append( $li );  
+    		
+    		  $img.attr( 'src', '__ROOT__/'+$('#hdfnoticepicture').val() );  
+    	}
+    	/*init webuploader*/  
+    	   var $list=$("#thelist");   //这几个初始化全局的百度文档上没说明，好蛋疼。  
+    	   var $btn =$("#ctlBtn");   //开始上传  
+    	   var thumbnailWidth = 200;   //缩略图高度和宽度 （单位是像素），当宽高度是0~1的时候，是按照百分比计算，具体可以看api文档  
+    	   var thumbnailHeight = 200;  
+    	    uploader = WebUploader.create({  
+    	       // 选完文件后，是否自动上传。  
+    	       auto: true,  
+    	  
+    	       // swf文件路径  
+    	       swf: '__PUBLIC__/qwadmin/js/webupload/Uploader.swf',  
+    	  
+    	       // 文件接收服务端。  
+    	       server: '__ROOT__/Content/ajax_upload.html',  
+    	  
+    	       // 选择文件的按钮。可选。  
+    	       // 内部根据当前运行是创建，可能是input元素，也可能是flash.  
+    	       pick: '#filePicker',  
+    	       fileSingleSizeLimit: 5 * 1024 * 1024,    // 5 M
+    	       // 只允许选择图片文件。  
+    	       accept: {  
+    	           title: 'Images',  
+    	           extensions: 'gif,jpg,jpeg,bmp,png',  
+    	           mimeTypes: '.gif,.jpg,.jpeg,.bmp,.png'  
+    	       },  
+    	       method:'POST',  
+    	   });  
+    	   // 当有文件添加进来的时候  
+    	   uploader.on( 'fileQueued', function( file ) {  // webuploader事件.当选择文件后，文件被加载到文件队列中，触发该事件。等效于 uploader.onFileueued = function(file){...} ，类似js的事件定义。  
+    		   var $list=$("#thelist");  
+      		   $list.children().remove();
+    		   var $li = $(  
+    	               '<div id="' + file.id + '" class="file-item thumbnail">' +  
+    	                   '<img>' +  
+    	                   '<div class="info">' + file.name + '</div>' +  
+    	               '</div>'  
+    	               ),  
+    	            
+    	           $img = $li.find('img');  
+    	       // $list为容器jQuery实例  
+    	       $list.append( $li );  
+    	  
+    	       // 创建缩略图  
+    	       // 如果为非图片文件，可以不用调用此方法。  
+    	       // thumbnailWidth x thumbnailHeight 为 100 x 100  
+    	       uploader.makeThumb( file, function( error, src ) {   //webuploader方法  
+    	           if ( error ) {  
+    	               $img.replaceWith('<span>不能预览</span>');  
+    	               return;  
+    	           }  
+    	  
+    	           $img.attr( 'src', src );  
+    	       }, thumbnailWidth, thumbnailHeight );  
+    	       
+      	       uploader.upload();  
+    	   });  
+    	   // 文件上传过程中创建进度条实时显示。  
+    	   uploader.on( 'uploadProgress', function( file, percentage ) {  
+    	       var $li = $( '#'+file.id ),  
+    	           $percent = $li.find('.progress span');  
+    	  
+    	       // 避免重复创建  
+    	       if ( !$percent.length ) {  
+    	           $percent = $('<p class="progress"><span></span></p>')  
+    	                   .appendTo( $li )  
+    	                   .find('span');  
+    	       }  
+    	  
+    	       $percent.css( 'width', percentage * 100 + '%' );  
+    	   });  
+    	  
+    	   // 文件上传成功，给item添加成功class, 用样式标记上传成功。  
+    	   uploader.on( 'uploadSuccess', function( file,response  ) {  
+    		   if(response.status==0){
+    			   bootbox.alert({
+                       buttons: {
+                           ok: {
+                               label: '确定',
+                               className: 'btn-myStyle'
+                           }
+                       },
+                       message: '附件上传失败',
+                       title: "提示信息",
+                   });
+    		   }else{
+    			   $('#hdfnoticepicture').val(response.message);//保存上传文件路径
+    			   uploader.removeFile(file);
+    			   uploader.reset();//重置上传附件
+    		   }
+    	       $( '#'+file.id ).addClass('upload-state-done');  
+    	   });  
+    	  
+    	   // 文件上传失败，显示上传出错。  
+    	   uploader.on( 'uploadError', function( file ) {  
+    	       var $li = $( '#'+file.id ),  
+    	           $error = $li.find('div.error');  
+    	  
+    	       // 避免重复创建  
+    	       if ( !$error.length ) {  
+    	           $error = $('<div class="error"></div>').appendTo( $li );  
+    	       }  
+    	  
+    	       $error.text('上传失败');  
+    	   });  
+    	  
+    	   // 完成上传完了，成功或者失败，先删除进度条。  
+    	   uploader.on( 'uploadComplete', function( file) {  
+    		   //清空队列
+    		     uploader.reset();
+    	   });  
     	 var editor = KindEditor.create('textarea[name="noticecontent"]', {
              uploadJson: '__PUBLIC__/kindeditor/php/upload_json.php',
              fileManagerJson: '__PUBLIC__/kindeditor/php/file_manager_json.php',

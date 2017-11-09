@@ -36,7 +36,7 @@ class ContentController extends ComController {
 			$data ['noticetitle'] = isset ( $_POST ['smstype'] ) ? trim ( $_POST ['smstype'] ) : 1; // 默认短信
 			$id = intval ( $_GET ['id'] );
 			$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
-			$pagesize = 10; // 每页数量
+			$pagesize = 1; // 每页数量
 			$offset = $pagesize * ($p - 1); // 计算记录偏移量
 			$m = M ( 'em_notice' );
 			$condition['stauts'] = 1;
@@ -51,6 +51,7 @@ class ContentController extends ComController {
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
 			$this->assign ( 'list', $list );
 			$this->assign ( 'model', $content );
+			$this->assign ( 'page', $page );
 			$this->display ();
 		} else {
 			$this->error ( '没有找到任何文章信息' );

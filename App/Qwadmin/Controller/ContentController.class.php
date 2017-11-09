@@ -271,12 +271,12 @@ class ContentController extends ComController {
 				addlog ( '内容管理保存成功，ID：' . $model->id );
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => '创建内容成功'
+						'message' => '保存内容成功'
 				) );
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,
-						'message' => '创建内容失败'
+						'message' => '保存内容失败'
 				) );
 			}
 		} else { // 新增

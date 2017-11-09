@@ -65,9 +65,8 @@
 										</div> -->
 								</a>
 									<div class="tools tools-bottom">
-										 <a href="{:U('detail',array('id'=>$vo['id']))}"> <i class="ace-icon fa fa-pencil"></i></a> 
-										  <php> echo '<a href="javascript:void(0);" class="deletecontent" val="'.$vo['id'].'"
-                                                     title="删除"><i class="ace-icon fa fa-times red"></i></a>';</php>
+										  <php> echo ' <a href="javascript:void(0);" class="editcontent" contenttype="'.$vo['contenttype'].'" contenttitile="'.$vo['contenttitile'].'"  val="'.$vo['id'].'" title="编辑"><i class="ace-icon fa fa-pencil"></i></a>';</php> 
+										  <php> echo ' <a href="javascript:void(0);" class="deletecontent" val="'.$vo['id'].'" title="删除"><i class="ace-icon fa fa-times red"></i></a>';</php>
 									</div></li>
 								</volist>
 							</ul>
@@ -88,6 +87,7 @@
 								<h4 class="modal-title" id="myModalLabel">添加模块</h4>
 							</div>
 							<div class="modal-body" style="height:100%">
+							<input type='hidden' id='hdfcontentid' value=''>
 								<div class="row">
 									<div class="form-group">
 										<label class="col-sm-2 control-label no-padding-right"
@@ -107,7 +107,7 @@
 											<select id="contenttype" name="contenttype"
 												class="col-xs-10 col-sm-5">
 												<volist name="contenttype" id="vo" empty="暂时无数据">
-												<option value='{$vo.dict_name}'>{$vo.dict_key}</option>
+												<option value='{$vo.dict_value}'>{$vo.dict_key}</option>
 												</volist>
 											</select>
 										</div>
@@ -136,12 +136,15 @@
 		$(function(){
 			//保存文章
 			$('#savecontent').click(function(){
+				var id=$('#hdfcontentid').val();
 				var contenttitile=$('#contenttitile').val();
-				var contenttype=$('contenttype').val();
+				var contenttype=$('#contenttype').val();
 				var sendData = {
 						contenttitile :contenttitile,
-						contenttype:contenttype
+						contenttype:contenttype,
+						id:id
 					};
+				debugger;
 				$.ajax({
 					type : "post",
 					url : "__URL__/updatecontent",
@@ -156,7 +159,7 @@
                                         className: 'btn-danger'
                                     }
                                 },
-                                message: '恭喜，添加成功！',
+                                message: data.message,
                                 callback: function () {
                                     window.location.reload(true);
                                 },
@@ -168,8 +171,21 @@
 					}
 				});
 			});
-			//模态框
+			//编辑模态框
+			$('.editcontent').click(function(){
+		        var id = $(this).attr('val');
+		        var contenttitile = $(this).attr('contenttitile');
+		        var contenttype = $(this).attr('contenttype');
+		        $('#contenttitile').val(contenttitile);
+		        $('#contenttype').val(contenttype);
+		        $('#hdfcontentid').val(id);
+				$('#theModal').modal({});
+			});
+			//新增模态框
 			$('#addcontent').click(function(){
+				$('#contenttitile').val('');
+				$('#hdfcontentid').val('');
+			    $('#contenttype option:first').prop('selected','selected');
 				$('#theModal').modal({});
 			});
 			//删除文章

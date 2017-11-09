@@ -54,33 +54,34 @@ class MessageController extends ComController {
 				$smsmodel = M ( 'em_smsmodel' )->where ( "id='$smsmodelid'" )->find ();
 				$mobileArray = explode ( ",", $phonenumbers );
 				// 后期替换为微信发送方法
-				//根据号码查询openid号
-				$condition['phone']=array('in',$mobileArray);
-				$openids=M('member')->where($condition)->getField('openid',true);
-				if($openids[0]!=null){
-					if(count($openids)==1){//批量发送，至少2条
-						array_push($openids, '');
+				// 根据号码查询openid号
+				$condition ['phone'] = array (
+						'in',
+						$mobileArray 
+				);
+				$openids = M ( 'member' )->where ( $condition )->getField ( 'openid', true );
+				if ($openids [0] != null) {
+					if (count ( $openids ) == 1) { // 批量发送，至少2条
+						array_push ( $openids, '' );
 					}
-					$result = send_wechat_message( $openids, $smsmodel ['smscontent'] );
-					if($result==0){//成功
+					$result = send_wechat_message ( $openids, $smsmodel ['smscontent'] );
+					if ($result == 0) { // 成功
 						$this->ajaxReturn ( array (
 								'status' => 1,
-								'message' => '微信发送成功'
+								'message' => '微信发送成功' 
 						) );
-					}else{
+					} else {
 						$this->ajaxReturn ( array (
 								'status' => 0,
-								'message' =>'微信发送失败,失败码:'.$result
+								'message' => '微信发送失败,失败码:' . $result 
 						) );
 					}
-					
-				}else{
+				} else {
 					$this->ajaxReturn ( array (
 							'status' => 0,
-							'message' => '没有任何手机号关注过公众号'
+							'message' => '没有任何手机号关注过公众号' 
 					) );
 				}
-			
 			}
 		}
 	}
@@ -105,42 +106,44 @@ class MessageController extends ComController {
 								$authresult 
 						);
 						$House = M ( 'em_household' );
-						$mobileArray= $House->where($condition)->getField('tel',true);
-						if ($mobileArray[0]!=null) {
+						$mobileArray = $House->where ( $condition )->getField ( 'tel', true );
+						if ($mobileArray [0] != null) {
 							// 查询短信模板
 							$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
 							if ($smsmodel) {
-								//根据号码查询openid号
-								$map['phone']=array('in',$mobileArray);
-								$openids=M('member')->where($map)->getField('openid',true);
-								if($openids){
-									if(count($openids)==1){//批量发送，至少2条
-										array_push($openids, '');
+								// 根据号码查询openid号
+								$map ['phone'] = array (
+										'in',
+										$mobileArray 
+								);
+								$openids = M ( 'member' )->where ( $map )->getField ( 'openid', true );
+								if ($openids) {
+									if (count ( $openids ) == 1) { // 批量发送，至少2条
+										array_push ( $openids, '' );
 									}
-									$result = send_wechat_message( $openids, $smsmodel ['smscontent'] );
-									if($result==0){//成功
+									$result = send_wechat_message ( $openids, $smsmodel ['smscontent'] );
+									if ($result == 0) { // 成功
 										$this->ajaxReturn ( array (
 												'status' => 1,
-												'message' => '微信发送成功'
+												'message' => '微信发送成功' 
 										) );
-									}else{
+									} else {
 										$this->ajaxReturn ( array (
 												'status' => 0,
-												'message' =>'微信发送失败,失败码:'.$result
+												'message' => '微信发送失败,失败码:' . $result 
 										) );
 									}
-									
-								}else{
+								} else {
 									$this->ajaxReturn ( array (
 											'status' => 0,
-											'message' =>'没有任何手机号关注过公众号'
+											'message' => '没有任何手机号关注过公众号' 
 									) );
 								}
 							}
 						} else {
 							$this->ajaxReturn ( array (
 									'status' => 0,
-									'message' =>'没有查询到楼宇中符合发送条件的住户信息' 
+									'message' => '没有查询到楼宇中符合发送条件的住户信息' 
 							) );
 						}
 					} else {
@@ -188,7 +191,7 @@ class MessageController extends ComController {
 							);
 							$condition ['HOUSEHOLD_STATUS'] = array (
 									'in',
-									$householdtype
+									$householdtype 
 							);
 							$condition ['AUTH_RESULT'] = array (
 									'in',
@@ -382,7 +385,7 @@ class MessageController extends ComController {
 			;
 			$this->ajaxReturn ( array (
 					'status' => 1,
-					'message' => $treeArray 
+					'message' => $treeArray
 			) );
 		} else {
 			$this->ajaxReturn ( array (
@@ -395,8 +398,8 @@ class MessageController extends ComController {
 	// 查找子节点 Pid=父节点ID (楼宇id),2个表id可能重复，所有根目录id前加p
 	private function selectSon($Pid, $fid) {
 		$m = M ( 'em_building' );
-		if (($info = $m->where ( "village='$fid'" )->select ())) // 查找该父ID下的子ID
-{
+		$select = ($info = $m->where ( "village='$fid'" )->select ());
+		if ($select) { // 查找该父ID下的子ID{
 			$list = array ();
 			for($i = 0; $i < count ( $info ); $i ++) {
 				$data = array ();
@@ -408,7 +411,7 @@ class MessageController extends ComController {
 			;
 			return $list; // 一次性返回子节点数组，他们成为同级子节点。
 		} else {
-			return null;
+			return $select;
 		}
 	}
 }

@@ -1,0 +1,64 @@
+<include file="Public/head" />
+<body class="no-skin">
+
+	<include file="Public/header" />
+	<div class="main-container" id="main-container">
+		<script type="text/javascript">
+			try {
+				ace.settings.check('main-container', 'fixed')
+			} catch (e) {
+			}
+		</script>
+		<include file="Public/sidebar" />
+		<div class="main-content">
+			<div class="main-content-inner">
+				<include file="Public/breadcrumbs" />
+				<div class="page-content">
+					<include file="Public/set" />
+					、
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- #section:elements.tab -->
+							<div class="tabbable">
+								<ul class="nav nav-tabs" id="myTab">
+									<li class="active"><a  href="{:U('Message/index')}"> <i
+											class="green ace-icon fa fa-home bigger-120"></i>短信群发
+									</a></li>
+									<li><a  href="{:U('Sms/smsindex')}">短信模板设置
+									</a></li>
+									<li><a  href="{:U('Sms/approveindex')}">短信模板审核
+									</a></li>
+									<li><a  href="{:U('Message/smslogindex')}">短信日志
+									</a></li>
+								</ul>
+
+								<div class="tab-content">
+									<div id="one" class="tab-pane fade in active">
+										<include file="smsindex" />
+									</div>
+									<div id="two" class="tab-pane fade">
+										<include file="./Sms/smsindex" />
+									</div>
+									<div id="three" class="tab-pane fade">
+										<include file="./Sms/approveindex" />
+									</div><div id="four" class="tab-pane fade">
+										<include file="smslogindex" />
+									</div>
+								</div>
+							</div>
+							<!-- /section:elements.tab -->
+						</div>
+						<!-- /.col -->
+					</div>
+				</div>
+			</div>
+			<!-- /.main-content -->
+			<include file="Public/footer" />
+		</div>
+		<!-- /.main-container -->
+		<include file="Public/footerjs" />
+		 <script> 
+
+    </script>
+</body>
+</html>

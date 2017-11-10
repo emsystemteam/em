@@ -37,107 +37,74 @@
 				<!-- /section:basics/content.breadcrumbs -->
 				<div class="page-content">
 					<include file="Public/set" />
-
-					<!-- /section:settings.box -->
 					<div class="row">
-						<div class="col-xs-12">
-							<!-- PAGE CONTENT BEGINS -->
-							<div class="space-4"></div>
-							<div class="row">
-								<form id="form" method="post" action="{:U('del')}">
-									短信余额:<strong >{$data}</strong>
-									<table class="table table-striped table-bordered table-hover">
-										<thead>
-											<tr>
-												<th style="width: 60%">短信内容</th>
-												<th>条数</th>
-												<th>发送时间</th>
-											</tr>
-										</thead>
-										<tbody>
-											<volist name="list" id="val">
-											<tr>
-												<td>{$val['smscontent']}</td>
-												<td>{$val['amount']}</td>
-												<td>{$val['createtime']}</td>
-											</tr>
-											</volist>
-										</tbody>
-									</table>
-								</form>
+						<div class="col-sm-12">
+							<!-- #section:elements.tab -->
+							<div class="tabbable">
+								<ul class="nav nav-tabs" id="myTab">
+									<li><a href="{:U('Message/index')}"> <i
+											class="green ace-icon fa fa-home bigger-120"></i>短信群发
+									</a></li>
+									<li><a href="{:U('Sms/smsindex')}">短信模板设置 </a></li>
+									<li><a href="{:U('Sms/approveindex')}">短信模板审核 </a></li>
+									<li class="active"><a href="{:U('Message/smslogindex')}">短信日志
+									</a></li>
+								</ul>
 
+								<div class="tab-content">
+									<div id="one" class="tab-pane fade"></div>
+									<div id="two" class="tab-pane fade"></div>
+									<div id="three" class="tab-pane fade"></div>
+									<div id="four" class="tab-pane fade  in active">
+										<div class="row">
+											<div class="col-xs-12">
+												<!-- PAGE CONTENT BEGINS -->
+												<div class="space-4"></div>
+												<div class="row">
+													<form>
+														短信余额:<strong>{$data}</strong>
+
+														<table
+															class="table table-striped table-bordered table-hover">
+															<thead>
+																<tr>
+																	<th style="width: 60%">短信内容</th>
+																	<th>条数</th>
+																	<th>发送时间</th>
+																</tr>
+															</thead>
+															<tbody>
+																<volist name="list" id="val">
+																<tr>
+																	<td>{$val['smscontent']}</td>
+																	<td>{$val['amount']}</td>
+																	<td>{$val['createtime']}</td>
+																</tr>
+																</volist>
+															</tbody>
+														</table>
+													</form>
+													{$page}
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
 							</div>
-							<!-- PAGE CONTENT ENDS -->
+							<!-- /section:elements.tab -->
 						</div>
-						{$page}
 						<!-- /.col -->
 					</div>
+					<!-- /section:settings.box -->
 					<!-- /.row -->
 				</div>
-				<!-- /.page-content -->
 			</div>
 		</div>
-		<!-- /.main-content -->
-		<include file="Public/footer" />
-
 	</div>
-	<!-- /.main-container -->
-
+	<!-- /.main-content -->
+	<include file="Public/footer" />
 	<include file="Public/footerjs" />
 	<!-- inline scripts related to this page -->
-	<script type="text/javascript">
-	 $(function () {
-	  $(".approve").on('click', function () {
-          var obj = $(this);
-          var id = obj.attr('val');
-          bootbox.confirm({
-              title: "系统提示",
-              message: "是否要审核通过？",
-              callback: function (result) {
-                  if (result) {
-                      $.get("{:U('approve')}?id=" + id, function (result) {
-                         if (result == 1) {
-                              bootbox.alert({
-                                  buttons: {
-                                      ok: {
-                                          label: '确定',
-                                          className: 'btn-danger'
-                                      }
-                                  },
-                                  message: '恭喜，审核成功！',
-                                  callback: function () {
-                                      window.location.reload(true);
-                                  },
-                                  title: "友情提示",
-                              });
-                              return;
-                          }else{
-                        	  bootbox.dialog({
-                                  message: "抱歉，系统错误，请稍后再试。",
-                                  buttons: {
-                                      "success": {
-                                          "label": "确定",
-                                          "className": "btn-danger"
-                                      }
-                                  }
-                              });
-                              return;
-                          } 
-                      });
-                  } else {
-                      return true;
-                  }
-              },
-              buttons: {
-                  "cancel": {"label": "取消"},
-                  "confirm": {
-                      "label": "确定",
-                      "className": "btn-danger"
-                  }
-              }
-          });
-      })
-	 });
-	</script>
 </body>
 </html>

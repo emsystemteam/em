@@ -13,6 +13,19 @@ namespace Qwadmin\Controller;
 
 class MessageController extends ComController {
 	
+	// 群发短信首页
+	public function index() {
+		$m = M ( 'em_smsmodel' );
+		$authResult = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"authResult"' )->order ( 'CREATE_TIME desc' )->select ();
+		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"householdStatus"' )->order ( 'CREATE_TIME desc' )->select ();
+		$list = $m->where ( 'smstype=1 and status=1 and isapprove=1' )->order ( 'createtime desc' )->select ();
+		$this->assign ( 'titlelist', $list );
+		$this->assign ( 'authResults', $authResult );
+		$this->assign ( 'holdtype', $holdtype );
+		$this->assign ( 'page', $page );
+		$this->display ();
+	}
+	
 	// 微信模板管理
 	public function wechatsmsindex() {
 		$m = M ( 'em_smsmodel' );
@@ -221,7 +234,7 @@ class MessageController extends ComController {
 									
 									$mobileArray = array ();
 									foreach ( $result as $v ) {
-										array_push ( $mobileArray, $v ['TEL'] );
+										array_push ( $mobileArray, $v ['tel'] );
 									}
 									$smsresult = sendSmsMessage ( $mobileArray, $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】' );
 									$amount = 0;
@@ -243,7 +256,7 @@ class MessageController extends ComController {
 									
 									$this->ajaxReturn ( array (
 											'status' => 1,
-											'message' => $smsresult 
+											'message' => $smsresult
 									) );
 								}
 							} else {
@@ -292,10 +305,18 @@ class MessageController extends ComController {
 		$pagesize = 10; // 每页数量
 		$offset = $pagesize * ($p - 1); // 计算记录偏移量
 		$m = M ( 'em_smslog' );
-		$list = $m->limit ( $offset . ',' . $pagesize )->select ();
+		$count = $m->count ();
+		$list = $m->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
-		
+		$data=$this->getMessageSurplus();
+		$this->assign ( 'data',$data);
+		$this->assign ( 'list', $list );
+		$this->assign ( 'page', $page );
+		$this->display ();
+	}
+	//获取短信剩余条目数
+	private function getMessageSurplus() {
 		$post_data = array ();
 		$post_data ['sn'] = 'SDK_AAA_00227'; // 序列号
 		$post_data ['password'] = '852172777'; // 密码
@@ -313,12 +334,7 @@ class MessageController extends ComController {
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 ); // 如果需要将结果直接返回到变量里，那加上这句。
 		$result = curl_exec ( $ch );
 		$jsonObject = json_decode ( $result );
-		$code = $jsonObject->status->code;
-		$data = $jsonObject->status->data;
-		$this->assign ( 'data', $jsonObject->data );
-		$this->assign ( 'list', $list );
-		$this->assign ( 'page', $page );
-		$this->display ();
+		return $jsonObject->data;
 	}
 	
 	// 指定号码发送短信
@@ -385,7 +401,7 @@ class MessageController extends ComController {
 			;
 			$this->ajaxReturn ( array (
 					'status' => 1,
-					'message' => $treeArray
+					'message' => $treeArray 
 			) );
 		} else {
 			$this->ajaxReturn ( array (

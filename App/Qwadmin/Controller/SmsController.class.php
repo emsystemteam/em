@@ -38,6 +38,23 @@ class SmsController extends ComController {
 		$this->assign ( 'model', $model );
 		$this->display ( 'form' );
 	}
+	// 编辑短信
+	public function getSmsModelbyId() {
+		$id = isset ( $_POST ['id'] ) ? intval ( $_POST['id'] ) : false;
+		if (! $id) {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '参数错误'
+			) );
+		}else{
+			$model = M ( 'em_smsmodel' )->where ( 'id=' . $id )->find ();
+			$this->ajaxReturn ( array (
+					'status' => 1,
+					'message' => '完成查询',
+					'data'=>$model
+			) );
+		}
+	}
 	
 	// 添加或更新
 	public function update() {
@@ -52,10 +69,16 @@ class SmsController extends ComController {
 			$model->isapprove=0;//编辑后重新审核
 			$flag = $model->save ();
 			if ($flag) {
-				$this->success ( "保存成功" );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '保存成功'
+				) );
 				addlog ( '信息模板保存成功，ID：' . $model->id);
 			} else {
-				$this->success ( "保存失败" );
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '保存失败'
+				) );
 			}
 		} else { // 新增
 			$model->createtime = date ( 'y-m-d H:i:s', time () );
@@ -63,10 +86,16 @@ class SmsController extends ComController {
 			$model->status = 1;
 			$flag = $model->add ();
 			if ($flag) {
-				$this->success ( "创建成功" );
 				addlog ( '信息模板创建成功，ID：' . $model->id);
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '创建成功'
+				) );
 			} else {
-				$this->error ( "创建失败" );
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '创建失败'
+				) );
 			}
 		}
 	}

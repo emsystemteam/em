@@ -1,445 +1,413 @@
-<include file="Public/head" />
-<body class="no-skin">
-
-	<include file="Public/header" />
-	<div class="main-container" id="main-container">
-		<script type="text/javascript">
-			try {
-				ace.settings.check('main-container', 'fixed')
-			} catch (e) {
-			}
-		</script>
-		<include file="Public/sidebar" />
-		<div class="main-content">
-			<div class="main-content-inner">
-				<!-- #section:basics/content.breadcrumbs -->
-				<include file="Public/breadcrumbs" />
-
-				<!-- /section:basics/content.breadcrumbs -->
-				<div class="page-content">
-					<include file="Public/set" />
-
-					<!-- /section:settings.box -->
-					<div class="row">
-						<div class="col-xs-12">
-							<form class="form-horizontal" id="form" method="post" onsubmit="return false;"
-								action="{:U('update')}">
-								<!-- PAGE CONTENT BEGINS -->
-								<div class="form-group">
-									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-0"> 短信模板</label>
-									<div class="col-sm-9">
-										<select id="smstitle" name="smstitle"
-											class="col-xs-10 col-sm-5">
-											<volist name="titlelist" id="vo" empty="暂时无数据">
-												<option value='{$vo.id}'>{$vo.smstitle}</option>
-											</volist>
-										</select>
-									</div>
-								</div>
-
-								<div class="space-4"></div>
-								<div class="form-group">
-									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-1"> 发送内容 </label>
-									<div class="col-sm-9">
-										<select id="smsmodel" name="smsmodel"
-											class="col-xs-10 col-sm-5">
-											<option value="0">指定身份发送</option>
-											<option value="1">指定号码发送</option>
-										</select>
-									</div>
-								</div>
-								<div class="form-group" id="mobileModel" style="display: none">
-									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-10">手机号码</label>
-									<div class="col-sm-9">
-										<textarea name="phoneNumber" id="phoneNumber"
-											class="col-xs-10 col-sm-5" placeholder="请输入手机号码,多号码用逗号隔开 "
-											style="height: 200px"></textarea>
-									</div>
-								</div>
-								<div id="moreModel">
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-1"> 发送对象 </label>
-										<div class="col-sm-9 checkbox">
-											<button class="btn btn-info" id="btnOpenModal">
-												请选择小区或楼宇 <i
-													class="ace-icon fa fa-search  align-top bigger-125 icon-on-right"></i>
-											</button>
-										</div>
-									</div>
-
-									<div class="space-4"></div>
-
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2"> 住户状态</label>
-										<div class="col-sm-9">
-											<div class="auth_result">
-												<volist name="authResults" id="vo" empty="暂时无数据">
-												<input name="form-field-checkbox" type="checkbox" checked="checked"
-												value="{$vo.dict_value}" 	class="ace input-lg"> <span class="lbl">{$vo.dict_key}</span>
-											 	</volist>
-											</div>
-										</div>
-									</div>
-
-									<div class="space-4"></div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2"> 住户身份</label>
-										<div class="col-sm-9">
-											<div class="holdtype">
-											<volist name="holdtype" id="vo" empty="暂时无数据">
-												<input name="form-field-checkbox" type="checkbox" checked="checked"
-												value="{$vo.dict_value}" 	class="ace input-lg"> <span class="lbl">{$vo.dict_key}</span>
-											 </volist>
-											</div>
-										</div>
-									</div>
-									<div class="space-4"></div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2">微信登录记录</label>
-										<div class="col-sm-9">
-											<div class="wechatlog">
-												<input name="form-field-checkbox" type="checkbox" 
-													checked="checked" value="0" class="ace input-lg"> <span
-													class="lbl"> 无登录记录</span> <input
-													name="form-field-checkbox" value="1" type="checkbox"
-													checked="checked" class="ace input-lg"> <span
-													class="lbl"> 有登录记录</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-offset-3 col-md-9">
-									<button class="btn btn-info submit" id="btnsend" type="button">
-										<i class="icon-ok bigger-110"></i> 立即发送
-									</button>
-								</div>
-							</form>
-						</div>
-						<!-- /.col -->
-					</div>
-					<!-- /.row -->
-					<!-- /.row -->
-					
-				</div>
-				<!-- 模态框（Modal） -->
-				<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
-					aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal"
-									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">选择楼宇</h4>
-							</div>
-							<div class="modal-body" style="height:100%; overflow:scroll;"><include file="Public/buildingselected" /></div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default"
-									data-dismiss="modal">关闭</button>
-							</div>
-						</div>
-						<!-- /.modal-content -->
-					</div>
-					<!-- /.page-content -->
+<div class="row">
+	<div class="col-xs-12">
+		<form class="form-horizontal" id="form" method="post"
+			onsubmit="return false;" action="{:U('update')}">
+			<!-- PAGE CONTENT BEGINS -->
+			<div class="form-group">
+				<label class="col-sm-2 control-label no-padding-right"
+					for="form-field-0"> 短信模板</label>
+				<div class="col-sm-9">
+					<select id="smstitle" name="smstitle" class="col-xs-10 col-sm-5">
+						<volist name="titlelist" id="vo" empty="暂时无数据">
+						<option value='{$vo.id}'>{$vo.smstitle}</option>
+						</volist>
+					</select>
 				</div>
 			</div>
-		</div>
-		<!-- /.main-content -->
-		<include file="Public/footer" />
 
+			<div class="space-4"></div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label no-padding-right"
+					for="form-field-1"> 发送内容 </label>
+				<div class="col-sm-9">
+					<select id="smsmodel" name="smsmodel" class="col-xs-10 col-sm-5">
+						<option value="0">指定身份发送</option>
+						<option value="1">指定号码发送</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group" id="mobileModel" style="display: none">
+				<label class="col-sm-2 control-label no-padding-right"
+					for="form-field-10">手机号码</label>
+				<div class="col-sm-9">
+					<textarea name="phoneNumber" id="phoneNumber"
+						class="col-xs-10 col-sm-5" placeholder="请输入手机号码,多号码用逗号隔开 "
+						style="height: 200px"></textarea>
+				</div>
+			</div>
+			<div id="moreModel">
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-1"> 发送对象 </label>
+					<div class="col-sm-9 checkbox">
+						<button class="btn btn-info" id="btnOpenModal">
+							请选择小区或楼宇 <i
+								class="ace-icon fa fa-search  align-top bigger-125 icon-on-right"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2"> 住户状态</label>
+					<div class="col-sm-9">
+						<div class="auth_result">
+							<volist name="authResults" id="vo" empty="暂时无数据"> <input
+								name="form-field-checkbox" type="checkbox" checked="checked"
+								value="{$vo.dict_value}" class="ace input-lg"> <span
+								class="lbl">{$vo.dict_key}</span> </volist>
+						</div>
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2"> 住户身份</label>
+					<div class="col-sm-9">
+						<div class="holdtype">
+							<volist name="holdtype" id="vo" empty="暂时无数据"> <input
+								name="form-field-checkbox" type="checkbox" checked="checked"
+								value="{$vo.dict_value}" class="ace input-lg"> <span
+								class="lbl">{$vo.dict_key}</span> </volist>
+						</div>
+					</div>
+				</div>
+				<div class="space-4"></div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2">微信登录记录</label>
+					<div class="col-sm-9">
+						<div class="wechatlog">
+							<input name="form-field-checkbox" type="checkbox"
+								checked="checked" value="0" class="ace input-lg"> <span
+								class="lbl"> 无登录记录</span> <input name="form-field-checkbox"
+								value="1" type="checkbox" checked="checked" class="ace input-lg">
+							<span class="lbl"> 有登录记录</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-offset-3 col-md-9">
+				<button class="btn btn-info submit" id="btnsend" type="button">
+					<i class="icon-ok bigger-110"></i> 立即发送
+				</button>
+			</div>
+		</form>
 	</div>
-	<!-- /.main-container -->
-	<include file="Public/footerjs" />
-	<script type="text/javascript">
-	$('#btnsend').click(function(){
-		if($('#smstitle').val()!=null){
-			if($('#smsmodel').val()=="0"){
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">选择楼宇</h4>
+			</div>
+			<div class="modal-body" style="height: 100%; overflow: scroll;">
+				<include file="Public/buildingselected" />
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.page-content -->
+</div>
+
+<script type="text/javascript">
+	$('#btnsend').click(function() {
+		if ($('#smstitle').val() != null) {
+			if ($('#smsmodel').val() == "0") {
 				//指定身份发送	
 				//住户状态
-				var authresult=new Array();
-				var c=$('.auth_result input[type=checkbox]:checked');
-				$.each(c,function(i,v){
+				var authresult = new Array();
+				var c = $('.auth_result input[type=checkbox]:checked');
+				$.each(c, function(i, v) {
 					authresult.push(v.value);
 				});
-				if(authresult.length==0){
+				if (authresult.length == 0) {
 					bootbox.dialog({
-		                title: '友情提示：',
-		                message: '请选择住户状态',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-info"
-		                    }
-		                }
-		            });
+						title : '友情提示：',
+						message : '请选择住户状态',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
 					return;
 				}
 				//住户身份
-				var householdtype=new Array();
-				var h=$('.holdtype input[type=checkbox]:checked');
-				$.each(h,function(i,v){
+				var householdtype = new Array();
+				var h = $('.holdtype input[type=checkbox]:checked');
+				$.each(h, function(i, v) {
 					householdtype.push(v.value);
 				});
-				if(householdtype.length==0){
+				if (householdtype.length == 0) {
 					bootbox.dialog({
-		                title: '友情提示：',
-		                message: '请选择住户身份',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-info"
-		                    }
-		                }
-		            });
+						title : '友情提示：',
+						message : '请选择住户身份',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
 					return;
 				}
 				//微信登录记录
-				var wechatlog=new Array();
-				var w=$('.wechatlog input[type=checkbox]:checked');
-				$.each(w,function(i,v){
+				var wechatlog = new Array();
+				var w = $('.wechatlog input[type=checkbox]:checked');
+				$.each(w, function(i, v) {
 					wechatlog.push(v.value);
 				});
-				if(wechatlog.length==0){
+				if (wechatlog.length == 0) {
 					bootbox.dialog({
-		                title: '友情提示：',
-		                message: '请选择微信登录记录',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-info"
-		                    }
-		                }
-		            });
+						title : '友情提示：',
+						message : '请选择微信登录记录',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
 					return;
 				}
 				var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
-				var checkedNodes = zTreeObj.getCheckedNodes(); 
-				 if(checkedNodes.length==0){
-					 bootbox.dialog({
-			                title: '友情提示：',
-			                message: '请选择楼宇',
-			                buttons: {
-			                    "success": {
-			                        "label": "确定",
-			                        "className": "btn-info"
-			                    }
-			                }
-			            });
-					 return;
-				 }
-					var totalselect = new Array();//选中多少楼宇
-					for(var i = 0;i < checkedNodes.length; i++) {
-						var first=checkedNodes[i].id.substr(0,1);
-						if(first!="p"){
-							totalselect.push(checkedNodes[i].id);
+				var checkedNodes = zTreeObj.getCheckedNodes();
+				if (checkedNodes.length == 0) {
+					bootbox.dialog({
+						title : '友情提示：',
+						message : '请选择楼宇',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
 						}
-					} 
+					});
+					return;
+				}
+				var totalselect = new Array();//选中多少楼宇
+				for (var i = 0; i < checkedNodes.length; i++) {
+					var first = checkedNodes[i].id.substr(0, 1);
+					if (first != "p") {
+						totalselect.push(checkedNodes[i].id);
+					}
+				}
 				//立即发送
-				 var sendData={smsmodelid:$('#smstitle').val(),totalselect:totalselect,authresult:authresult,householdtype:householdtype,wechatlog:wechatlog};				
-				 $.ajax({
-					 type : "post",
-					 url: "__URL__/sendSms",
-					 dataType : "json",
-					 data:sendData,
-					 success : function(data) {
-						 if(data.status=="1"){
-							 var result=data.message;
-								var error="";
-								for (let i in result) { 
-									if(result[i]!='0'){
-										error=error+i+","
+				var sendData = {
+					smsmodelid : $('#smstitle').val(),
+					totalselect : totalselect,
+					authresult : authresult,
+					householdtype : householdtype,
+					wechatlog : wechatlog
+				};
+				$.ajax({
+					type : "post",
+					url : "__URL__/sendSms",
+					dataType : "json",
+					data : sendData,
+					success : function(data) {
+						if (data.status == "1") {
+							var result = data.message;
+							var error = "";
+							for ( let i in result) {
+								if (result[i] != '0') {
+									error = error + i + ","
+								}
+							}
+							if (error != "") {
+								bootbox.dialog({
+									title : '短信发送失败提示：',
+									message : error,
+									buttons : {
+										"success" : {
+											"label" : "确定",
+											"className" : "btn-danger"
+										}
+									}
+								});
+							} else {
+								bootbox.dialog({
+									title : '短信发送成功提示：',
+									message : '短信发送成功',
+									buttons : {
+										"success" : {
+											"label" : "确定",
+											"className" : "btn-info"
+										}
+									}
+								});
+							}
+						} else {
+							bootbox.dialog({
+								title : '友情提示：',
+								message : data.message,
+								buttons : {
+									"success" : {
+										"label" : "确定",
+										"className" : "btn-danger"
 									}
 								}
-								if(error!=""){
-									bootbox.dialog({
-						                title: '短信发送失败提示：',
-						                message: error,
-						                buttons: {
-						                    "success": {
-						                        "label": "确定",
-						                        "className": "btn-danger"
-						                    }
-						                }
-						            });
-								}else{
-									bootbox.dialog({
-						                title: '短信发送成功提示：',
-						                message: '短信发送成功',
-						                buttons: {
-						                    "success": {
-						                        "label": "确定",
-						                        "className": "btn-info"
-						                    }
-						                }
-						            });
-								}
-						 }else{
-							 bootbox.dialog({
-				                title: '友情提示：',
-				                message: data.message,
-				                buttons: {
-				                    "success": {
-				                        "label": "确定",
-				                        "className": "btn-danger"
-				                    }
-				                }
-				            });
-						 }
-						
-					 },
-					 error : function(XMLHttpRequest, textStatus, errorThrown) {
-					 }
-					 });  
-				
-			}else{
-				if($('#phoneNumber').val()==""){
-					 bootbox.dialog({
-			                title: '友情提示：',
-			                message: '请填写手机号',
-			                buttons: {
-			                    "success": {
-			                        "label": "确定",
-			                        "className": "btn-danger"
-			                    }
-			                }
-			            });
+							});
+						}
+
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+					}
+				});
+
+			} else {
+				if ($('#phoneNumber').val() == "") {
+					bootbox.dialog({
+						title : '友情提示：',
+						message : '请填写手机号',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-danger"
+							}
+						}
+					});
 					return false;
 				}
-				var phoneArray=$('#phoneNumber').val().split(',');
-				var isphone=true;
-				for(var i=0;i<phoneArray.length;i++ ){
-					if(validatemobile(phoneArray[i])==false){
-						isphone=false;
+				var phoneArray = $('#phoneNumber').val().split(',');
+				var isphone = true;
+				for (var i = 0; i < phoneArray.length; i++) {
+					if (validatemobile(phoneArray[i]) == false) {
+						isphone = false;
 						break;
 					}
 				}
-				if(isphone==false){
+				if (isphone == false) {
 					bootbox.dialog({
-		                title: '短信发送失败提示：',
-		                message: '有非法手机号',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-danger"
-		                    }
-		                }
-		            });
+						title : '短信发送失败提示：',
+						message : '有非法手机号',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-danger"
+							}
+						}
+					});
 					return;
 				}
-				var sendData={smsmodelid:$('#smstitle').val(),phonenumbers:$('#phoneNumber').val()};				
-				 $.ajax({
-					 type : "post",
-					 url: "__URL__/sendSmsByPhoneNumber",
-					 dataType : "json",
-					 data:sendData,
-					 success : function(data) {
-						 if(data.status=="1"){
-							var result=data.message;
-							var error="";
-							for (let i in result) { 
-								if(result[i]!='0'){
-									error=error+i+","
+				var sendData = {
+					smsmodelid : $('#smstitle').val(),
+					phonenumbers : $('#phoneNumber').val()
+				};
+				$.ajax({
+					type : "post",
+					url : "__URL__/sendSmsByPhoneNumber",
+					dataType : "json",
+					data : sendData,
+					success : function(data) {
+						if (data.status == "1") {
+							var result = data.message;
+							var error = "";
+							for ( let i in result) {
+								if (result[i] != '0') {
+									error = error + i + ","
 								}
 							}
-						
-							if(error!=""){
+
+							if (error != "") {
 								bootbox.dialog({
-					                title: '短信发送失败提示：',
-					                message: error,
-					                buttons: {
-					                    "success": {
-					                        "label": "确定",
-					                        "className": "btn-danger"
-					                    }
-					                }
-					            });
-							}else{
+									title : '短信发送失败提示：',
+									message : error,
+									buttons : {
+										"success" : {
+											"label" : "确定",
+											"className" : "btn-danger"
+										}
+									}
+								});
+							} else {
 								bootbox.dialog({
-					                title: '短信发送成功提示：',
-					                message: '短信发送成功',
-					                buttons: {
-					                    "success": {
-					                        "label": "确定",
-					                        "className": "btn-info"
-					                    }
-					                }
-					            });
+									title : '短信发送成功提示：',
+									message : '短信发送成功',
+									buttons : {
+										"success" : {
+											"label" : "确定",
+											"className" : "btn-info"
+										}
+									}
+								});
 							}
-						 }else{
-							 bootbox.dialog({
-				                title: '友情提示：',
-				                message: data.message,
-				                buttons: {
-				                    "success": {
-				                        "label": "确定",
-				                        "className": "btn-danger"
-				                    }
-				                }
-				            });
-						 }
-						
-					 },
-					 error : function(XMLHttpRequest, textStatus, errorThrown) {
-					 }
-					 });  
+						} else {
+							bootbox.dialog({
+								title : '友情提示：',
+								message : data.message,
+								buttons : {
+									"success" : {
+										"label" : "确定",
+										"className" : "btn-danger"
+									}
+								}
+							});
+						}
+
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+					}
+				});
 			}
-		}else{
+		} else {
 			bootbox.dialog({
-                title: '友情提示：',
-                message: "请选择短信模板",
-                buttons: {
-                    "success": {
-                        "label": "确定",
-                        "className": "btn-info"
-                    }
-                }
-            });
-		}
-	
-	});
-	
-	//打开模态框
-	$('#btnOpenModal').click(function(){
-		$('#myModal').modal({});
-	});
-		$(function() {
-			bindtreeview();
-			//发送内容选中改变后
-			$('#smsmodel').change(function() {
-				if ($('#smsmodel').val() == "0") {
-					$('#moreModel').show();
-					$('#mobileModel').hide();
-				} else {
-					$('#moreModel').hide();
-					$('#mobileModel').show();
+				title : '友情提示：',
+				message : "请选择短信模板",
+				buttons : {
+					"success" : {
+						"label" : "确定",
+						"className" : "btn-info"
+					}
 				}
 			});
+		}
 
+	});
+
+	//打开模态框
+	$('#btnOpenModal').click(function() {
+		$('#myModal').modal({});
+	});
+	$(function() {
+		bindtreeview();
+		//发送内容选中改变后
+		$('#smsmodel').change(function() {
+			if ($('#smsmodel').val() == "0") {
+				$('#moreModel').show();
+				$('#mobileModel').hide();
+			} else {
+				$('#moreModel').hide();
+				$('#mobileModel').show();
+			}
 		});
-		
-		//判断是不是手机号
-		function validatemobile(mobile) 
-		   { 
-		       if(mobile.length==0) 
-		       { 
-		          return false; 
-		       }     
-		       if(mobile.length!=11) 
-		       { 
-		           return false; 
-		       } 
-		       var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
-		       if(!myreg.test(mobile)) 
-		       { 
-		           return false; 
-		       } 
-		   } 
-	</script>
-</body>
-</html>
+
+	});
+
+	//判断是不是手机号
+	function validatemobile(mobile) {
+		if (mobile.length == 0) {
+			return false;
+		}
+		if (mobile.length != 11) {
+			return false;
+		}
+		var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+		if (!myreg.test(mobile)) {
+			return false;
+		}
+	}
+</script>

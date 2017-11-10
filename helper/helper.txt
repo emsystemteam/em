@@ -20,3 +20,6 @@ XCijoy59661944
 5.调用微信公众号接口，发送文本消息失败，返回错误信息是：errcode=45015,
  errmsg=response out of time limit or subscription is canceled
 这是因为用户已经超过24小时没有和公众号发生交互了，你用你的用户发送消息到公众号，再调用接口就可以了。
+
+6.公众号debug地址
+https://mp.weixin.qq.com/debug

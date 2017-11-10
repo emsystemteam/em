@@ -172,6 +172,15 @@
 	<include file="Public/footerjs" />
 	<script type="text/javascript">
 	 $(function () {
+		 $('#status').change(function(){
+			 if($('#status').val()=='0'){
+				 $('#status').attr('checked','checked');
+				 $('#status').val('1');
+			 }else{
+				 $('#status').removeAttr('checked');
+				 $('#status').val('0');
+			 }
+		 })
     	  editor = KindEditor.create('textarea[name="smscontent"]', {
              uploadJson: '__PUBLIC__/kindeditor/php/upload_json.php',
              fileManagerJson: '__PUBLIC__/kindeditor/php/file_manager_json.php',
@@ -203,15 +212,7 @@
 	         }
 	         
 	 }
-	 $('#status').change(function(){
-		 if($('#status').val()=='0'){
-			 $('#status').attr('checked','checked');
-			 $('#status').val('1');
-		 }else{
-			 $('#status').removeAttr('checked');
-			 $('#status').val('0');
-		 }
-	 })
+	 
 	$('#addsmsmodel').click(function(){
 		$('#smstitle').val('');
 		editor.html('');

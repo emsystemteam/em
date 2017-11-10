@@ -1,6 +1,24 @@
 <include file="Public/head" />
-<body class="no-skin">
+<style>
+.grouptd {
+	position: relative;
+}
 
+.group {
+	display: inline-block;
+	width: 100%;
+}
+
+.groupselect {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+</style>
+<body class="no-skin">
 	<include file="Public/header" />
 	<div class="main-container" id="main-container">
 		<script type="text/javascript">
@@ -15,7 +33,6 @@
 				<include file="Public/breadcrumbs" />
 				<div class="page-content">
 					<include file="Public/set" />
-					、
 					<div class="row">
 						<div class="col-sm-12">
 							<!-- #section:elements.tab -->
@@ -23,6 +40,8 @@
 								<ul class="nav nav-tabs" id="myTab">
 									<li class="active"><a  href="{:U('Message/index')}"> <i
 											class="green ace-icon fa fa-home bigger-120"></i>短信群发
+									</a></li>
+									<li><a  href="{:U('Message/wechatsmsindex')}">微信群发
 									</a></li>
 									<li><a  href="{:U('Sms/smsindex')}">短信模板设置
 									</a></li>
@@ -37,12 +56,10 @@
 										<include file="smsindex" />
 									</div>
 									<div id="two" class="tab-pane fade">
-										<include file="./Sms/smsindex" />
 									</div>
 									<div id="three" class="tab-pane fade">
-										<include file="./Sms/approveindex" />
 									</div><div id="four" class="tab-pane fade">
-										<include file="smslogindex" />
+									</div><div id="five" class="tab-pane fade">
 									</div>
 								</div>
 							</div>

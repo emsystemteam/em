@@ -18,9 +18,28 @@
 				<!-- /section:basics/content.breadcrumbs -->
 				<div class="page-content">
 					<include file="Public/set" />
-
-					<!-- /section:settings.box -->
 					<div class="row">
+						<div class="col-sm-12">
+							<!-- #section:elements.tab -->
+							<div class="tabbable">
+								<ul class="nav nav-tabs" id="myTab">
+									<li ><a  href="{:U('Message/index')}"> <i
+											class="green ace-icon fa fa-home bigger-120"></i>短信群发
+									</a></li>
+									<li class="active"><a  href="{:U('Message/wechatsmsindex')}">微信群发
+									</a></li>
+									<li><a  href="{:U('Sms/smsindex')}">短信模板设置
+									</a></li>
+									<li><a  href="{:U('Sms/approveindex')}">短信模板审核
+									</a></li>
+									<li><a  href="{:U('Message/smslogindex')}">短信日志
+									</a></li>
+								</ul>
+								<div class="tab-content">
+									<div id="one" class="tab-pane fade">
+									</div>
+									<div id="two" class="tab-pane fade  in active">
+									<div class="row">
 						<div class="col-xs-12">
 							<form class="form-horizontal" id="form" method="post" onsubmit="return false;"
 								action="{:U('update')}">
@@ -111,6 +130,21 @@
 						</div>
 						<!-- /.col -->
 					</div>
+									</div>
+									<div id="three" class="tab-pane fade">
+									</div>
+									<div id="four" class="tab-pane fade">
+									</div>
+									<div id="five" class="tab-pane fade">
+									</div>
+								</div>
+							</div>
+							<!-- /section:elements.tab -->
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /section:settings.box -->
+					
 					<!-- /.row -->
 					<!-- /.row -->
 					

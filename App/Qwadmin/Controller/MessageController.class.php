@@ -72,22 +72,45 @@ class MessageController extends ComController {
 						'in',
 						$mobileArray 
 				);
-				$openids = M ( 'member' )->where ( $condition )->getField ( 'openid', true );
-				if ($openids [0] != null) {
-					if (count ( $openids ) == 1) { // 批量发送，至少2条
-						array_push ( $openids, '' );
-					}
-					$result = send_wechat_message ( $openids, $smsmodel ['smscontent'] );
-					if ($result == 0) { // 成功
-						$this->ajaxReturn ( array (
-								'status' => 1,
-								'message' => '微信发送成功' 
-						) );
-					} else {
-						$this->ajaxReturn ( array (
-								'status' => 0,
-								'message' => '微信发送失败,失败码:' . $result 
-						) );
+				$arr = M ( 'member' )->where ( $condition )->select ();
+				if ($arr) {
+					$msgarray = array ();
+					foreach ( $arr as $row ) {
+						$msgarray ['touser'] = $row [openid];
+						$msgarray ['msgtype'] = 'text';
+						$msgarray ['text'] ['content'] = $smsmodel ['smscontent'];
+						/*
+						 * 图文类型
+						 * $msgarray ['touser'] = $row[openid];
+						 * $msgarray ['msgtype'] = 'news';
+						 * $msgarray ['news'] ['articles'] = array (
+						 * array (
+						 * 'title' => $smsmodel ['smstitle'],
+						 * 'description' => $smsmodel ['smscontent'],
+						 * 'picurl' => 'http://www.bontion.com/em//Upload/image/2017-11-10/5a05a4f85dba5.png',
+						 * 'url' => 'http://www.bontion.com/em/Content/editnotice/contentid/3/id/4.html'
+						 * ),
+						 * array (
+						 * 'title' => $smsmodel ['smstitle'],
+						 * 'description' => $smsmodel ['smscontent'],
+						 * 'picurl' => 'http://www.bontion.com/em//Upload/image/2017-11-10/5a05a4f85dba5.png',
+						 * 'url' => 'http://www.bontion.com/em/Content/editnotice/contentid/3/id/4.html'
+						 * )
+						 * );
+						 */
+						$result = send_wechat_custommsg ( $msgarray );
+						if ($result == 0) { // 成功
+							$this->ajaxReturn ( array (
+									'status' => 1,
+									'message' => '微信发送成功' 
+							) );
+						} else {
+							$this->ajaxReturn ( array (
+									'status' => 0,
+									'message' => '微信发送失败,失败码:' . $result 
+							) );
+						}
+						reset ( $msgarray );
 					}
 				} else {
 					$this->ajaxReturn ( array (
@@ -256,7 +279,7 @@ class MessageController extends ComController {
 									
 									$this->ajaxReturn ( array (
 											'status' => 1,
-											'message' => $smsresult
+											'message' => $smsresult 
 									) );
 								}
 							} else {
@@ -309,13 +332,13 @@ class MessageController extends ComController {
 		$list = $m->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
-		$data=$this->getMessageSurplus();
-		$this->assign ( 'data',$data);
+		$data = $this->getMessageSurplus ();
+		$this->assign ( 'data', $data );
 		$this->assign ( 'list', $list );
 		$this->assign ( 'page', $page );
 		$this->display ();
 	}
-	//获取短信剩余条目数
+	// 获取短信剩余条目数
 	private function getMessageSurplus() {
 		$post_data = array ();
 		$post_data ['sn'] = 'SDK_AAA_00227'; // 序列号

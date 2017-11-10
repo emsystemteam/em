@@ -11,7 +11,12 @@ http://www.thinkphp.cn/topic/23636.html
 115.28.26.209
 帐号：administrator
 XCijoy59661944
+
 4.公众号后台登录账户密码
 微信公众号：
 账号：13329042671@189.cn
 密码：zhanghua1010
+
+5.调用微信公众号接口，发送文本消息失败，返回错误信息是：errcode=45015,
+ errmsg=response out of time limit or subscription is canceled
+这是因为用户已经超过24小时没有和公众号发生交互了，你用你的用户发送消息到公众号，再调用接口就可以了。

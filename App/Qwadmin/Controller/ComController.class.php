@@ -273,4 +273,5 @@ class ComController extends BaseController
     	unlink($file);
     	return array("error"=>1,"data"=>$array);
     }
+    
 }

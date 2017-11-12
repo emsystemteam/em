@@ -23,3 +23,6 @@ XCijoy59661944
 
 6.公众号debug地址
 https://mp.weixin.qq.com/debug
+
+7.qw_auth_group 表rules 字段默认为255长度，但是一旦用户组关联的权限较多，很容易超过这个长度，所以把长度改为1000,以下是sql：
+alter table `qw_auth_group` modify column `rules` VARCHAR(1000);

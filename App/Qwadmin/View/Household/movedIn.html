@@ -1,0 +1,157 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+            	<include file="Public/set"/>
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                		<form class="form-horizontal" action="{:U('move')}" method="post">
+							<input name="household_id" value="{$em_household['household_id']}" type="hidden" />
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
+                                <div class="col-sm-9">
+                                    <select id="village" name="village" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="villages" id="val">
+                                            <option value="{$val['village_id']}"
+                                            <if condition="$val['village_id'] eq $em_household['village']">selected="selected"
+                                            </if>
+                                            >{$val.village_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇 </label>
+                                <div class="col-sm-9">
+                                    <select id="building" name="building" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="buildings" id="val">
+                                            <option value="{$val['building_id']}"
+                                            <if condition="$val['building_id'] eq $em_household['building']">selected="selected"
+                                            </if>
+                                            >{$val.building_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元 </label>
+                                <div class="col-sm-9">
+                                    <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="units" id="val">
+                                            <option value="{$val['unit_id']}"
+                                            <if condition="$val['unit_id'] eq $em_household['unit']">selected="selected"
+                                            </if>
+                                            >{$val.unit_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属房屋 </label>
+                                <div class="col-sm-9">
+                                    <select id="house" name="house" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="houses" id="val">
+                                            <option value="{$val['house_id']}"
+                                            <if condition="$val['house_id'] eq $em_household['house']">selected="selected"
+                                            </if>
+                                            >{$val.house_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="col-md-offset-2 col-md-9">
+                            <button class="btn btn-info" type="submit">
+                                <i class="icon-ok bigger-110"></i>
+                                提交
+                            </button>
+
+                            &nbsp; &nbsp; &nbsp;
+                            <button class="btn" type="reset">
+                                <i class="icon-undo bigger-110"></i>
+                                重置
+                            </button>
+                        </form>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+	jQuery(function ($) {
+	    $('#HOUSE_TRANSFER_TIME').datepicker({
+	        format: 'yyyy-mm-dd',
+	        weekStart: 1,
+	        autoclose: true,
+	        todayBtn: 'linked',
+	        language: 'cn'
+	    });
+	});
+
+	$("#village").on("change", function () {
+		$("#building").empty();
+	    var ob = $(this);
+	    var villageId = ob.val();
+	    $("#building").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var building = document.getElementById("building");
+	    $.get("{:U('changeVillage')}?villageId=" + villageId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		building.options[index+1] = new Option(obj.building_name,obj.building_id);
+	        });
+	    });
+	})
+	
+	$("#building").on("change", function () {
+		$("#unit").empty();
+	    var ob = $(this);
+	    var buildId = ob.val();
+	    $("#unit").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var unit = document.getElementById("unit");
+	    $.get("{:U('changeBuilding')}?buildingId=" + buildId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		unit.options[index+1] = new Option(obj.unit_name,obj.unit_id);
+	        });
+	    });
+	})
+	
+	$("#unit").on("change", function () {
+		$("#house").empty();
+	    var ob = $(this);
+	    var unitId = ob.val();
+	    $("#house").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var house = document.getElementById("house");
+	    $.get("{:U('changeUnit')}?unitId=" + unitId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		house.options[index+1] = new Option(obj.house_name,obj.house_id);
+	        });
+	    });
+	})
+</script>
+</body>
+</html>

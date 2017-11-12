@@ -1,0 +1,125 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                			<div class="row">
+		                            <form class="form-inline" id="searchForm" action="" method="get">
+		                            	<input type="hidden" id="tabname" name="tabname" value="tapeAudit" />
+		                                <label class="inline">住户搜索</label>
+		                                <select name="field" class="form-control">
+		                                    <option <if condition="I('field') eq household_name">selected</if> value="household_name">住户名</option>
+		                                	<option <if condition="I('field') eq nickname">selected</if> value="nickname">昵称</option>
+		                                </select>
+		                                <input type="text" name="keyword" value="{:I(keyword)}" class="form-control">
+		                                <label class="inline">&nbsp;&nbsp;排序：</label>
+		                                <select name="order" class="form-control">
+		                                    <option <if condition="I('order') eq asc">selected</if> value="asc">修改时间升</option>
+		                                    <option <if condition="I('order') eq desc">selected</if> value="desc">修改时间降</option>
+		                                </select>
+		                                <button type="submit" class="btn btn-purple btn-sm">
+		                                    <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
+		                                    Search
+		                                </button>
+		                            </form>
+		                        </div>
+		                        <div class="space-4"></div>
+		                        <div class="row">
+		                            <form id="form" method="post" action="{:U('del')}">
+		                                <table class="table table-striped table-bordered table-hover">
+		                                    <thead>
+		                                    <tr>
+		                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
+		                                        <th class="center">所属小区</th>
+		                                        <!-- <th class="center">所属房屋</th> -->
+		                                        <th class="center">住户名称</th>
+		                                        <th class="center">昵称</th>
+		                                        <!-- <th class="center">住户类型</th> -->
+		                                        <th class="center">手机号</th>
+		                                        <th class="center">微信号</th>
+		                                        <th class="center">微信昵称</th>
+		                                        <th class="center">迁入申请</th>
+		                                        <!-- <th class="center">QQ</th>
+		                                        <th class="center">QQ昵称</th>
+		                                        <th class="center">支付宝</th>
+		                                        <th class="center">支付宝昵称</th>
+		                                        <th class="center">E-MAIL</th>
+		                                        <th class="center">家庭电话</th>
+		                                        <th class="center">业主卡号</th>
+		                                        <th class="center">门禁卡号</th> -->
+		                                        <!-- <th class="center">首次登录时间</th> -->
+		                                        <!--  <th class="center">迁入/认证时间</th>
+		                                        <th class="center">认证结果</th>
+		                                        <th class="center">登录次数</th> -->
+		                                        <!-- <th class="center">创建时间</th>
+		                                        <th class="center">修改时间</th>
+		                                        <th class="center">操作人</th> -->
+		                                        <th class="center">操作</th>
+		                                    </tr>
+		                                    </thead>
+		                                    <tbody>
+		                                    <volist name="list" id="val">
+		                                        <tr>
+		                                        	<td class="center">
+		                                                <input class="householdIds" type="checkbox" name="householdIds[]" value="{$val['household_id']}">   
+		                                            </td>
+		                                        	<td class="center">{$val['village_name']}</td>
+		                                            <!-- <td class="center">{$val['house_name']}</td> -->
+		                                            <td class="center">{$val['household_name']}</td>
+		                                            <td class="center">{$val['nickname']}</td>
+		                                            <!-- <td class="center">{$val['household_type']}</td> -->
+		                                            <td class="center">{$val['tel']}</td>
+		                                            <td class="center">{$val['wechat_account']}</td>
+		                                            <td class="center">{$val['wechat_nickname']}</td>
+		                                            <td class="center">{$val['move_reason']}</td>
+		                                            <!-- <td class="center">{$val['qq']}</td>
+		                                            <td class="center">{$val['qq_nickname']}</td>
+		                                            <td class="center">{$val['alipay_account']}</td>
+		                                            <td class="center">{$val['alipay_nickname']}</td>
+		                                            <td class="center">{$val['email']}</td>
+		                                            <td class="center">{$val['home_tel']}</td>
+		                                            <td class="center">{$val['card_number']}</td>
+		                                            <td class="center">{$val['door_card_number']}</td> -->
+		                                            <!-- <td class="center">{$val['first_login_number']}</td> -->
+		                                            <!-- <td class="center">{$val['auth_time']}</td>
+		                                            <td class="center">{$val['auth_result']}</td>
+		                                            <td class="center">{$val['login_times']}</td> -->
+		                                            <!-- <td>{$val['create_time']}</td>
+		                                            <td>{$val['modify_time']}</td>
+		                                            <td>{$val['user']}</td> -->
+		                                            <td class="center">
+		                                            	<a href="{:U('moveIn',array('household_id'=>$val['household_id']))}">迁入</a>&nbsp;
+		                                            	<a href="{:U('auditing',array('household_id'=>$val['household_id']))}">审核</a>&nbsp;
+		                                            </td>
+		                                        </tr>
+		                                    </volist>
+		                                    </tbody>
+		                                </table>
+		                            </form>
+		                            {$page}
+		                        </div>
+                		</div>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+</div><!-- /.main-container -->
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+</body>
+</html>

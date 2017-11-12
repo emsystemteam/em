@@ -1,0 +1,340 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <form class="form-horizontal" action="{:U('update')}" method="post">
+							<input name="household_id" value="{$em_household['household_id']}" type="hidden" />
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
+                                <div class="col-sm-9">
+                                    <select id="village" name="village" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="villages" id="val">
+                                            <option value="{$val['village_id']}"
+                                            <if condition="$val['village_id'] eq $em_household['village']">selected="selected"
+                                            </if>
+                                            >{$val.village_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇 </label>
+                                <div class="col-sm-9">
+                                    <select id="building" name="building" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="buildings" id="val">
+                                            <option value="{$val['building_id']}"
+                                            <if condition="$val['building_id'] eq $em_household['building']">selected="selected"
+                                            </if>
+                                            >{$val.building_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元 </label>
+                                <div class="col-sm-9">
+                                    <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="units" id="val">
+                                            <option value="{$val['unit_id']}"
+                                            <if condition="$val['unit_id'] eq $em_household['unit']">selected="selected"
+                                            </if>
+                                            >{$val.unit_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属房屋 </label>
+                                <div class="col-sm-9">
+                                    <select id="house" name="house" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="houses" id="val">
+                                            <option value="{$val['house_id']}"
+                                            <if condition="$val['house_id'] eq $em_household['house']">selected="selected"
+                                            </if>
+                                            >{$val.house_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户名称</label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="HOUSEHOLD_NAME" id="HOUSEHOLD_NAME" placeholder="住户名称" class="col-xs-10 col-sm-5" value="{$em_household['household_name']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 昵称 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="NICKNAME" id="NICKNAME" placeholder="昵称 " class="col-xs-10 col-sm-5" value="{$em_household['nickname']}">
+                            	</div>
+                            </div>
+							
+							<div class="space-4"></div>
+							
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 手机号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="TEL" id="TEL" placeholder="手机号" class="col-xs-10 col-sm-5" value="{$em_household['tel']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 微信号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="WECHAT_ACCOUNT" id="WECHAT_ACCOUNT" placeholder="微信号" class="col-xs-10 col-sm-5" value="{$em_household['wechat_account']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 微信昵称 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="WECHAT_NICKNAME" id="WECHAT_NICKNAME" placeholder="微信昵称" class="col-xs-10 col-sm-5" value="{$em_household['wechat_nickname']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> QQ号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="QQ" id="QQ" placeholder="QQ号" class="col-xs-10 col-sm-5" value="{$em_household['qq']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> QQ昵称 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="QQ_NICKNAME" id="QQ_NICKNAME" placeholder="QQ昵称" class="col-xs-10 col-sm-5" value="{$em_household['qq_nickname']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 支付宝帐号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="ALIPAY_ACCOUNT" id="ALIPAY_ACCOUNT" placeholder="支付宝帐号" class="col-xs-10 col-sm-5" value="{$em_household['alipay_account']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 支付宝昵称 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="ALIPAY_NICKNAME" id="ALIPAY_NICKNAME" placeholder="支付宝昵称" class="col-xs-10 col-sm-5" value="{$em_household['alipay_nickname']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 邮箱 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="EMAIL" id="EMAIL" placeholder="邮箱" class="col-xs-10 col-sm-5" value="{$em_household['email']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 家庭电话 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="HOME_TEL" id="HOME_TEL" placeholder="家庭电话" class="col-xs-10 col-sm-5" value="{$em_household['home_tel']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 业主卡号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="CARD_NUMBER" id="CARD_NUMBER" placeholder="业主卡号" class="col-xs-10 col-sm-5" value="{$em_household['card_number']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 门禁卡号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="DOOR_CARD_NUMBER" id="DOOR_CARD_NUMBER" placeholder="门禁卡号" class="col-xs-10 col-sm-5" value="{$em_household['door_card_number']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 迁入时间 </label>
+                                <div class="col-sm-9">
+                                	<div class="input-group col-xs-5">
+                                        <input class="form-control" id="AUTH_TIME" name="AUTH_TIME" value="<if condition="
+                                               $em_household['auth_time'] neq '' ">{$em_household['auth_time']}</if>"
+                                        type="text" data-date-format="dd-mm-yyyy" />
+                                        <span class="input-group-addon">
+											<i class="ace-icon fa fa-calendar bigger-110"></i>
+										</span>
+                                    </div>
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 迁入原因 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="MOVE_REASON" id="MOVE_REASON" placeholder="迁入原因" class="col-xs-10 col-sm-5" value="{$em_household['move_reason']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 户口类型 </label>
+                                <div class="col-sm-9">
+                                	<select id="household_type" name="household_type" class="rcol-xs-10 col-sm-5">
+                                        <volist name="householdTypes" id="val">
+                                            <option value="{$val['dict_value']}"
+                                            <if condition="$val['dict_value'] eq $em_household['household_type']">selected="selected"
+                                            </if>
+                                            >{$val.dict_key}</option>
+                                        </volist>
+                                    </select>
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户身份</label>
+                                <div class="col-sm-9">
+                                	<select id="household_status" name="household_status" class="rcol-xs-10 col-sm-5">
+                                        <volist name="householdStatuss" id="val">
+                                            <option value="{$val['dict_value']}"
+                                            <if condition="$val['dict_value'] eq $em_household['household_status']">selected="selected"
+                                            </if>
+                                            >{$val.dict_key}</option>
+                                        </volist>
+                                    </select>
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            <div class="col-md-offset-2 col-md-9">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="icon-ok bigger-110"></i>
+                                    提交
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="icon-undo bigger-110"></i>
+                                    重置
+                                </button>
+                            </div>
+                        </form>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script src="__PUBLIC__/qwadmin/js/date-time/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+	jQuery(function ($) {
+	    $('#AUTH_TIME').datepicker({
+	        format: 'yyyy-mm-dd',
+	        weekStart: 1,
+	        autoclose: true,
+	        todayBtn: 'linked',
+	        language: 'cn'
+	    });
+	});
+
+	$("#village").on("change", function () {
+		$("#building").empty();
+	    var ob = $(this);
+	    var villageId = ob.val();
+	    $("#building").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var building = document.getElementById("building");
+	    $.get("{:U('changeVillage')}?villageId=" + villageId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		building.options[index+1] = new Option(obj.building_name,obj.building_id);
+	        });
+	    });
+	})
+	
+	$("#building").on("change", function () {
+		$("#unit").empty();
+	    var ob = $(this);
+	    var buildId = ob.val();
+	    $("#unit").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var unit = document.getElementById("unit");
+	    $.get("{:U('changeBuilding')}?buildingId=" + buildId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		unit.options[index+1] = new Option(obj.unit_name,obj.unit_id);
+	        });
+	    });
+	})
+	
+	$("#unit").on("change", function () {
+		$("#house").empty();
+	    var ob = $(this);
+	    var unitId = ob.val();
+	    $("#house").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var house = document.getElementById("house");
+	    $.get("{:U('changeUnit')}?unitId=" + unitId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		house.options[index+1] = new Option(obj.house_name,obj.house_id);
+	        });
+	    });
+	})
+</script>
+</body>
+</html>

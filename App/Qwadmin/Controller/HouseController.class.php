@@ -44,17 +44,20 @@ class HouseController extends ComController
             ->where($where)
             ->count();
 
-            $list = $emHouse->field("{$prefix}em_house.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
+            $list = $emHouse->field("{$prefix}em_house.*,v.village_name,b.building_name,u.unit_name,m.user as user,
+				d1.dict_key as house_type,d2.dict_key as building_structure,d3.dict_key as building_orientation")
             ->order($order)
             ->where($where)
-            ->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
-            ->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
-            ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_building.building_type = d1.dict_value and d1.dict_name = 'buildingType'")
-            ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
-            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
+            ->join("left join {$prefix}em_village v ON {$prefix}em_house.village = v.village_id")
+            ->join("left join {$prefix}em_building b ON {$prefix}em_house.building = b.building_id")
+            ->join("left join {$prefix}em_unit u ON {$prefix}em_house.unit = u.unit_id")
+            ->join("left join {$prefix}member m ON {$prefix}em_house.operator = m.uid")
+            ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_house.house_type = d1.dict_value and d1.dict_name = 'houseType'")
+            ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_house.house_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_house.house_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
             ->limit($offset . ',' . $pagesize)
             ->select();
-//         var_dump($list);
+        trace($list);
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
         $this->assign('list', $list);
@@ -64,24 +67,40 @@ class HouseController extends ComController
 
     public function del()
     {
-    	$buildingIds = isset($_REQUEST['buildingIds']) ? $_REQUEST['buildingIds'] : false;
-    	if(!$buildingIds){
-    		$this->error('需要删除的楼宇为空，请选择楼宇！');
+    	$houseIds= isset($_REQUEST['houseIds']) ? $_REQUEST['houseIds'] : false;
+    	if(!$houseIds){
+    		$this->error('需要删除的房屋为空，请选择房屋！');
     	}
     	
-    	if (is_array($buildingIds)) {
-    		foreach ($buildingIds as $k => $v) {
-    			$buildingIds[$k] = intval($v);
+    	if (is_array($houseIds)) {
+    		foreach ($houseIds as $k => $v) {
+    			$houseIds[$k] = intval($v);
             }
-            if (!$buildingIds) {
+            if (!$houseIds) {
                 $this->error('参数错误！');
-                $buildingIds = implode(',', $buildingIds);
+                $houseIds= implode(',', $houseIds);
             }
         }
-        $map['BUILDING_ID'] = array('in', $buildingIds);
-        if (M('em_building')->where($map)->delete()) {
-        	addlog('删除楼宇UID：' . $villageIds);
-            $this->success('恭喜，楼宇删除成功！');
+        
+        if (is_array($houseIds)) {
+        	for ($i=0;$i<count($houseIds);$i++){
+        		$houseId = $houseIds[$i];
+        		$emHousehold = M('em_household')->where("house = $houseId")->select();
+        		if(!empty($emHousehold)){
+        			$this->error('房屋：' . $houseId. '下包含住户信息，不能删除!');
+        		}
+        	}
+        }else{
+        	$emHousehold = M('em_household')->where("house = $houseIds")->select();
+        	if(!empty($emHousehold)){
+        		$this->error('房屋：' . $houseIds. '下包含住户信息，不能删除!');
+        	}
+        }
+        
+        $map['HOUSE_ID'] = array('in', $houseIds);
+        if (M('em_house')->where($map)->delete()) {
+        	addlog('删除房屋ID：' . $houseIds);
+            $this->success('恭喜，房屋删除成功！');
         } else {
             $this->error('参数错误！');
         }
@@ -90,14 +109,18 @@ class HouseController extends ComController
     public function edit()
     {
 
-        $vid = isset($_GET['building_id']) ? intval($_GET['building_id']) : false;
+        $vid = isset($_GET['house_id']) ? intval($_GET['house_id']) : false;
         if ($vid) {
             $prefix = C('DB_PREFIX');
-            $em_building = M('em_building')->field("{$prefix}em_building.*")->where("{$prefix}em_building.building_id=$vid")->find();
+            $em_house= M('em_house')->field("{$prefix}em_house.*")->where("{$prefix}em_house.house_id=$vid")->find();
             $em_village = M('em_village')->field("village_id,village_name")->select();
+            $village = $em_house['village'];
+            $em_building = M('em_building')->field("building_id,building_name")->where("village = $village")->select();
+            $building = $em_house['building'];
+            $em_unit = M('em_unit')->field("unit_id,unit_name")->where("building = $building")->select();
             
-            $buildingTypes = M('em_dictionary')->field("dict_key,dict_value")
-            ->where("dict_name = 'buildingType'")
+            $houseTypes = M('em_dictionary')->field("dict_key,dict_value")
+            ->where("dict_name = 'houseType'")
             ->select();
             $buildingOrientations = M('em_dictionary')->field("dict_key,dict_value")
             ->where("dict_name = 'buildingOrientation'")
@@ -108,46 +131,71 @@ class HouseController extends ComController
         } else {
             $this->error('参数错误！');
         }
+        $this->assign('em_house', $em_house);
         $this->assign('villages', $em_village);
-        $this->assign('em_building', $em_building);
-        $this->assign('buildingTypes', $buildingTypes);
-        $this->assign('buildingOrientations', $buildingOrientations);
-        $this->assign('buildingStructures', $buildingStructures);
+        $this->assign('buildings', $em_building);
+        $this->assign('units', $em_unit);
+        $this->assign('houseTypes', $houseTypes);
+        $this->assign('houseOrientations', $buildingOrientations);
+        $this->assign('houseStructures', $buildingStructures);
         $this->display('form');
     }
 
     public function update($ajax = '')
     {
-    	$buildingId = isset($_POST['building_id']) ? intval($_POST['building_id']) : false;
-    	$data['BUILDING_NAME'] = isset($_POST['BUILDING_NAME']) ? trim($_POST['BUILDING_NAME'], ENT_QUOTES) : '';
+    	$houseId = isset($_POST['house_id']) ? intval($_POST['house_id']) : false;
+    	$data['HOUSE_NAME'] = isset($_POST['HOUSE_NAME']) ? trim($_POST['HOUSE_NAME']) : '';
     	$village = isset($_POST['village']) ? trim($_POST['village']) : false;
     	if(!$village){
     		$this->error('所属小区不能为空！');
     	}else{
     		$data['VILLAGE']= $village;
     	}
+    	
+    	$building = isset($_POST['building']) ? trim($_POST['building']) : false;
+    	if(!$building){
+    		$this->error('所属楼宇不能为空！');
+    	}else{
+    		$data['BUILDING']= $building;
+    	}
+    	
+    	$unit = isset($_POST['unit']) ? trim($_POST['unit']) : false;
+    	if(!$unit){
+    		$this->error('所属单元不能为空！');
+    	}else{
+    		$data['UNIT']= $unit;
+    	}
         
-        $data['UNIT_NUMBER'] = isset($_POST['UNIT_NUMBER']) ? trim($_POST['UNIT_NUMBER']) : '';
-        $data['FLOOR_NUMBER'] = isset($_POST['FLOOR_NUMBER']) ? trim($_POST['FLOOR_NUMBER']) : '';
-        $data['BUILDING_TYPE'] = isset($_POST['building_type']) ? trim($_POST['building_type']) : '';
-        $data['BUILDING_STRUCTURE'] = isset($_POST['building_structure']) ? trim($_POST['building_structure']) : '';
-        $data['BUILDING_ORIENTATION'] = isset($_POST['building_orientation']) ? trim($_POST['building_orientation']) : '';
+        $data['FLOOR'] = isset($_POST['FLOOR']) ? trim($_POST['FLOOR']) : '';
+        $data['BUILD_UP_AREA'] = isset($_POST['BUILD_UP_AREA']) ? trim($_POST['BUILD_UP_AREA']) : '';
+        $data['SET_IN_AREA'] = isset($_POST['SET_IN_AREA']) ? trim($_POST['SET_IN_AREA']) : '';
+        $data['POLL_AREA'] = isset($_POST['POLL_AREA']) ? trim($_POST['POLL_AREA']) : '';
+        
+        $data['HOUSE_TYPE'] = isset($_POST['house_type']) ? trim($_POST['house_type']) : '';
+        $data['HOUSE_STRUCTURE'] = isset($_POST['house_structure']) ? trim($_POST['house_structure']) : '';
+        $data['HOUSE_ORIENTATION'] = isset($_POST['house_orientation']) ? trim($_POST['house_orientation']) : '';
+        
+        $transfer_time = isset($_POST['HOUSE_TRANSFER_TIME']) ? trim($_POST['HOUSE_TRANSFER_TIME']) : false;
+        if($transfer_time){
+        	$data['HOUSE_TRANSFER_TIME'] = $transfer_time;
+        }
+        $data['PROPERTY_RIGHT_AGE'] = isset($_POST['PROPERTY_RIGHT_AGE']) ? trim($_POST['PROPERTY_RIGHT_AGE']) : '';
 		
         $data['OPERATOR'] = session('uid');
         
         $timenow=date('Y-m-d H:i:s',time());
-        if (!$buildingId) {
+        if (!$houseId) {
         	$data['CREATE_TIME'] = $timenow;
         	$data['MODIFY_TIME'] = $timenow;
-        	if (village_name== '') {
-                $this->error('小区名称不能为空！');
+        	if (house_name== '') {
+                $this->error('房号不能为空！');
             }
-            $uid = M('em_building')->data($data)->add();
-            addlog('新增楼宇，楼宇ID：' . $buildingId);
+            $houseId = M('em_house')->data($data)->add();
+            addlog('新增房屋，房屋ID：' . $houseId);
         } else {
         	$data['MODIFY_TIME'] = $timenow;
-        	M('em_building')->data($data)->where("building_id=$buildingId")->save();
-        	addlog('编辑楼宇信息，楼宇ID：' . $buildingId);
+        	M('em_house')->data($data)->where("house_id=$houseId")->save();
+        	addlog('编辑房屋信息，房屋ID：' . $houseId);
 
         }
         $this->success('操作成功！');
@@ -157,10 +205,9 @@ class HouseController extends ComController
     public function add()
     {
     	$prefix = C('DB_PREFIX');
-    	$emVillage = M('em_village');
-    	$emVillages = $emVillage->field("village_id,village_name")->select();
-    	$buildingTypes = M('em_dictionary')->field("dict_key,dict_value")
-    	->where("dict_name = 'buildingType'")
+    	$emVillages = M('em_village')->field("village_id,village_name")->select();
+    	$houseTypes = M('em_dictionary')->field("dict_key,dict_value")
+    	->where("dict_name = 'houseType'")
     	->select();
     	$buildingOrientations = M('em_dictionary')->field("dict_key,dict_value")
     	->where("dict_name = 'buildingOrientation'")
@@ -169,9 +216,9 @@ class HouseController extends ComController
     	->where("dict_name = 'buildingStructure'")
     	->select();
     	$this->assign('villages', $emVillages);
-    	$this->assign('buildingTypes', $buildingTypes);
-    	$this->assign('buildingOrientations', $buildingOrientations);
-    	$this->assign('buildingStructures', $buildingStructures);
+    	$this->assign('houseTypes', $houseTypes);
+    	$this->assign('houseOrientations', $buildingOrientations);
+    	$this->assign('houseStructures', $buildingStructures);
         $this->display('form');
     }
     
@@ -179,34 +226,42 @@ class HouseController extends ComController
     /**
      * 导出excel
      */
-    public function exportBuilding()
+    public function exportHouse()
     {
-    	$xlsName  = "楼宇";
+    	$xlsName  = "房屋";
     	$xlsCell  = array(
-    			array('building_id','楼宇编号'),
-    			array('building_name','楼宇名称'),
+    			array('house_id','房屋编号'),
+    			array('house_name','房号'),
     			array('village','所属小区'),
-    			array('unit_number','单元数量'),
-    			array('floor_number','楼宇层数'),
-    			array('building_type','楼宇类型'),
-    			array('building_structure','楼宇结构'),
-    			array('building_orientation','楼宇朝向'),
+    			array('building','所属楼宇'),
+    			array('unit','所属单元'),
+    			array('floor','所在楼层'),
+    			array('build_up_area','建筑面积'),
+    			array('set_in_area','套内面积'),
+    			array('poll_area','公摊面积'),
+    			array('house_type','房屋类型'),
+    			array('house_structure','房屋结构'),
+    			array('house_orientation','房屋朝向'),
+    			array('house_transfer_time','交房时间'),
+    			array('property_right_age','产权年限'),
     			array('create_time','创建时间'),
     			array('modify_time','修改时间'),
     			array('operator','操作人')
     	);
     	
     	$prefix = C('DB_PREFIX');
-    	$emBuilding = M('em_building');
+    	$emHouse = M('em_house');
 //     	$where = "{$prefix}em_village.village_id = 2";
-    	$list = $emBuilding->field("building_id,building_name,unit_number,floor_number,d1.dict_key as building_type,d2.dict_key as building_structure,
-    			d3.dict_key as building_orientation,{$prefix}em_building.create_time,{$prefix}em_building.modify_time,
-    			b.user as operator,v.village_name as village")
-    	->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
-    	->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_building.building_type = d1.dict_value and d1.dict_name = 'buildingType'")
-    	->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
-    	->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
-    	->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
+    	$list = $emHouse->field("house_id,house_name,floor,house_transfer_time,property_right_age,d1.dict_key as house_type,d2.dict_key as house_structure,
+    			d3.dict_key as house_orientation,{$prefix}em_house.create_time,{$prefix}em_house.modify_time,build_up_area,set_in_area,
+    			poll_area,b.user as operator,v.village_name as village,bd.building_name as building,u.unit_name as unit")
+    	->join("left join {$prefix}em_village v ON {$prefix}em_house.village = v.village_id")
+    	->join("left join {$prefix}em_building bd ON {$prefix}em_house.building = bd.building_id")
+    	->join("left join {$prefix}em_unit u ON {$prefix}em_house.unit = u.unit_id")
+    	->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_house.house_type = d1.dict_value and d1.dict_name = 'houseType'")
+    	->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_house.house_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
+    	->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_house.house_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
+    	->join("left join {$prefix}member b ON {$prefix}em_house.operator = b.uid")
     	->select();
     	
 //     	$em_village = $emVillage->field("{$prefix}em_village.*")->select();
@@ -218,15 +273,21 @@ class HouseController extends ComController
      * 导出excel导入模板
      */
     public function exportExcelTemplate(){
-    	$xlsName  = "导入楼宇模板";
+    	$xlsName  = "导入房屋模板";
     	$xlsCell  = array(
-    			array('building_name','楼宇名称'),
+    			array('house_name','房号'),
     			array('village','所属小区'),
-    			array('unit_number','单元数量'),
-    			array('floor_number','楼宇层数'),
-    			array('building_type','楼宇类型'),
-    			array('building_structure','楼宇结构'),
-    			array('building_orientation','楼宇朝向')
+    			array('building','所属楼宇'),
+    			array('unit','所属单元'),
+    			array('floor','所在楼层'),
+    			array('build_up_area','建筑面积'),
+    			array('set_in_area','套内面积'),
+    			array('poll_area','公摊面积'),
+    			array('house_type','房屋类型'),
+    			array('house_structure','房屋结构'),
+    			array('house_orientation','房屋朝向'),
+    			array('house_transfer_time','交房时间'),
+    			array('property_right_age','产权年限')
     	);
     	$this->exportExcel($xlsName,$xlsCell);
     }
@@ -266,45 +327,74 @@ class HouseController extends ComController
      */
     public function batchInsert($insertData){
     	$prefix = C('DB_PREFIX');
-    	$emBuilding = M('em_building');
+    	$emHouse = M('em_house');
     	$emVillage = M('em_village');
     	for($i=1;$i<=count($insertData);$i++){
     		if($i == 1 || $i == 2){
     			continue;
     		}
-    		$buildingData = $insertData[$i];
+    		$houseData = $insertData[$i];
     		
-    		$buildingName = $buildingData[0];
-    		if(empty($buildingName)){
-    			$this->error("楼宇名称不能为空！");
+    		$houseName = $houseData[0];
+    		if(empty($houseName)){
+    			$this->error("房号不能为空！");
     		}
     		
-    		$data['BUILDING_NAME'] = $buildingName;
+    		$data['HOUSE_NAME'] = $houseName;
     		
-    		$villageName= $buildingData[1];
+    		$villageName = trim($houseData[1]);
     		$em_village = $emVillage->where("village_name = '$villageName'")->find();
     		if(empty($em_village)){
     			$this->error("小区名称：".$villageName."不存在");
+    		}else{
+	    		$data['VILLAGE'] = $em_village['village_id'];
     		}
-    		$data['VILLAGE'] = $em_village['village_id'];
-    			
-    		$data['UNIT_NUMBER'] = trim($buildingData[2]);
-    		$data['FLOOR_NUMBER'] = trim($buildingData[3]);
     		
-    		//楼宇类型
-    		$buildingType = trim($buildingData[4]);
-    		$buildingTypeDict = M('em_dictionary')->where("dict_name = 'buildingType' and dict_key = '%s'",array($buildingType))->find();
-    		$data['BUILDING_TYPE'] = $buildingTypeDict['dict_value'];
+    		$buildingName = trim($houseData[2]);
+    		$map1['BUILDING_NAME'] = $buildingName;
+    		$map1['VILLAGE'] = $em_village['village_id'];
+    		$em_building = M('em_building')->where($map1)->find();
+    		if(empty($em_building)){
+    			$this->error("小区：" . $villageName . ",楼宇名称：" . $buildingName. "不存在");
+    		}else{
+    			$data['BUILDING'] = $em_building['building_id'];
+    		}
     		
-    		//楼宇结构
-    		$buildingStructure = trim($buildingData[5]);
-    		$buildingStructureDict = M('em_dictionary')->where("dict_name = 'buildingStructure' and dict_key = '%s'",array($buildingStructure))->find();
-    		$data['BUILDING_STRUCTURE'] = $buildingStructureDict['dict_value'];
+    		$unitName = trim($houseData[3]);
+    		$map2['BUILDING'] = $em_building['building_id'];
+    		$map2['VILLAGE'] = $em_village['village_id'];
+    		$map2['UNIT_NAME'] = $unitName;
+    		$em_unit = M('em_unit')->where($map2)->find();
+    		if(empty($em_unit)){
+    			$this->error("小区：" . $villageName . ",楼宇名称：" . $buildingName . ",单元名称：" . $unitName . "不存在");
+    		}else{
+    			$data['UNIT'] = $em_unit['unit_id'];
+    		}
     		
-    		//楼宇朝向
-    		$buildingOrientation = trim($buildingData[6]);
-    		$buildingOrientationDict = M('em_dictionary')->where("dict_name = 'buildingOrientation' and dict_key = '%s'",array($buildingOrientation))->find();
-    		$data['BUILDING_ORIENTATION'] = $buildingOrientationDict['dict_value'];
+    		$data['FLOOR'] = $houseData[4];
+    		$data['BUILD_UP_AREA'] = $houseData[5];
+    		$data['SET_IN_AREA'] = $houseData[6];
+    		$data['POLL_AREA'] = $houseData[7];
+    		
+    		//房屋类型
+    		$houseType = trim($houseData[8]);
+    		$houseTypeDict = M('em_dictionary')->where("dict_name = 'houseType' and dict_key = '%s'",array($houseType))->find();
+    		$data['HOUSE_TYPE'] = $houseTypeDict['dict_value'];
+    		
+    		//房屋结构
+    		$houseStructure = trim($houseData[9]);
+    		$houseStructureDict= M('em_dictionary')->where("dict_name = 'buildingStructure' and dict_key = '%s'",array($houseStructure))->find();
+    		$data['HOUSE_STRUCTURE'] = $houseStructureDict['dict_value'];
+    		
+    		//房屋朝向
+    		$houseOrientation = trim($houseData[10]);
+    		$houseOrientationDict = M('em_dictionary')->where("dict_name = 'buildingOrientation' and dict_key = '%s'",array($houseOrientation))->find();
+    		$data['HOUSE_ORIENTATION'] = $houseOrientationDict['dict_value'];
+    		
+    		//交房时间
+    		$data['HOUSE_TRANSFER_TIME'] = $houseData[11];
+    		//产权年限
+    		$data['PROPERTY_RIGHT_AGE'] = $houseData[12];
     		
     		$data['OPERATOR'] = session('uid');
     		
@@ -312,19 +402,69 @@ class HouseController extends ComController
     		
     		$data['CREATE_TIME'] = $timenow;
     		$data['MODIFY_TIME'] = $timenow;
-    		$emBuilding->data($data)->add();
+    		$emHouse->data($data)->add();
     	}
     }
     
     /**
-     * array类型组织机构数据转换成二维数组形式的map，key为组织机构名称
-     * @param unknown $em_sys_org 组织机构数组
-     * @return unknown
+     * 小区、楼宇级联，根据选择的小区查找楼宇
+     * @param string $villageId 小区id
+     *
      */
-    private function arrayToMap($em_sys_org){
-    	for($i=0;$i<count($em_sys_org);$i++){
-    		$emSysOrgMap[$em_sys_org[$i]['org_name']] = $em_sys_org[$i];
-		}
-		return $emSysOrgMap;
+    public function changeVillage($villageId= FALSE)
+    {
+    	$emBuilding = M('em_building');
+    	$thisBuilding = $emBuilding->field("building_id,building_name")->where("village = $villageId")->select();
+    	//     	trace($thisOrg);
+    	$this->ajaxReturn($thisBuilding);
+    }
+    
+    /**
+     * 楼宇、单元级联，根据选择的楼宇查找单元
+     * @param string $buildingId 楼宇id
+     *
+     */
+    public function changeBuilding($buildingId= FALSE)
+    {
+    	$thisUnit = M('em_unit')->field("unit_id,unit_name")->where("building = $buildingId")->select();
+    	$this->ajaxReturn($thisUnit);
+    }
+    
+    public function uploadAttachedfile()
+    {
+    	$upload = new \Think\Upload();                      // 实例化上传类
+    	$upload->maxSize = 104857600 ;                 // 设置附件上传大小,10M
+    	$upload->exts = array(
+    			'xls',
+    			'xlsx',
+    			'doc',
+    			'pdf',
+    			'csv',
+    			'jpeg',
+    			'jpg',
+    			'jpeg',
+    			'png',
+    			'pjpeg',
+    			'gif',
+    			'bmp',
+    			'x-png');       // 设置附件上传类型
+    	$upload->rootPath  = './Public/';             // 设置附件上传根目录
+    	$savePath->savePath = 'attached/'.date('Y')."/".date('m')."/";
+    	$upload->autoSub   = false;                   // 将自动生成以当前时间的形式的子文件夹，关闭
+    	
+    	//     		var_dump($upload);
+    	
+    	$info = $upload->upload();                             // 上传文件
+    	
+    	if(!$info) {// 上传错误提示错误信息
+    		$error = $upload->getError();
+    		$this->error($error);
+    	}else{// 上传成功
+    		foreach ($info as $item) {
+    			$filePath[] = __ROOT__."/Public/".$item['savepath'].$item['savename'];
+    		}
+    		$fileStr = implode("|", $filePath);
+    		$this->success('上传成功！');
+    	}
     }
 }

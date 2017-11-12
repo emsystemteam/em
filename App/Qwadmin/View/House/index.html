@@ -1,0 +1,201 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="row">
+                        	<form class="form-inline" action="{:U('importExcel')}" method="post" enctype="multipart/form-data">
+					            <input class="inline" type="file" name="import"/>
+					            <input type="hidden" name="table" value="tablename"/>
+					            <input class="btn btn-info" type="submit" value="导入"/>
+						    </form>
+                            <form class="form-inline" action="" method="get">
+                                <a class="btn btn-info" href="{:U('add')}" value="">新增</a>
+                                <a class="btn btn-info" href="{:U('exportHouse')}" value="">导出</a>
+                                <a class="btn btn-info" href="{:U('exportExcelTemplate')}" value="">下载导入模板</a>
+                                <label class="inline">房屋搜索</label>
+                                <select name="field" class="form-control">
+                                    <option <if condition="I('field') eq house_name">selected</if> value="house_name">房屋名</option>
+                                </select>
+                                <input type="text" name="keyword" value="{:I(keyword)}" class="form-control">
+                                <label class="inline">&nbsp;&nbsp;排序：</label>
+                                <select name="order" class="form-control">
+                                    <option <if condition="I('order') eq asc">selected</if> value="asc">修改时间升</option>
+                                    <option <if condition="I('order') eq desc">selected</if> value="desc">修改时间降</option>
+                                </select>
+                                <button type="submit" class="btn btn-purple btn-sm">
+                                    <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
+                                    Search
+                                </button>
+                            </form>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <form id="form" method="post" action="{:U('del')}">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
+                                        <th class="center">房号</th>
+                                        <th class="center">所属小区</th>
+                                        <th class="center">所属楼宇</th>
+                                        <th class="center">所属单元</th>
+                                        <th class="center">所在楼层</th>
+                                        <th class="center">建筑面积</th>
+                                        <th class="center">套内面积</th>
+                                        <th class="center">公摊面积</th>
+                                        <th class="center">房屋类型</th>
+                                        <th class="center">房屋结构</th>
+                                        <th class="center">房屋朝向</th>
+                                        <th class="center">交房时间</th>
+                                        <th class="center">产权年限</th>
+                                        <!-- <th class="center">附件</th>
+                                        <th class="center">创建时间</th> -->
+                                        <th class="center">修改时间</th>
+                                        <!-- <th class="center">操作人</th> -->
+                                        <th class="center">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <volist name="list" id="val">
+                                        <tr>
+                                            <td class="center">
+                                                <input class="houseIds" type="checkbox" name="houseIds[]" value="{$val['house_id']}">   
+                                            </td>
+                                            <td class="center">{$val['house_name']}</td>
+                                            <td class="center">
+                                                {$val['village_name']}
+                                            </td>
+                                            <td class="center">{$val['building_name']}</td>
+                                            <td class="center">{$val['unit_name']}</td>
+                                            <td>{$val['floor']}</td>
+                                            <td>{$val['build_up_area']}</td>
+                                            <td>{$val['set_in_area']}</td>
+                                            <td>{$val['poll_area']}</td>
+                                            <td>{$val['house_type']}</td>
+                                            <td>{$val['building_structure']}</td>
+                                            <td>{$val['building_orientation']}</td>
+                                            <td>{$val['house_transfer_time']}</td>
+                                            <td>{$val['property_right_age']}</td>
+                                            <!-- <td>{$val['create_time']}</td> -->
+                                            <td>{$val['modify_time']}</td>
+                                            <!-- <td>{$val['user']}</td> -->
+                                            <td class="center">
+                                            	<a href="{:U('edit',array('house_id'=>$val['house_id']))}">修改</a>&nbsp;
+                                                <a class="del" href="javascript:;" val="{:U('del',array('houseIds'=>$val['house_id']))}" title="删除">删除</a>&nbsp;
+                                                <a href="{:U('edit',array('house_id'=>$val['house_id']))}">{$val['attachment']}</a>&nbsp;
+                                            </td>
+                                        </tr>
+                                    </volist>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <div class="cf">
+                                <input id="submit" class="btn btn-info" type="button" value="删除">
+                            </div>
+                            {$page}
+                        </div>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(function () {
+       /*  $(".group").click(function () {
+            $(this).addClass('hide');
+            $(this).parent().find(".groupselect").removeClass('hide');
+        })
+        $(".groupselect").on("change", function () {
+            var ob = $(this);
+            var gid = ob.val();
+            var uid = ob.parent().find('.group').attr('val');
+            $.get("{:U('update')}?ajax=yes&uid=" + uid + "&gid=" + gid, function (data) {
+                var text = ob.find("option:selected").text();
+                ob.parent().find(".group").removeClass('hide').html(text);
+                ob.addClass('hide');
+            });
+        }) */
+
+        $(".check-all").click(function () {
+            $(".houseIds").prop("checked", this.checked);
+        });
+      /*   $(".villageIds").click(function () {
+            var option = $(".ids");
+            option.each(function (i) {
+                if (!this.checked) {
+                    $(".check-all").prop("checked", false);
+                    return false;
+                } else {
+                    $(".check-all").prop("checked", true);
+                }
+            });
+        }); */
+        $("#submit").click(function () {
+            bootbox.confirm({
+                title: "系统提示",
+                message: "是否要删除所选房屋？",
+                callback: function (result) {
+                    if (result) {
+                        $("#form").submit();
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+        });
+        $(".del").click(function () {
+            var url = $(this).attr('val');
+            bootbox.confirm({
+                title: "系统提示",
+                message: "是否要删除该房屋?",
+                callback: function (result) {
+                    if (result) {
+                        window.location.href = url;
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+        });
+    })
+</script>
+</body>
+</html>

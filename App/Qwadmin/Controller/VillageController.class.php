@@ -338,7 +338,7 @@ class VillageController extends ComController
     		
     		$readExcelResult = $this->importExecl($filename);
     		$this->batchInsert($readExcelResult['data'][0]['Content']);
-    		$this->success('导入成功！');
+    		$this->success('上传成功！');
     	}else{
     		$this->error("请选择上传的文件");
     	}

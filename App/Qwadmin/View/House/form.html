@@ -1,0 +1,256 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <form class="form-horizontal" action="{:U('update')}" method="post">
+							<input name="house_id" value="{$em_house['house_id']}" type="hidden" />
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
+                                <div class="col-sm-9">
+                                    <select id="village" name="village" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="villages" id="val">
+                                            <option value="{$val['village_id']}"
+                                            <if condition="$val['village_id'] eq $em_house['village']">selected="selected"
+                                            </if>
+                                            >{$val.village_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇 </label>
+                                <div class="col-sm-9">
+                                    <select id="building" name="building" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="buildings" id="val">
+                                            <option value="{$val['building_id']}"
+                                            <if condition="$val['building_id'] eq $em_house['building']">selected="selected"
+                                            </if>
+                                            >{$val.building_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元 </label>
+                                <div class="col-sm-9">
+                                    <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
+                                    	<option value="">--请选择--</option>
+                                        <volist name="units" id="val">
+                                            <option value="{$val['unit_id']}"
+                                            <if condition="$val['unit_id'] eq $em_house['unit']">selected="selected"
+                                            </if>
+                                            >{$val.unit_name}</option>
+                                        </volist>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 所在楼层</label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="FLOOR" id="FLOOR" placeholder="所在楼层" class="col-xs-10 col-sm-5" value="{$em_house['floor']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 房号 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="HOUSE_NAME" id="HOUSE_NAME" placeholder="房号" class="col-xs-10 col-sm-5" value="{$em_house['house_name']}">
+                            	</div>
+                            </div>
+							
+							<div class="space-4"></div>
+							
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 建筑面积 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="BUILD_UP_AREA" id="BUILD_UP_AREA" placeholder="建筑面积" class="col-xs-10 col-sm-5" value="{$em_house['build_up_area']}">
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 套内面积 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="SET_IN_AREA" id="SET_IN_AREA" placeholder="套内面积" class="col-xs-10 col-sm-5" value="{$em_house['set_in_area']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 公摊面积 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="POLL_AREA" id="POLL_AREA" placeholder="公摊面积" class="col-xs-10 col-sm-5" value="{$em_house['poll_area']}">
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+							<div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 房屋类型 </label>
+                                <div class="col-sm-9">
+                                	<select id="house_type" name="house_type" class="rcol-xs-10 col-sm-5">
+                                        <volist name="houseTypes" id="val">
+                                            <option value="{$val['dict_value']}"
+                                            <if condition="$val['dict_value'] eq $em_house['house_type']">selected="selected"
+                                            </if>
+                                            >{$val.dict_key}</option>
+                                        </volist>
+                                    </select>
+                            	</div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 房屋结构 </label>
+                                <div class="col-sm-9">
+                                	<select id="house_structure" name="house_structure" class="rcol-xs-10 col-sm-5">
+                                        <volist name="houseStructures" id="val">
+                                            <option value="{$val['dict_value']}"
+                                            <if condition="$val['dict_value'] eq $em_house['house_structure']">selected="selected"
+                                            </if>
+                                            >{$val.dict_key}</option>
+                                        </volist>
+                                    </select>
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 楼宇朝向 </label>
+                                <div class="col-sm-9">
+                                	<select id="house_orientation" name="house_orientation" class="rcol-xs-10 col-sm-5">
+                                        <volist name="houseOrientations" id="val">
+                                            <option value="{$val['dict_value']}"
+                                            <if condition="$val['dict_value'] eq $em_house['house_orientation']">selected="selected"
+                                            </if>
+                                            >{$val.dict_key}</option>
+                                        </volist>
+                                    </select>
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="id-date-picker-1">交房时间</label>
+                                <div class="col-xs-9 col-sm-9">
+                                    <div class="input-group col-xs-5">
+
+                                        <input class="form-control" id="HOUSE_TRANSFER_TIME" name="HOUSE_TRANSFER_TIME" value="<if condition="
+                                               $em_house['house_transfer_time'] neq '' ">{$em_house['house_transfer_time']}</if>"
+                                        type="text" data-date-format="dd-mm-yyyy" />
+                                        <span class="input-group-addon">
+											<i class="ace-icon fa fa-calendar bigger-110"></i>
+										</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 产权年限 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="PROPERTY_RIGHT_AGE" id="PROPERTY_RIGHT_AGE" placeholder="产权年限" class="col-xs-10 col-sm-5" value="{$em_house['property_right_age']}">
+                            	</div>
+                            </div>
+                            
+                             <div class="space-4"></div>
+                            
+                            <div class="col-md-offset-2 col-md-9">
+                                <button class="btn btn-info" type="submit">
+                                    <i class="icon-ok bigger-110"></i>
+                                    提交
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="icon-undo bigger-110"></i>
+                                    重置
+                                </button>
+                            </div>
+                        </form>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script src="__PUBLIC__/qwadmin/js/date-time/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+	jQuery(function ($) {
+	    $('#HOUSE_TRANSFER_TIME').datepicker({
+	        format: 'yyyy-mm-dd',
+	        weekStart: 1,
+	        autoclose: true,
+	        todayBtn: 'linked',
+	        language: 'cn'
+	    });
+	});
+
+	$("#village").on("change", function () {
+		$("#building").empty();
+	    var ob = $(this);
+	    var villageId = ob.val();
+	    $("#building").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var building = document.getElementById("building");
+	    $.get("{:U('changeVillage')}?villageId=" + villageId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		building.options[index+1] = new Option(obj.building_name,obj.building_id);
+	        });
+	    });
+	})
+	
+	$("#building").on("change", function () {
+		$("#unit").empty();
+	    var ob = $(this);
+	    var buildId = ob.val();
+	    $("#unit").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var unit = document.getElementById("unit");
+	    $.get("{:U('changeBuilding')}?buildingId=" + buildId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		unit.options[index+1] = new Option(obj.unit_name,obj.unit_id);
+	        });
+	    });
+	})
+</script>
+</body>
+</html>

@@ -26,7 +26,6 @@ function BatchImage($callBack = "image", $width = 100, $height = 100, $image = "
 		<input type="hidden" ' . 'value = "' . $image . '"' . 'name="' . $callBack . '" id="' . $callBack . '">';
 }
 
-
 /*
  * 函数：网站配置获取函数
  * @param  string $k      可选，配置名称

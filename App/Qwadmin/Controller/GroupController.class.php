@@ -66,15 +66,17 @@ class GroupController extends ComController
                 }
                 $rules = implode(',', $rules);
             }
+            var_dump($rules);
             $data['rules'] = $rules;
             if ($id) {
                 $group = M('auth_group')->where('id=' . $id)->data($data)->save();
+                var_dump($group);
                 if ($group) {
                     addlog('编辑用户组，ID：' . $id . '，组名：' . $data['title']);
                     $this->success('恭喜，用户组修改成功！');
                     exit(0);
                 } else {
-                    $this->success('未修改内容');
+//                     $this->success('未修改内容');
                 }
             } else {
                 M('auth_group')->data($data)->add();

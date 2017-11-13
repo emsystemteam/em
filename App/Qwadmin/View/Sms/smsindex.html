@@ -184,18 +184,18 @@
 				 $('#status').val('0');
 			 }
 		 })
-    	  editor = KindEditor.create('textarea[name="smscontent"]', {
+ /*    	  editor = KindEditor.create('textarea[name="smscontent"]', {
              uploadJson: '__PUBLIC__/kindeditor/php/upload_json.php',
              fileManagerJson: '__PUBLIC__/kindeditor/php/file_manager_json.php',
              allowFileManager: true,
              afterBlur: function () {
                  this.sync();
              }
-         });
+         }); */
     });
 	 //校验表单是否合法
 	 function validateform(){
-		  	var smscontent = editor.html();
+		  	var smscontent = $('#smscontent').val();
 	        var smstitle = $("#smstitle").val();
 	        var signname = $("#signname").val();
 	         if (smscontent == ''||smstitle==''||signname=='') {
@@ -218,7 +218,7 @@
 	 
 	$('#addsmsmodel').click(function(){
 		$('#smstitle').val('');
-		editor.html('');
+		$('#smscontent').val('');
 		$('#signname').val('');
 		$('#smsmodelid').val('');
 		$('#myModal').modal({});
@@ -233,7 +233,7 @@
 			 data:{id:id},
 			 success : function(res) {
 					$('#smstitle').val(res.data.smstitle);
-					editor.html(res.data.smscontent);
+					$('#smscontent').val(res.data.smscontent);
 					if(res.data.status==1){
 						$('#status').val(1);
 						$('#status').attr('checked','checked');
@@ -251,9 +251,8 @@
 	}
 	 $(".submit").click(function () {
 		 if(validateform()){
-			 var jsondata={id:	$('#smsmodelid').val(),smstitle:$('#smstitle').val(),smscontent:editor.html(),
+			 var jsondata={id:	$('#smsmodelid').val(),smstitle:$('#smstitle').val(),smscontent:$('#smscontent').val(),
 					 status:$('#status').val(),smstype:$('#smstype').val(),signname:$('#signname').val()};
-			 debugger;
 			 $.ajax({
 				 type : "post",
 				 url: "__URL__/update",

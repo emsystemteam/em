@@ -14,17 +14,15 @@ namespace Qwadmin\Controller;
 class SmsController extends ComController {
 	// 短信模板管理
 	public function smsindex() {
-		$data ['smstype'] = isset ( $_POST ['smstype'] ) ? trim ( $_POST ['smstype'] ) : 1; // 默认短信
 		$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
 		$pagesize = 10; // 每页数量
 		$offset = $pagesize * ($p - 1); // 计算记录偏移量
 		$m = M ( 'em_smsmodel' );
-		$count = $m->where ( 'smstype=' . $data ['smstype'] )->count ();
-		$list = $m->where ( 'smstype=' . $data ['smstype'] )->order('createtime desc')->limit ( $offset . ',' . $pagesize )->select ();
+		$count = $m->count ();
+		$list = $m->order('createtime desc')->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
 		$this->assign ( 'list', $list );
-		$this->assign ( 'smstype', $data ['smstype'] );
 		$this->assign ( 'page', $page );
 		$this->display ();
 	}
@@ -65,6 +63,7 @@ class SmsController extends ComController {
 		if (! empty ( $model->id )) { // 更新
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
 			$model->modifier = session ( 'uid' );
+			$model->smstype=1;
 			$model->status = I ( 'post.status', '', 'intval' );
 			$model->isapprove=0;//编辑后重新审核
 			$flag = $model->save ();
@@ -84,6 +83,7 @@ class SmsController extends ComController {
 			$model->createtime = date ( 'y-m-d H:i:s', time () );
 			$model->creater = session ( 'uid' );
 			$model->status = 1;
+			$model->smstype=1;
 			$flag = $model->add ();
 			if ($flag) {
 				addlog ( '信息模板创建成功，ID：' . $model->id);
@@ -105,7 +105,6 @@ class SmsController extends ComController {
 	public function add() {
 		$model = M ( 'em_smsmodel' )->create ();
 		$model ['status'] = 1;
-		$model ['smstype'] = 1;
 		$this->assign ( 'model', $model );
 		$this->display ( 'form' );
 	}

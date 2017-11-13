@@ -45,8 +45,6 @@
 									<li><a href="{:U('Message/index')}"> <i
 											class="green ace-icon fa fa-home bigger-120"></i>短信群发
 									</a></li>
-									<li><a  href="{:U('Message/wechatsmsindex')}">微信群发
-									</a></li>
 									<li class="active"><a href="{:U('Sms/smsindex')}">短信模板设置
 									</a></li>
 									<li><a href="{:U('Sms/approveindex')}">短信模板审核 </a></li>
@@ -55,15 +53,14 @@
 
 								<div class="tab-content">
 									<div id="one" class="tab-pane fade"></div>
-									<div id="two" class="tab-pane fade"></div>
-									<div id="three" class="tab-pane fade in active">
+									<div id="two" class="tab-pane fade in active">
 										<div class="row">
 											<div class="col-xs-12">
 												<!-- PAGE CONTENT BEGINS -->
 												<div class="row">
 													<form class="form-inline" action="" method="post">
 														<a class="btn btn-info" id="addsmsmodel" href="javascript:void(0)" >新增</a>
-														<label class="inline">&nbsp;&nbsp;消息类型：</label> <select
+													<!-- 	<label class="inline">&nbsp;&nbsp;消息类型：</label> <select
 															name="smstype" class="form-control">
 															<option <if condition="I('smstype') eq 1">selected</if>
 																value="1">短信
@@ -71,12 +68,12 @@
 															<option <if condition="I('smstype') eq 2">selected</if>
 																value="2">微信
 															</option>
-														</select>
-														<button type="submit" class="btn btn-purple btn-sm">
+														</select> -->
+														<!-- <button type="submit" class="btn btn-purple btn-sm">
 															<span
 																class="ace-icon fa fa-search icon-on-right bigger-110"></span>
 															Search
-														</button>
+														</button> -->
 													</form>
 												</div>
 												<div class="space-4"></div>
@@ -87,7 +84,6 @@
 															<thead>
 																<tr>
 																	<th>标题</th>
-																	<th width='50%'>短信内容</th>
 																	<th>创建时间</th>
 																	<th>类型</th>
 																	<th>状态</th>
@@ -101,9 +97,6 @@
 																	<td>{$val['smstitle']}</td>
 																	<td>{$val['smscontent']}</td>
 																	<td>{$val['createtime']}</td>
-																	<td id="{$val['smstype']}">
-																		<?php if($val['smstype']==1){echo '短信';}else{echo '微信';} ?>
-																	</td>
 																	<td id="{$val['status']}">
 																		<?php if($val['status']==1){echo '启用';}else{echo '禁用';} ?>
 																	</td>
@@ -152,8 +145,8 @@
 											<!-- /.page-content -->
 										</div>
 									</div>
+									<div id="three" class="tab-pane fade"></div>
 									<div id="four" class="tab-pane fade"></div>
-									<div id="five" class="tab-pane fade"></div>
 								</div>
 							</div>
 							<!-- /section:elements.tab -->

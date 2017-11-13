@@ -45,8 +45,6 @@
 									<li><a href="{:U('Message/index')}"> <i
 											class="green ace-icon fa fa-home bigger-120"></i>短信群发
 									</a></li>
-									<li><a  href="{:U('Message/wechatsmsindex')}">微信群发
-									</a></li>
 									<li><a href="{:U('Sms/smsindex')}">短信模板设置 </a></li>
 									<li class="active"><a href="{:U('Sms/approveindex')}">短信模板审核
 									</a></li>
@@ -69,7 +67,6 @@
 																<tr>
 																	<th style="width: 60%">短信内容</th>
 																	<th>创建时间</th>
-																	<th>类型</th>
 																	<th>状态</th>
 																	<th>是否通审核过</th>
 																	<th class="center">操作</th>
@@ -80,9 +77,6 @@
 																<tr>
 																	<td>{$val['smscontent']}</td>
 																	<td>{$val['createtime']}</td>
-																	<td>
-																		<?php if($val['smstype']==1){echo '短信';}else{echo '微信';} ?>
-																	</td>
 																	<td>
 																		<?php if($val['status']==1){echo '启用';}else{echo '禁用';} ?>
 																	</td>
@@ -107,7 +101,6 @@
 										</div>
 									</div>
 									<div id="four" class="tab-pane fade"></div>
-									<div id="five" class="tab-pane fade"></div>
 								</div>
 							</div>
 							<!-- /section:elements.tab -->

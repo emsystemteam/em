@@ -17,6 +17,11 @@ class MobileController extends Controller
 
     public function index()
     {
+        $model = M("em_contentmanager");
+        $list = $model->where("status=1")
+            ->order("createtime desc")
+            ->select();
+        $this->assign("list", $list);
         $this->display("home");
     }
 }

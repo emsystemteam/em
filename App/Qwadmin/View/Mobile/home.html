@@ -9,17 +9,24 @@
 	width:60px;
 	height:60px;
 	text-align:center;
-	margin:10px;
+	margin:0 auto;
+	margin-bottom:5px;
+}
+.col-xs-12{
+	padding:0px;
+}
+.col-xs-3{
+	widht: auto;
 }
 </style>
 <div class="main-container">
     <div class="main-content">
       <div class="page-content">
         <div class="row">
-            <div class="col-xs-12">
+            <div class="thumbnail col-xs-12" style="padding:15px;">
             
 	            <div class="form-inline">
-	               <div class="form-group col-xs-3 col-md-2">
+	               <div class="form-group col-xs-3 col-md-2 text-center">
 		              <div class="img-circle mobile-panel" style="background-color:#00c883;">
 		              <i class="ace-icon fa fa-money fa-2x mobile-icon"></i>
 		              </div> 
@@ -27,32 +34,32 @@
 	              </div>  
 	              
 	              
-	              <div class="form-group col-xs-3 col-md-2">
+	              <div class="form-group col-xs-3 col-md-2 text-center">
 		              <div class="img-circle mobile-panel" style="background-color:#f49055;">
 		              <i class="ace-icon fa fa-life-ring fa-2x mobile-icon"></i>
 		              </div> 
 		              <span>物业服务</span>
 	              </div>
 	              
-	              <div class="form-group  col-xs-3 col-md-2">
+	              <div class="form-group  col-xs-3 col-md-2 text-center">
 		              <div class="img-circle mobile-panel" style="background-color:#fab655;">
 		              <i class="ace-icon fa fa-bar-chart fa-2x mobile-icon"></i>
 		              </div> 
 		              <span>投票表决</span>
 	              </div>
 	              
-	              <div class="form-group col-xs-3 col-md-2">
+	              <div class="form-group col-xs-3 col-md-2 text-center">
 		              <div class="img-circle mobile-panel" style="background-color:#579df5;">
 		              <i class="ace-icon fa fa-bank fa-2x mobile-icon"></i>
-		              </div> 
+		              </div>
 		              <span>生活服务</span>
 	              </div>
 	              
-	              <div class="form-group col-xs-3 col-md-2">
+	              <div class="form-group col-xs-3 col-md-2 text-center">
 		              <div class="img-circle mobile-panel" style="background-color:#3dc5f7;">
 		              <i class="ace-icon fa fa-shopping-cart fa-2x mobile-icon"></i>
 		              </div> 
-		              <span>小区商家</span>
+		              <span class="text-center">小区商家</span>
 	              </div>
                </div>
                
@@ -60,31 +67,35 @@
             
             
             <div class="col-xs-12">
-            
+				<table class="table table-hover table-bordered">
+					<volist name="list" id="vo" empty="">
+						<tr>
+							<td style="padding:15px;">
+								<i class="ace-icon fa fa-book fa-2x green"></i>
+								<a href="#"><strong style="font-size:22px;">{$vo.contenttitile}</strong></a>
+							</td>
+						</tr>
+					</volist>
+				</table>
            </div>
-            
-            
-            
             
         </div><!-- /.row -->
         </div>
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->
 
-    <div class="navbar-fixed-bottom" style="height:70px;">
-		<div class="btn-group btn-group-justified" role="group"  style="height:80px;">
-		  <div class="btn-group" role="group"  style="height:60px;">
-		    <a type="button" class="btn btn-danger" href="{:U('mobile/home')}">
+    <div class="navbar-fixed-bottom" style="height:55px;">
+		<div class="btn-group btn-group-justified" role="group">
+		  <div class="btn-group" role="group">
+		    <a type="button" class="btn btn-danger" href="{:U('mobile/index')}">
 		    <i class="ace-icon fa fa-home fa-2x white"></i>
-		    <div class="space-2"></div>
-		    <span>首页</span>
+		    <p>首页</p>
 		    </a>
 		  </div>
-		  <div class="btn-group" role="group" style="height:60px;">
+		  <div class="btn-group" role="group">
 		    <a type="button" class="btn" href="{:U('mobile/profile')}">
 		    <i class="ace-icon fa fa-user fa-2x white" ></i>
-		    <div class="space-2"></div>
-		    <span>我</span>
+		    <p>我</p>
 		    </a>
 		  </div>
 		</div>

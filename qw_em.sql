@@ -368,3 +368,31 @@ CREATE TABLE `qw_em_noticetovillage` (
 
 ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;
 
+DROP TABLE IF EXISTS `qw_em_news`;
+CREATE TABLE `qw_em_news` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `newspicture` varchar(255) DEFAULT NULL COMMENT '图片地址',
+  `newstitle` varchar(255) DEFAULT NULL COMMENT '图文标题',
+  `newssummary` varchar(2000) DEFAULT NULL COMMENT '简介',
+  `newscontent` text,
+  `newsouturl` varchar(2000) DEFAULT NULL COMMENT '外链地址',
+  `creater` int(255) DEFAULT NULL COMMENT '创建人',
+  `createtime` datetime DEFAULT NULL COMMENT '创建时间',
+  `modifier` int(11) DEFAULT NULL COMMENT '修改人',
+  `modifytime` datetime DEFAULT NULL COMMENT '修改时间',
+  `status` int(11) DEFAULT NULL COMMENT '状态：1启用,0禁用',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='图文主表';
+
+DROP TABLE IF EXISTS `qw_em_newsitems`;
+CREATE TABLE `qw_em_newsitems` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `newsid` int(11) DEFAULT NULL COMMENT '关联图文主表',
+  `itempicture` varchar(255) DEFAULT NULL COMMENT '图片地址',
+  `itemtitle` varchar(255) DEFAULT NULL COMMENT '图文标题',
+  `itemsummary` varchar(2000) DEFAULT NULL COMMENT '简介',
+  `itemcontent` text,
+  `itemouturl` varchar(2000) DEFAULT NULL COMMENT '外链地址',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='图文明细表';
+

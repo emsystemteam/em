@@ -1,8 +1,12 @@
 <include file="Public/head" />
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/js/webupload/webuploader.css">
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/animate.min.css">
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/weixin.css">
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/js/waves.min.js">
+<link rel="stylesheet" type="text/css"
+	href="__PUBLIC__/qwadmin/js/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css"
+	href="__PUBLIC__/qwadmin/css/animate.min.css">
+<link rel="stylesheet" type="text/css"
+	href="__PUBLIC__/qwadmin/css/weixin.css">
+<link rel="stylesheet" type="text/css"
+	href="__PUBLIC__/qwadmin/js/waves.min.js">
 <body class="no-skin">
 	<include file="Public/header" />
 	<div class="main-container" id="main-container">
@@ -18,144 +22,145 @@
 			<div class="main-content-inner">
 				<!-- #section:basics/content.breadcrumbs -->
 				<include file="Public/breadcrumbs" />
-
 				<!-- /section:basics/content.breadcrumbs -->
 				<div class="page-content">
 					<include file="Public/set" />
-
 					<!-- /section:settings.box -->
 					<div class="row">
-						<!-- PAGE CONTENT BEGINS -->
-						
-
-
-
-  <div class="col-lg-10 m-t-20" style="">
-   <div class="app-wrap p-b-30" style="">
-    <!--left  start-->
-    <div class="app-preview">
-     <form class="add">
-      <div class="app-header" style="background: url('__PUBLIC__/qwadmin/images/iphone_head.png') no-repeat center center;"></div>
-      <div class="app-body">
-       <div class="app-top" style="background: url('__PUBLIC__/qwadmin/images/titlebar.png') no-repeat center center;">
-        <h1>图文回复</h1>
-       </div>
-       <div class="app-content">
-        <div class="app-item app-first">
-         <div class="app-msg">
-          <h4 class="app-msg-title msg_title"> 标题 </h4>
-          <div class="app-msg-pic">
-           <p class="first_p">封面图片</p>
-           <img class="none first_img" src="" alt="" />
-          </div>
-         </div>
-         <div class="app-operation">
-          <a href="javascript:;" class="app-edit"><i class="fa fa-edit"></i></a>
-         </div>
-         <input type="hidden" class="tuwen_title" name="tuwen_title[]" value="" />
-         <input type="hidden" class="tuwen_con" name="tuwen_con[]" value="" />
-         <input type="hidden" class="tuwen_img" name="tuwen_img[]" value="" />
-         <input type="hidden" class="tuwen_content" name="tuwen_content[]" value="" />
-         <input type="hidden" class="tuwen_url" name="tuwen_url[]" value="" />
-         <input type="hidden" class="tuwen_isshow" name="tuwen_isshow[]" value="" />
-        </div>
-       </div>
-      </div>
-      <div class="app-add-item">
-       <a href="javascript:;" class="add-item"><i class="fa fa-plus"></i> 新增 </a>
-      </div>
-     </form>
-    </div>
-    <!--left  end-->
-    <!--right  start-->
-    <div class="app-sidebar" style="">
-     <div class="arrow"></div>
-     <div class="app-edit-wrap" style="">
-      <form action="" class="form-horizontal" style="">
-       <div class="form-group">
-        <label class="col-sm-10"> 标题 <span class="text-danger"> * </span></label>
-        <div class="col-sm-12">
-         <input type="text" id="duotu_title" placeholder="请输入标题" class="form-control" name="" value="" />
-        </div>
-       </div>
-       <div class="form-group">
-        <label class="col-sm-10"> 简介 <span class="text-ddd"> (单图文选填，多图文无需填写) </span></label>
-        <div class="col-sm-12">
-         <textarea placeholder=" 请输入简介" id="duotu_con" class="text-area"></textarea>
-        </div>
-       </div>
-       <div class="form-group">
-        <label class="col-sm-10"> 封面 <span class="text-danger"> * </span><span class="text-ddd"> (图片建议尺寸：360 x 200像素) </span></label>
-        <div class="col-sm-12 img-control">
-         <img id="duotu_img" src="__PUBLIC__/qwadmin/images/no-pic.jpg" alt="" />
-         <a href="javascript:;" id="up_img" class="up-img no-preview dz-clickable">上传图片</a>
-        </div>
-       </div>
-       <div class="form-group">
-        <label class="col-sm-10 text-thin"><input type="checkbox" name="" id="duotu_isshow" value="" /> 封面图片显示在正文中 </label>
-       </div>
-       <div class="form-group" style="">
-        <label class="col-sm-10"> 正文 </label>
-			<div class="col-sm-12">
-				<textarea name="newscontent" id="newscontent" rows="8" class="form-control">{$model['newscontent']}</textarea>
-			</div>
-       </div>
-       <div class="form-group">
-        <label class="col-sm-10"> 外链地址 <span class="text-ddd"> (微信公众号点击“阅读原文”跳转到此链接，支付宝生活号点击图文消息直接跳转到此链接) </span></label>
-        <div class="col-sm-12">
-         <input type="text" id="duotu_url" placeholder="请输外链地址(例如：http://www.bontion.com/em/，地址必须有http://)" class="form-control" name="" value="" />
-        </div>
-       </div>
-      </form>
-     </div>
-    </div>
-    <!--right  end-->
-    <div class="row text-center m-t-30">
-     <button type="button" class="btn btn-info submit">保存</button>
-     <a href="javascript:history.go(-1)" class="btn btn-info">返回</a>
-    </div>
-   </div>
-  </div> 
-
-
-</div>
-						<!-- PAGE CONTENT ENDS -->
+						<div class="col-lg-10 m-t-20" style="">
+							<div class="app-wrap p-b-30" style="">
+								<!--left  start-->
+								<div class="app-preview">
+									<form class="add">
+										<div class="app-header"
+											style="background: url('__PUBLIC__/qwadmin/images/iphone_head.png') no-repeat center center;"></div>
+										<div class="app-body">
+											<div class="app-top"
+												style="background: url('__PUBLIC__/qwadmin/images/titlebar.png') no-repeat center center;">
+												<h1>图文回复</h1>
+											</div>
+											<div class="app-content">
+												<div class="app-item app-first">
+													<div class="app-msg">
+														<h4 class="app-msg-title view_title">标题</h4>
+														<div class="app-msg-pic">
+															<p class="first_p">封面图片</p>
+															<img id="view_img" class="none view_img" src="" alt="" />
+														</div>
+													</div>
+													<div class="app-operation">
+														<a href="javascript:;" class="app-edit"><i
+															class="fa fa-edit"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+								<!--left  end-->
+								<!--right  start-->
+								<div class="app-sidebar" style="">
+									<div class="arrow"></div>
+									<div class="app-edit-wrap" style="">
+										<form action="{:U('updatenews')}" id="form" method="POST" class="form-horizontal" style="">
+										<input type="hidden" name="newspicture" id="newspicture"/>
+											<div class="form-group">
+												<label class="col-sm-10"> 标题 <span
+													class="text-danger"> * </span></label>
+												<div class="col-sm-12">
+													<input type="text" id="newstitle" name="newstitle" placeholder="请输入标题"
+														class="form-control" />
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-10"> 简介 <span class="text-ddd">
+														(单图文选填，多图文无需填写) </span></label>
+												<div class="col-sm-12">
+													<textarea placeholder=" 请输入简介" id="newssummary" name="newssummary"
+														class="text-area"></textarea>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-10"> 封面 <span
+													class="text-danger"> * </span><span class="text-ddd">
+														(图片建议尺寸：360 x 200像素) </span></label>
+												<div class="col-sm-12 img-control">
+													<img id="duotu_img"
+														src="__PUBLIC__/qwadmin/images/no-pic.jpg" alt="" />
+													<div class="form-group">
+														<div class="col-sm-6">
+															<div id="uploader-demo">
+																<!--用来存放item-->
+																<div id="thelist" class="uploader-list"></div>
+																<div>
+																	<div id="filePicker">选择图片</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="form-group" style="">
+												<label class="col-sm-10"> 正文 </label>
+												<div class="col-sm-12">
+													<textarea name="newscontent" id="newscontent" rows="8"
+														class="form-control">{$model['newscontent']}</textarea>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-10"> 外链地址 <span
+													class="text-ddd">
+														(微信公众号点击“阅读原文”跳转到此链接，支付宝生活号点击图文消息直接跳转到此链接) </span></label>
+												<div class="col-sm-12">
+													<input type="text" id="newsouturl"
+														placeholder="请输外链地址(例如：http://www.bontion.com/em/，地址必须有http://)"
+														class="form-control" name="newsouturl" value="" />
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+								<!--right  end-->
+								<div class="row text-center m-t-30">
+									<button type="button" class="btn btn-info submit">保存</button>
+									<a href="javascript:history.go(-1)" class="btn btn-info">返回</a>
+								</div>
+							</div>
+						</div>
 					</div>
-					<!-- /.col -->
+					<!-- PAGE CONTENT ENDS -->
 				</div>
-				<!-- /.row -->
+				<!-- /.col -->
 			</div>
+			<!-- /.row -->
 		</div>
-		<!-- /.main-content -->
-		<include file="Public/footer" />
-
-
-
-		<!-- /.main-container -->
-		<include file="Public/footerjs" />
-  
-		<script src="__PUBLIC__/qwadmin/js/webupload/webuploader.min.js"></script>
+	</div>
+	<!-- /.main-content -->
+	<include file="Public/footer" />
+	<!-- /.main-container -->
+	<include file="Public/footerjs" />
+<script src="__PUBLIC__/qwadmin/js/webupload/webuploader.min.js"></script>
 		<script type="text/javascript">
     $(function () {
-    	if($('#hdfnoticepicture').val()!=''){
+    	$('#newstitle').keyup(function(){
+    		var newstitle=$('#newstitle').val();
+    		$('.view_title').html(newstitle);
+    	});
+    	if($('.view_img').val()!=''){
     		 var $list=$("#thelist"); 
     		 var $li = $(  
-  	               '<div class="file-item thumbnail">' +  
-  	                   '<img width="200" height="200">' +  
+  	               '<div class="">' +  
   	                   '<div class="info"></div>' +  
   	               '</div>'  
   	               ),  
   	            
   	          $img = $li.find('img');  
     		  $list.append( $li );  
-    		
-    		  $img.attr( 'src', '__ROOT__/'+$('#hdfnoticepicture').val() );  
+    		  $img.attr( 'src', '__ROOT__/'+$('.view_img').val() );  
     	}
     	/*init webuploader*/  
     	   var $list=$("#thelist");   //这几个初始化全局的百度文档上没说明，好蛋疼。  
     	   var $btn =$("#ctlBtn");   //开始上传  
-    	   var thumbnailWidth = 200;   //缩略图高度和宽度 （单位是像素），当宽高度是0~1的时候，是按照百分比计算，具体可以看api文档  
-    	   var thumbnailHeight = 200;  
     	    uploader = WebUploader.create({  
     	       // 选完文件后，是否自动上传。  
     	       auto: true,  
@@ -182,29 +187,6 @@
     	   uploader.on( 'fileQueued', function( file ) {  // webuploader事件.当选择文件后，文件被加载到文件队列中，触发该事件。等效于 uploader.onFileueued = function(file){...} ，类似js的事件定义。  
     		   var $list=$("#thelist");  
       		   $list.children().remove();
-    		   var $li = $(  
-    	               '<div id="' + file.id + '" class="file-item thumbnail">' +  
-    	                   '<img>' +  
-    	                   '<div class="info">' + file.name + '</div>' +  
-    	               '</div>'  
-    	               ),  
-    	            
-    	           $img = $li.find('img');  
-    	       // $list为容器jQuery实例  
-    	       $list.append( $li );  
-    	  
-    	       // 创建缩略图  
-    	       // 如果为非图片文件，可以不用调用此方法。  
-    	       // thumbnailWidth x thumbnailHeight 为 100 x 100  
-    	       uploader.makeThumb( file, function( error, src ) {   //webuploader方法  
-    	           if ( error ) {  
-    	               $img.replaceWith('<span>不能预览</span>');  
-    	               return;  
-    	           }  
-    	  
-    	           $img.attr( 'src', src );  
-    	       }, thumbnailWidth, thumbnailHeight );  
-    	       
       	       uploader.upload();  
     	   });  
     	   // 文件上传过程中创建进度条实时显示。  
@@ -236,7 +218,10 @@
                        title: "提示信息",
                    });
     		   }else{
-    			   $('#hdfnoticepicture').val(response.message);//保存上传文件路径
+    			   $('.first_p').hide();
+    			   $('#duotu_img').attr('src','__ROOT__'+response.message);//保存上传文件路径
+    			   $('#view_img').attr('src','__ROOT__'+response.message);//保存上传文件路径
+    			   $('#newspicture').val(response.message);
     			   uploader.removeFile(file);
     			   uploader.reset();//重置上传附件
     		   }
@@ -270,12 +255,50 @@
              }
          });
 	 $(".submit").click(function () {
-         var noticetitle = $("#noticetitle").val();//文章标题
-         var noticecontent = $("#noticecontent").val();//文章内容
-         if (noticetitle == ''||noticecontent=='') {
+         var newspicture = $("#newspicture").val();//图文图片地址
+         var newstitle = $("#newstitle").val();//图文标题
+         var newssummary = $("#newssummary").val();//图文简介
+         var newscontent = $("#newscontent").html();//图文正文
+         if (newspicture=='') {
              bootbox.dialog({
                  title: '友情提示：',
-                 message: "文章标题,文章内容不能为空。",
+                 message: "图片没有上传",
+                 buttons: {
+                     "success": {
+                         "label": "确定",
+                         "className": "btn-danger"
+                     }
+                 }
+             });
+             return;
+         }if($('#newstitle').val()==''){
+        	 bootbox.dialog({
+                 title: '友情提示：',
+                 message: "图文标题不能为空。",
+                 buttons: {
+                     "success": {
+                         "label": "确定",
+                         "className": "btn-danger"
+                     }
+                 }
+             });
+             return;
+         } if($('#newssummary').val()==''){
+        	 bootbox.dialog({
+                 title: '友情提示：',
+                 message: "图文简介不能为空。",
+                 buttons: {
+                     "success": {
+                         "label": "确定",
+                         "className": "btn-danger"
+                     }
+                 }
+             });
+             return;
+         }if($('#newscontent').val()==''){
+        	 bootbox.dialog({
+                 title: '友情提示：',
+                 message: "图文正文不能为空。",
                  buttons: {
                      "success": {
                          "label": "确定",

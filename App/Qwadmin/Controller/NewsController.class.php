@@ -101,7 +101,7 @@ class NewsController extends ComController {
 	}
 	
 	// 删除文章
-	public function deletenews() {
+	public function delete() {
 		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
 		if (! $id) {
 			$this->ajaxReturn ( array (
@@ -110,7 +110,7 @@ class NewsController extends ComController {
 			) );
 		} else {
 			$m = M ( 'em_news' );
-			$m->stauts = 0;
+			$m->status = 0;
 			$m->modifytime = date ( 'y-m-d H:i:s', time () );
 			$m->modifier = session ( 'uid' );
 			$flag = $m->where ( 'id=' . $id )->save ();

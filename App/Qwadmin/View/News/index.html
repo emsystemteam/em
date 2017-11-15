@@ -54,7 +54,7 @@
 										<td class="center">
 											<php> echo '<a class="blue edit" href="'.U('edit',array('id'=>$val['id'])).'"
 											val="'.$val['id'].'" title="修改">修改</a>';</php>
-											<php> echo '<a class="blue deletenews" href="javascript:void(0);"
+											<php> echo '<a class="blue delete" href="javascript:void(0);"
 											val="'.$val['id'].'" title="删除">删除</a>';</php>
 										</td>
 									</tr>
@@ -67,53 +67,6 @@
 					</div>
 					<!-- /.col -->
 				</div>
-				<!-- /.row -->
-				<div class="modal fade" id="theModal" tabindex="-1" role="dialog"
-					aria-labelledby="theModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal"
-									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">添加模块</h4>
-							</div>
-							<div class="modal-body" style="height: 100%">
-								<input type='hidden' id='hdfcontentid' value=''>
-								<div class="row">
-									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right"
-											for="form-field-10">模块名称：</label>
-										<div class="col-sm-6">
-											<input type="text" name="contenttitile" id="contenttitile"
-												placeholder="模块名称" class="col-xs-12 col-sm-12" value="">
-										</div>
-									</div>
-								</div>
-								<div style="height: 20px"></div>
-								<div class="row">
-									<div class="form-group">
-										<label class="col-sm-2 control-label no-padding-right"
-											for="form-field-10">模块类型：</label>
-										<div class="col-sm-6">
-											<select id="contenttype" name="contenttype"
-												class="col-xs-10 col-sm-5">
-												<volist name="contenttype" id="vo" empty="暂时无数据">
-												<option value='{$vo.dict_value}'>{$vo.dict_key}</option>
-												</volist>
-											</select>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-info submit"
-									id="savecontent" data-dismiss="modal">保存</button>
-								<button type="button" class="btn btn-default"
-									data-dismiss="modal">关闭</button>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -125,61 +78,8 @@
 	<!-- inline scripts related to this page -->
 <script type="text/javascript">
 		$(function(){
-			//保存文章
-			$('#savecontent').click(function(){
-				var id=$('#hdfcontentid').val();
-				var contenttitile=$('#contenttitile').val();
-				var contenttype=$('#contenttype').val();
-				var sendData = {
-						contenttitile :contenttitile,
-						contenttype:contenttype,
-						id:id
-					};
-				$.ajax({
-					type : "post",
-					url : "__URL__/updatecontent",
-					dataType : "json",
-					data : sendData,
-					success : function(data) {
-						if (data.status == "1") {
-							bootbox.alert({
-                                buttons: {
-                                    ok: {
-                                        label: '确定',
-                                        className: 'btn-danger'
-                                    }
-                                },
-                                message: data.message,
-                                callback: function () {
-                                    window.location.reload(true);
-                                },
-                                title: "友情提示",
-                            });
-						} 
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-					}
-				});
-			});
-			//编辑模态框
-			$('.editcontent').click(function(){
-		        var id = $(this).attr('val');
-		        var contenttitile = $(this).attr('contenttitile');
-		        var contenttype = $(this).attr('contenttype');
-		        $('#contenttitile').val(contenttitile);
-		        $('#contenttype').val(contenttype);
-		        $('#hdfcontentid').val(id);
-				$('#theModal').modal({});
-			});
-			//新增模态框
-			$('#addcontent').click(function(){
-				$('#contenttitile').val('');
-				$('#hdfcontentid').val('');
-			    $('#contenttype option:first').prop('selected','selected');
-				$('#theModal').modal({});
-			});
-			//删除文章
-			 $(".deletenews").on('click', function () {
+			//删除图文素材
+			 $(".delete").on('click', function () {
 		          var obj = $(this);
 		          var id = obj.attr('val');
 		          bootbox.confirm({
@@ -187,7 +87,7 @@
 		              message: "是否要删除该图文素材？",
 		              callback: function (result) {
 		                  if (result) {
-		                      $.get("{:U('deletecontent')}?id=" + id, function (response) {
+		                      $.get("{:U('delete')}?id=" + id, function (response) {
 		                    	  if (response.status == 1) {
 		                              bootbox.alert({
 		                                  buttons: {

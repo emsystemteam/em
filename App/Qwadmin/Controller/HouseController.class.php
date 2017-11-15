@@ -14,7 +14,11 @@ class HouseController extends ComController
 {
     public function index()
     {
-        
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
         $keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
@@ -36,15 +40,36 @@ class HouseController extends ComController
         }
 
 
+        //如果不是超级管理员，需要添加当前登录用户数据权限
+        if($uid != 1){
+        	$member = M('member')->where("uid = $uid")->find();
+        	$phone = $member['phone'];
+        	if($where != ""){
+        		$where = $where . "and hh.tel = $phone";
+        	}else{
+        		$where ="hh.tel = $phone";
+        	}
+        }
+        
         $emHouse = M('em_house');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
-        $count = $emHouse->field("{$prefix}em_house.*")
+        $model = $emHouse->field("{$prefix}em_house.*")
             ->order($order)
             ->where($where)
-            ->count();
-
-            $list = $emHouse->field("{$prefix}em_house.*,v.village_name,b.building_name,u.unit_name,m.user as user,
+            ->join("left join {$prefix}em_village v ON {$prefix}em_house.village = v.village_id")
+            ->join("left join {$prefix}em_building b ON {$prefix}em_house.building = b.building_id")
+            ->join("left join {$prefix}em_unit u ON {$prefix}em_house.unit = u.unit_id")
+            ->join("left join {$prefix}member m ON {$prefix}em_house.operator = m.uid")
+            ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_house.house_type = d1.dict_value and d1.dict_name = 'houseType'")
+            ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_house.house_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_house.house_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'");
+        if($uid != 1){
+        	$model = $model->join("left join {$prefix}em_household hh ON {$prefix}em_house.village = hh.village");
+        }
+        $count = $model->count();
+            
+        $listModel = $emHouse->field("{$prefix}em_house.*,v.village_name,b.building_name,u.unit_name,m.user as user,
 				d1.dict_key as house_type,d2.dict_key as building_structure,d3.dict_key as building_orientation")
             ->order($order)
             ->where($where)
@@ -54,10 +79,12 @@ class HouseController extends ComController
             ->join("left join {$prefix}member m ON {$prefix}em_house.operator = m.uid")
             ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_house.house_type = d1.dict_value and d1.dict_name = 'houseType'")
             ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_house.house_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
-            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_house.house_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
-            ->limit($offset . ',' . $pagesize)
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_house.house_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'");
+        if($uid != 1){
+        	$listModel= $listModel->join("left join {$prefix}em_household hh ON {$prefix}em_house.village = hh.village");
+        }
+        $list = $listModel->limit($offset . ',' . $pagesize)
             ->select();
-        trace($list);
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
         $this->assign('list', $list);
@@ -198,7 +225,7 @@ class HouseController extends ComController
         	addlog('编辑房屋信息，房屋ID：' . $houseId);
 
         }
-        $this->success('操作成功！');
+        $this->success('操作成功！','index');
     }
 
 

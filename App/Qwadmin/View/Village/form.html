@@ -68,7 +68,7 @@
                                         </volist>
                                     </select>
                                 </div>
-                                <div class="col-sm-2">
+                                <!-- <div class="col-sm-2">
                                		<select id="street" name="street" class="rcol-xs-10 col-sm-11">
                                			<option value="">--请选择--</option>
                                         <volist name="streets" id="val">
@@ -89,18 +89,27 @@
                                             >{$val.org_name}</option>
                                         </volist>
                                     </select>
-                                </div>
-                                <span class="help-inline col-xs-12 col-sm-11">
-									<span class="middle">请选择组织机构</span>
-								</span>
+                                </div> -->
+                                <div class="col-sm-2">
+									<span class="col-xs-10 col-sm-11 middle">请选择组织机构</span>
+								</div>
                             </div>
 
                             <div class="space-4"></div>
 
                             <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 街道社区 </label>
+                                <div class="col-sm-9">
+                                	<input type="text" name="STREET" id="STREET" placeholder="街道社区" class="col-xs-10 col-sm-5" value="{$em_village['street']}" />
+                            	</div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
                                 <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 物业服务公司 </label>
                                 <div class="col-sm-9">
-                                	<input type="text" name="PROPERTY_COMPANY" id="PROPERTY_COMPANY" placeholder="物业服务公司" class="col-xs-10 col-sm-5" value="{$em_village['property_company']}">
+                                	<input type="text" name="PROPERTY_COMPANY" id="PROPERTY_COMPANY" placeholder="物业服务公司" class="col-xs-10 col-sm-5" value="{$em_village['property_company']}" />
                             	</div>
                             </div>
 							

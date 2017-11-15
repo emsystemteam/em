@@ -38,6 +38,19 @@ class MobileController extends Controller
         }
     }
 
+    public function profile()
+    {
+        $id = I("get.id");
+        if (strlen($id) > 0) {
+            $model = M("Member");
+            $user = $model->where(array(
+                'openid' => $id
+            ))->find();
+            $this->assign('user', $user);
+            $this->display("profile");
+        }
+    }
+
     public function detail()
     {
         $id = I("get.id");

@@ -22,8 +22,11 @@ class WechatController extends Controller
 
     private $redirect_uri = '';
 
+    private $return_url = '';
+
     public function index()
     {
+        $this->return_url = I("get.url");
         $this->redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . U('wechat/authorize');
         $state = md5(time() + getRandNumber(10));
         redirect($this->get_authorize_url($state));
@@ -119,23 +122,27 @@ class WechatController extends Controller
             ->find();
         
         if ($check) {
-            $model = M("Member");
-            // 绑定openid
-            $data['openid'] = $openid;
-            $model->data($data)
-                ->where(array(
-                'phone' => $phone
-            ))
-                ->save();
-            // 登录
-            $user = $model->field('uid,user')
-                ->where(array(
-                'phone' => $phone
-            ))
-                ->find();
-            $uid = $user['uid'];
-            $name = $user['user'];
-            $this->login($uid, $name);
+            if (strlen($this->return_url) > 0) {
+                redirect($this->return_url . '?id=' . $openid);
+            } else {
+                $model = M("Member");
+                // 绑定openid
+                $data['openid'] = $openid;
+                $model->data($data)
+                    ->where(array(
+                    'phone' => $phone
+                ))
+                    ->save();
+                // 登录
+                $user = $model->field('uid,user')
+                    ->where(array(
+                    'phone' => $phone
+                ))
+                    ->find();
+                $uid = $user['uid'];
+                $name = $user['user'];
+                $this->login($uid, $name);
+            }
         } else {
             $this->assign('phone', $phone);
             $this->assign('smscode', $smscode);

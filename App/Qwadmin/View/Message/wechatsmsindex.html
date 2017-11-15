@@ -1,4 +1,46 @@
 <include file="Public/head" />
+<style>
+.tw-item:last-child {
+    border: 0;
+}
+.tw-item:first-child, .tw-first {
+    padding: 20px 15px;
+}
+.tw-item:last-child {
+    border-bottom: 0;
+}
+.tw-item {
+    padding: 8px 15px;
+    border-bottom: 1px solid #ddd;
+}
+.tw-item {
+    padding: 10px;
+    overflow: hidden;
+    border-bottom: 1px solid #E0E0E0;
+}
+.bgm-red {
+    background-color: #f44336!important;
+}
+.tab-content-panel {
+	min-height: 200px;
+}
+
+.tab-content-panel .tab-text-panel textarea {
+	width: 100%;
+	min-height: 200px;
+	padding: 15px;
+	border: 0;
+	outline: 0;
+}
+
+.tab-content-panel .edit-toobar {
+	padding: 0 15px;
+	line-height: 45px;
+	text-align: right;
+	border-top: 1px solid #e7e7eb;
+	color: #8d8d8d;
+}
+</style>
 <body class="no-skin">
 
 	<include file="Public/header" />
@@ -23,319 +65,150 @@
 							<!-- #section:elements.tab -->
 							<div class="tabbable">
 								<ul class="nav nav-tabs" id="myTab">
-									<li ><a  href="{:U('Message/index')}"> <i
-											class="green ace-icon fa fa-home bigger-120"></i>短信群发
+									<li class="active"><a
+										href="{:U('Message/wechatsmsindex')}"> <i
+											class="green ace-icon fa fa-home bigger-120"></i>发消息
 									</a></li>
-									<li class="active"><a  href="{:U('Message/wechatsmsindex')}">微信群发
-									</a></li>
-									<li><a  href="{:U('Sms/smsindex')}">短信模板设置
-									</a></li>
-									<li><a  href="{:U('Sms/approveindex')}">短信模板审核
-									</a></li>
-									<li><a  href="{:U('Message/smslogindex')}">短信日志
-									</a></li>
+									<li><a href="{:U('Message/wechatsmsindex')}">已发送 </a></li>
 								</ul>
 								<div class="tab-content">
-									<div id="one" class="tab-pane fade">
-									</div>
-									<div id="two" class="tab-pane fade  in active">
-									<div class="row">
-						<div class="col-xs-12">
-							<form class="form-horizontal" id="form" method="post" onsubmit="return false;"
-								action="{:U('update')}">
-
-								<!-- PAGE CONTENT BEGINS -->
-								<div class="form-group">
-									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-0"> 短信模板</label>
-									<div class="col-sm-9">
-										<select id="smstitle" name="smstitle"
-											class="col-xs-10 col-sm-5">
-											<volist name="titlelist" id="vo" empty="暂时无数据">
-											<option value='{$vo.id}'>{$vo.smstitle}</option>
-											<!-- <option value="${vo.id}">${vo.id}</option> --> </volist>
-										</select>
-									</div>
-								</div>
-
-								<div class="space-4"></div>
-								<div class="form-group">
-									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-1"> 发送内容 </label>
-									<div class="col-sm-9">
-										<select id="smsmodel" name="smsmodel"
-											class="col-xs-10 col-sm-5">
-											<option value="0">指定身份发送</option>
-											<option value="1">指定号码发送</option>
-										</select>
-									</div>
-								</div>
-								<div class="form-group" id="mobileModel" style="display: none">
-									<label class="col-sm-1 control-label no-padding-right"
-										for="form-field-10">手机号码</label>
-									<div class="col-sm-9">
-										<textarea name="phoneNumber" id="phoneNumber"
-											class="col-xs-10 col-sm-5" placeholder="请输入手机号码,多号码用逗号隔开 "
-											style="height: 200px"></textarea>
-									</div>
-								</div>
-								<div id="moreModel">
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-1"> 发送对象 </label>
-										<div class="col-sm-9 checkbox">
-											<button class="btn btn-info" id="btnOpenModal">
-												请选择小区或楼宇 <i
-													class="ace-icon fa fa-search  align-top bigger-125 icon-on-right"></i>
-											</button>
-										</div>
-									</div>
-
-									<div class="space-4"></div>
-
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2"> 住户状态</label>
-										<div class="col-sm-9">
-											<div class="auth_result">
-												<volist name="authResults" id="vo" empty="暂时无数据">
-												<input name="form-field-checkbox" type="checkbox" checked="checked"
-												value="{$vo.dict_value}" 	class="ace input-lg"> <span class="lbl">{$vo.dict_key}</span>
-											 	</volist>
+									<div id="one" class="tab-pane fade in active">
+										<div class="row">
+											<div class="col-xs-12">
+												<ul id="tabs" class="nav nav-tabs">
+													<li class="active"><a href="#home">
+															文字 </a></li>
+													<li>
+													<li class="dropdown">
+													<a href="#" id="tabsDrop1"
+														class="dropdown-toggle" data-toggle="dropdown">图文<b
+															class="caret"></b>
+													</a>
+														<ul class="dropdown-menu" role="menu"
+															aria-labelledby="tabsDrop1">
+															<li><a href="{:U('News/add')}" tabindex="-1">新建图文消息</a></li>
+															<li><a id="addnews" href="#ejb"  tabindex="-1" >从素材库选取</a></li>
+														</ul>
+													</li>
+												</ul>
+												<div id="tabsContent" class="tab-content">
+													<div class="tab-pane fade in active" id="home">
+														<div class="tab-content-panel">
+															<div class="tab-text-panel active">
+																<div class="text-edit">
+																	<textarea placeholder="请输入要发送的文字消息..." name="con"></textarea>
+																</div>
+																<div class="edit-toobar">
+																	还可以输入<span class="count">600</span>字
+																</div>
+															</div>
+															<!--<div class="tab-photo-panel"><div class="tab-cont-preview"></div></div>-->
+															<div class="tab-appmsg-panel">
+																<div class="tab-cont-preview"></div>
+															</div>
+														</div>
+													</div>
+													<div class="tab-pane fade" id="ejb">111</div>
+												</div>
+											</div>
+											<div class="col-md-offset-3 col-md-9">
+												<button class="btn btn-info submit" id="btnsend"
+													type="button">
+													<i class="icon-ok bigger-110"></i> 立即发送
+												</button>
 											</div>
 										</div>
 									</div>
-
-									<div class="space-4"></div>
-									<div class="form-group">
-										<label class="col-sm-1 control-label no-padding-right"
-											for="form-field-2"> 住户身份</label>
-										<div class="col-sm-9">
-											<div class="holdtype">
-											<volist name="holdtype" id="vo" empty="暂时无数据">
-												<input name="form-field-checkbox" type="checkbox" checked="checked"
-												value="{$vo.dict_value}" 	class="ace input-lg"> <span class="lbl">{$vo.dict_key}</span>
-											 </volist>
+									<div id="two" class="tab-pane fade"></div>
+									<div class="modal fade" id="theModal" tabindex="-1"
+										role="dialog" aria-labelledby="theModalLabel"
+										aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal"
+														aria-hidden="true">&times;</button>
+													<h4 class="modal-title" id="myModalLabel">图文素材</h4>
+												</div>
+												<div class="modal-body" style="height: 100%">
+													<input type='hidden' id='hdfcontentid' value=''>
+													<div class="row">
+														<div class="form-group">
+															<table
+																class="table table-striped table-bordered table-hover">
+																<thead>
+																	<tr>
+																		<th>图文标题</th>
+																		<th>创建时间</th>
+																		<th>选取</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	<volist name="list" id="val">
+																	<tr>
+																		<td>{$val['newstitle']}</td>
+																		<td>{$val['createtime']}</td>
+																		<td class="center"><php> echo '<a
+																			title="'.$val['newstitle'].'" 	class="blue selectnews" href="javascript:void(0);"
+																				val="'.$val['id'].'" title="选取">选取</a>';</php></td>
+																	</tr>
+																	</volist>
+																</tbody>
+															</table>
+														</div>
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default"
+														data-dismiss="modal">关闭</button>
+												</div>
 											</div>
 										</div>
 									</div>
-									<div class="space-4"></div>
-								</div>
-								<div class="col-md-offset-3 col-md-9">
-									<button class="btn btn-info submit" id="btnsend" type="button">
-										<i class="icon-ok bigger-110"></i> 立即发送
-									</button>
-								</div>
-							</form>
-						</div>
-						<!-- /.col -->
-					</div>
-									</div>
-									<div id="three" class="tab-pane fade">
-									</div>
-									<div id="four" class="tab-pane fade">
-									</div>
-									<div id="five" class="tab-pane fade">
-									</div>
 								</div>
 							</div>
-							<!-- /section:elements.tab -->
 						</div>
-						<!-- /.col -->
+						<!-- /section:elements.tab -->
 					</div>
-					<!-- /section:settings.box -->
-					
-					<!-- /.row -->
-					<!-- /.row -->
-					
+					<!-- /.col -->
 				</div>
-				<!-- 模态框（Modal） -->
-				<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
-					aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal"
-									aria-hidden="true">&times;</button>
-								<h4 class="modal-title" id="myModalLabel">选择楼宇</h4>
-							</div>
-							<div class="modal-body" style="height:100%; overflow:scroll;"><include file="Public/buildingselected" /></div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default"
-									data-dismiss="modal">关闭</button>
-							</div>
-						</div>
-						<!-- /.modal-content -->
-					</div>
-					<!-- /.page-content -->
-				</div>
+				<!-- /section:settings.box -->
 			</div>
 		</div>
-		<!-- /.main-content -->
-		<include file="Public/footer" />
+	</div>
+	<!-- /.main-content -->
+	<include file="Public/footer" />
 
 	</div>
 	<!-- /.main-container -->
 	<include file="Public/footerjs" />
 	<script type="text/javascript">
-	$('#btnsend').click(function(){
-		if($('#smstitle').val()!=null){
-			if($('#smsmodel').val()=="0"){
-				//指定身份发送	
-				//住户状态
-				var authresult=new Array();
-				var c=$('.auth_result input[type=checkbox]:checked');
-				$.each(c,function(i,v){
-					authresult.push(v.value);
-				});
-				if(authresult.length==0){
-					bootbox.dialog({
-		                title: '友情提示：',
-		                message: '请选择住户状态',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-info"
-		                    }
-		                }
-		            });
-					return;
-				}
-				//住户身份
-				var householdtype=new Array();
-				var h=$('.holdtype input[type=checkbox]:checked');
-				$.each(h,function(i,v){
-					householdtype.push(v.value);
-				});
-				if(householdtype.length==0){
-					bootbox.dialog({
-		                title: '友情提示：',
-		                message: '请选择住户身份',
-		                buttons: {
-		                    "success": {
-		                        "label": "确定",
-		                        "className": "btn-info"
-		                    }
-		                }
-		            });
-					return;
-				}
-				//微信登录记录
-				var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
-				var checkedNodes = zTreeObj.getCheckedNodes(); 
-				 if(checkedNodes.length==0){
-					 bootbox.dialog({
-			                title: '友情提示：',
-			                message: '请选择楼宇',
-			                buttons: {
-			                    "success": {
-			                        "label": "确定",
-			                        "className": "btn-info"
-			                    }
-			                }
-			            });
-					 return;
-				 }
-					var totalselect = new Array();//选中多少楼宇
-					for(var i = 0;i < checkedNodes.length; i++) {
-						var first=checkedNodes[i].id.substr(0,1);
-						if(first!="p"){
-							totalselect.push(checkedNodes[i].id);
-						}
-					} 
-				//立即发送
-				 var sendData={smsmodelid:$('#smstitle').val(),totalselect:totalselect,authresult:authresult,householdtype:householdtype};				
-				 $.ajax({
-					 type : "post",
-					 url: "__URL__/sendWechatSms",
-					 dataType : "json",
-					 data:sendData,
-					 success : function(data) {
-						 bootbox.alert({
-                             buttons: {
-                                 ok: {
-                                     label: '确定',
-                                     className: 'btn-myStyle'
-                                 }
-                             },
-                             message: data.message,
-                             title: "提示信息",
-                         });
-					 },
-					 error : function(XMLHttpRequest, textStatus, errorThrown) {
-					 }
-					 });  
-				
-			}else{
-				if($('#phoneNumber').val()==""){
-					 bootbox.dialog({
-			                title: '友情提示：',
-			                message: '请填写手机号',
-			                buttons: {
-			                    "success": {
-			                        "label": "确定",
-			                        "className": "btn-danger"
-			                    }
-			                }
-			            });
-					return false;
-				}
-				var sendData={smsmodelid:$('#smstitle').val(),phonenumbers:$('#phoneNumber').val()};				
-				 $.ajax({
-					 type : "post",
-					 url: "__URL__/sendWechatSmsByPhoneNumber",
-					 dataType : "json",
-					 data:sendData,
-					 success : function(data) {
-							bootbox.alert({
-                                buttons: {
-                                    ok: {
-                                        label: '确定',
-                                        className: 'btn-myStyle'
-                                    }
-                                },
-                                message: data.message,
-                                title: "提示信息",
-                            });
-					 },
-					 error : function(XMLHttpRequest, textStatus, errorThrown) {
-					 }
-					 });  
-			}
-		}else{
-			bootbox.dialog({
-                title: '友情提示：',
-                message: "请选择短信模板",
-                buttons: {
-                    "success": {
-                        "label": "确定",
-                        "className": "btn-info"
-                    }
-                }
-            });
-		}
-	
-	});
-	
-	//打开模态框
-	$('#btnOpenModal').click(function(){
-		$('#myModal').modal({});
-	});
-		$(function() {
-			bindtreeview();
-			//发送内容选中改变后
-			$('#smsmodel').change(function() {
-				bindtreeview();
-				if ($('#smsmodel').val() == "0") {
-					$('#moreModel').show();
-					$('#mobileModel').hide();
-				} else {
-					$('#moreModel').hide();
-					$('#mobileModel').show();
-				}
-			});
-
+	$(function(){
+		$('#tabbable ul li').click(function(){
+			var number=$(this).index();//知道选择了那个标签
 		});
+		//鼠标经过时切换tabs
+	    $("#tabs a").click(function(e){  
+	    	 //e.preventDefault();//阻止a链接的跳转行为  
+	    	 var num = $(this).index();
+	    	 $(this).tab('show')
+        });
+        //弹出选择
+	$('#addnews').click(function(){
+		$('#theModal').modal({});
+	});
+		//选择图文
+		$('.selectnews').click(function(){
+			var id= $(this).attr('val');
+			var title= $(this).attr('title');
+			$('#ejb').html('');
+			var itemhtml="<div class='tw-item'><span class='label bgm-red'>图文</span><a href='javascript:;' class='tw-link'>"+title+"</a></div>";
+			$('#ejb').html(itemhtml);
+			var tabs=$("#tabs");
+			debugger;
+			$('#theModal').modal('hide');
+		});
+	});
 	</script>
 </body>
 </html>

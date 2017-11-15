@@ -28,13 +28,10 @@ class MessageController extends ComController {
 	
 	// 微信模板管理
 	public function wechatsmsindex() {
-		$m = M ( 'em_smsmodel' );
-		$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"householdStatus"' )->order ( 'CREATE_TIME desc' )->select ();
-		$authResult = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"authResult"' )->order ( 'CREATE_TIME desc' )->select ();
-		$list = $m->where ( 'smstype=2 and status=1 and isapprove=1' )->order ( 'createtime desc' )->select ();
-		$this->assign ( 'titlelist', $list );
-		$this->assign ( 'holdtype', $holdtype );
-		$this->assign ( 'authResults', $authResult );
+		//图文模板
+		$m = M ( 'em_news' );
+		$list = $m->where ( 'status=1' )->order ( 'createtime desc' )->select ();
+		$this->assign ( 'list', $list );
 		$this->display ();
 	}
 	// 短信模板管理

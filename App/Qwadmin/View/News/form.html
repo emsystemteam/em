@@ -42,7 +42,11 @@
 											<div class="app-content">
 												<div class="app-item app-first">
 													<div class="app-msg">
-														<h4 class="app-msg-title view_title">标题</h4>
+														<if condition="$model['newstitle'] eq null" >
+															<h4 class="app-msg-title view_title">标题</h4>
+														<else/>
+														<h4 class="app-msg-title view_title">{$model['newstitle']}</h4>
+														</if>
 														<div class="app-msg-pic">
 														<if condition="$model['newspicture'] eq null" >
 														<p class="first_p">封面图片</p>

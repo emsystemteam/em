@@ -59,6 +59,7 @@ class WechatController extends Controller
                 }
             } else {
                 $this->assign('openid', $openid);
+                $this->assign('url', $this->return_url);
                 $this->display("authorize");
             }
         } else {
@@ -115,6 +116,7 @@ class WechatController extends Controller
     // 校验验证码
     public function check()
     {
+        $this->return_url = I("post.url");
         $phone = I("post.phone");
         $smscode = I("post.smscode");
         $openid = I("post.openid");
@@ -129,17 +131,19 @@ class WechatController extends Controller
             ->find();
         
         if ($check) {
+            $model = M("Member");
+            // 绑定openid
+            $data['openid'] = $openid;
+            $model->data($data)
+                ->where(array(
+                'phone' => $phone
+            ))
+                ->save();
             if (strlen($this->return_url) > 0) {
-                redirect($this->return_url . '?id=' . $openid);
+                redirect(U('mobile/profile', array(
+                    'id' => $openid
+                )));
             } else {
-                $model = M("Member");
-                // 绑定openid
-                $data['openid'] = $openid;
-                $model->data($data)
-                    ->where(array(
-                    'phone' => $phone
-                ))
-                    ->save();
                 // 登录
                 $user = $model->field('uid,user')
                     ->where(array(

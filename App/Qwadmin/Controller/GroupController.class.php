@@ -66,7 +66,7 @@ class GroupController extends ComController
                 }
                 $rules = implode(',', $rules);
             }
-            var_dump($rules);
+            //var_dump($rules);
             $data['rules'] = $rules;
             if ($id) {
                 $group = M('auth_group')->where('id=' . $id)->data($data)->save();

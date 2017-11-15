@@ -100,7 +100,7 @@ class NewsController extends ComController {
 		}
 	}
 	
-	// 删除文章
+	// 删除图文素材
 	public function delete() {
 		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
 		if (! $id) {

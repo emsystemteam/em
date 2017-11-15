@@ -24,4 +24,34 @@ class MobileController extends Controller
         $this->assign("list", $list);
         $this->display("home");
     }
+
+    public function notice()
+    {
+        $id = I("get.id");
+        if (strlen($id) > 0) {
+            $model = M("em_notice");
+            $list = $model->where("contentid={$id}")
+                ->order("createtime desc")
+                ->select();
+            $this->assign("list", $list);
+            $this->display("notices");
+        }
+    }
+
+    public function detail()
+    {
+        $id = I("get.id");
+        if (strlen($id) > 0) {
+            $model = M("em_notice");
+            $notice = $model->where(array(
+                'id' => $id
+            ))->find();
+            if ($notice) {
+                $this->assign("noticetitle", $notice['noticetitle']);
+                $this->assign("noticepicture", $notice['noticepicture']);
+                $this->assign("noticecontent", $notice['noticecontent']);
+            }
+            $this->display("details");
+        }
+    }
 }

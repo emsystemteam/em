@@ -14,6 +14,10 @@ class VillageController extends ComController
 {
     public function index()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
         
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
@@ -42,25 +46,43 @@ class VillageController extends ComController
         $emVillage = M('em_village');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
-        $count = $emVillage->field("{$prefix}em_village.*")
-            ->order($order)
-            ->where($where)
-            ->count();
-
-        $list = $emVillage->field("{$prefix}em_village.*,s1.org_name as province,s2.org_name as city,s3.org_name as county,s4.org_name as street,s5.org_name as committee")
+        //如果不是超级管理员，需要添加当前登录用户数据权限
+        if($uid != 1){
+        	$member = M('member')->where("uid = $uid")->find();
+        	$phone = $member['phone'];
+        	if($where != ""){
+	        	$where = $where . "and hh.tel = $phone";
+        	}else{
+        		$where ="hh.tel = $phone";
+        	}
+        }
+        
+        $model = $emVillage->field("{$prefix}em_village.*")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_sys_org s1 ON {$prefix}em_village.province = s1.org_id")
             ->join("left join {$prefix}em_sys_org s2 ON {$prefix}em_village.city = s2.org_id")
-            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id")
-            ->join("left join {$prefix}em_sys_org s4 ON {$prefix}em_village.street = s4.org_id")
-            ->join("left join {$prefix}em_sys_org s5 ON {$prefix}em_village.neigh_committee = s5.org_id")
-            ->limit($offset . ',' . $pagesize)
+            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id");
+        if($uid != 1){
+            $model = $model->join("left join {$prefix}em_household hh ON {$prefix}em_village.village_id = hh.village");
+        }
+        $count = $model->count();
+
+        $listModel = $emVillage->field("{$prefix}em_village.*,s1.org_name as province,s2.org_name as city,s3.org_name as county")
+            ->order($order)
+            ->where($where)
+            ->join("left join {$prefix}em_sys_org s1 ON {$prefix}em_village.province = s1.org_id")
+            ->join("left join {$prefix}em_sys_org s2 ON {$prefix}em_village.city = s2.org_id")
+            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id");
+        if($uid != 1){
+        	$listModel= $listModel->join("left join {$prefix}em_household hh ON {$prefix}em_village.village_id = hh.village");
+        }
+            /* ->join("left join {$prefix}em_sys_org s4 ON {$prefix}em_village.street = s4.org_id")
+            ->join("left join {$prefix}em_sys_org s5 ON {$prefix}em_village.neigh_committee = s5.org_id") */
+        $list = $listModel->limit($offset . ',' . $pagesize)
             ->select();
-//         var_dump($list);
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
-//         trace($list);
         $this->assign('list', $list);
         $this->assign('page', $page);
         $this->display();
@@ -117,8 +139,8 @@ class VillageController extends ComController
 			$citys = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(2,$em_village['province']))->select();
 			$countys = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(3,$em_village['city']))->select();
 			trace($citys);
-			$streets = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(4,$em_village['county']))->select();
-			$committees = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(5,$em_village['street']))->select();
+			/* $streets = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(4,$em_village['county']))->select();
+			$committees = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(5,$em_village['street']))->select(); */
         } else {
             $this->error('参数错误！');
         }
@@ -126,8 +148,8 @@ class VillageController extends ComController
         $this->assign('provinces', $provinces);
         $this->assign('citys', $citys);
         $this->assign('countys', $countys);
-        $this->assign('streets', $streets);
-        $this->assign('committees', $committees);
+        /* $this->assign('streets', $streets);
+        $this->assign('committees', $committees); */
         $this->display('form');
     }
 
@@ -146,7 +168,8 @@ class VillageController extends ComController
     		$this->error('小区名称不能为空！');
     	}
     	
-    	$data['PROPERTY_COMPANY']= isset($_POST['PROPERTY_COMPANY']) ? trim($_POST['PROPERTY_COMPANY']) : false;
+    	$data['STREET']= isset($_POST['STREET']) ? trim($_POST['STREET']) : '';
+    	$data['PROPERTY_COMPANY']= isset($_POST['PROPERTY_COMPANY']) ? trim($_POST['PROPERTY_COMPANY']) : '';
         $logo = I('post.VILLAGE_LOGO', '', 'strip_tags');
         $data['VILLAGE_LOGO'] = $logo? $logo: '';
         $data['PROPERTY_CUSTOMER_TEL'] = isset($_POST['PROPERTY_CUSTOMER_TEL']) ? trim($_POST['PROPERTY_CUSTOMER_TEL']) : '';
@@ -179,17 +202,17 @@ class VillageController extends ComController
         }else{
         	$data['COUNTY'] = $county;
         }
-        if(!isset($_POST['street']) || $_POST['street'] == ''){
+       /*  if(!isset($_POST['street']) || $_POST['street'] == ''){
         	$data['STREET'] = null;
         }else{
         	$data['STREET'] = trim($_POST['street']);
-        }
-        
+        } */
+        /* 
         if(!isset($_POST['committee'])|| $_POST['committee'] == ''){
         	$data['NEIGH_COMMITTEE']= null;
         }else{
         	$data['NEIGH_COMMITTEE'] = trim($_POST['committee']);
-        }
+        } */
         
         $timenow=date('Y-m-d H:i:s',time());
         if (!$villageId) {
@@ -203,7 +226,7 @@ class VillageController extends ComController
             addlog('编辑小区信息，小区ID：' . $villageId);
 
         }
-        $this->success('操作成功！');
+        $this->success('操作成功！','index');
     }
 
 
@@ -252,7 +275,7 @@ class VillageController extends ComController
     			array('city','市'),
     			array('county','县(区)'),
     			array('street','街道（社区）'),
-    			array('neigh_committee','社居委'),
+    			/* array('neigh_committee','社居委'), */
     			array('property_company','物业服务公司'),
     			array('property_customer_tel','物业客服电话'),
     			array('property_charge_person','物业负责人'),
@@ -273,12 +296,12 @@ class VillageController extends ComController
     	$list = $emVillage->field("village_id,village_name,property_company,property_customer_tel,property_charge_person,property_charge_person_tel,
 			owners_committee_contacts,owners_committee_tel,village_contacts,village_contacts_tel,{$prefix}em_village.create_time,{$prefix}em_village.modify_time,
 			b.user as operator,s1.org_name as province,
-			s2.org_name as city,s3.org_name as county,s4.org_name as street,s5.org_name as neigh_committee")
+			s2.org_name as city,s3.org_name as county")
     	->join("left join {$prefix}em_sys_org s1 ON {$prefix}em_village.province = s1.org_id")
     	->join("left join {$prefix}em_sys_org s2 ON {$prefix}em_village.city = s2.org_id")
     	->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id")
-    	->join("left join {$prefix}em_sys_org s4 ON {$prefix}em_village.street = s4.org_id")
-    	->join("left join {$prefix}em_sys_org s5 ON {$prefix}em_village.neigh_committee = s5.org_id")
+    	/* ->join("left join {$prefix}em_sys_org s4 ON {$prefix}em_village.street = s4.org_id")
+    	->join("left join {$prefix}em_sys_org s5 ON {$prefix}em_village.neigh_committee = s5.org_id") */
     	->join("left join {$prefix}member b ON {$prefix}em_village.operator = b.uid")
     	->select();
     	
@@ -298,7 +321,7 @@ class VillageController extends ComController
     			array('city','市'),
     			array('county','县(区)'),
     			array('street','街道（社区）'),
-    			array('neigh_committee','社居委'),
+    			/* array('neigh_committee','社居委'), */
     			array('property_company','物业服务公司'),
     			array('property_customer_tel','物业客服电话'),
     			array('property_charge_person','物业负责人'),
@@ -394,25 +417,26 @@ class VillageController extends ComController
     		}
     			
     		//街道（社区）
-    		$street = trim($villageData[4]);
+    		/* $street = trim($villageData[4]);
     		if(!empty($street)){
     			$data['STREET'] = $emSysOrgMap[$street]['org_id'];
-    		}
+    		} */
     			
     		//社居委
-    		$committee = trim($villageData[5]);
+    		/* $committee = trim($villageData[5]);
     		if(!empty($committee)){
     			$data['NEIGH_COMMITTEE'] = $emSysOrgMap[$committee]['org_id'];
-    		}
-    			
-    		$data['PROPERTY_COMPANY'] = trim($villageData[6]);
-    		$data['PROPERTY_CUSTOMER_TEL'] = trim($villageData[7]);
-    		$data['PROPERTY_CHARGE_PERSON'] = trim($villageData[8]);
-    		$data['PROPERTY_CHARGE_PERSON_TEL'] = trim($villageData[9]);
-    		$data['OWNERS_COMMITTEE_CONTACTS'] = trim($villageData[10]);
-    		$data['OWNERS_COMMITTEE_TEL'] = trim($villageData[11]);
-    		$data['VILLAGE_CONTACTS'] = trim($villageData[12]);
-    		$data['VILLAGE_CONTACTS_TEL'] = trim($villageData[13]);
+    		} */
+    		
+    		$data['STREET'] = trim($villageData[4]);
+    		$data['PROPERTY_COMPANY'] = trim($villageData[5]);
+    		$data['PROPERTY_CUSTOMER_TEL'] = trim($villageData[6]);
+    		$data['PROPERTY_CHARGE_PERSON'] = trim($villageData[7]);
+    		$data['PROPERTY_CHARGE_PERSON_TEL'] = trim($villageData[8]);
+    		$data['OWNERS_COMMITTEE_CONTACTS'] = trim($villageData[9]);
+    		$data['OWNERS_COMMITTEE_TEL'] = trim($villageData[10]);
+    		$data['VILLAGE_CONTACTS'] = trim($villageData[11]);
+    		$data['VILLAGE_CONTACTS_TEL'] = trim($villageData[12]);
     		
     		$data['OPERATOR'] = session('uid');
     		

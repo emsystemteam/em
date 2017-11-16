@@ -22,9 +22,12 @@ class WechatController extends Controller
 
     private $redirect_uri = '';
 
+    private $return_url = '';
+
     public function index()
     {
-        $this->redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . U('wechat/authorize');
+        $this->return_url = I("get.url");
+        $this->redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . U('wechat/authorize') . '?url=' . $this->return_url;
         $state = md5(time() + getRandNumber(10));
         redirect($this->get_authorize_url($state));
         // redirect($this->redirect_uri . "?code=1231321&state={$state}");
@@ -32,6 +35,7 @@ class WechatController extends Controller
 
     public function authorize()
     {
+        $this->return_url = I("get.url");
         $code = I("get.code");
         $state = I("get.state");
         $openid = $this->get_openid($code); // 获取openid
@@ -44,11 +48,18 @@ class WechatController extends Controller
                 ->find();
             
             if ($user) {
-                $uid = $user['uid'];
-                $name = $user['user'];
-                $this->login($uid, $name);
+                if (strlen($this->return_url) > 0) {
+                    redirect(U('mobile/profile', array(
+                        'id' => $openid
+                    )));
+                } else {
+                    $uid = $user['uid'];
+                    $name = $user['user'];
+                    $this->login($uid, $name);
+                }
             } else {
                 $this->assign('openid', $openid);
+                $this->assign('url', $this->return_url);
                 $this->display("authorize");
             }
         } else {
@@ -105,6 +116,7 @@ class WechatController extends Controller
     // 校验验证码
     public function check()
     {
+        $this->return_url = I("post.url");
         $phone = I("post.phone");
         $smscode = I("post.smscode");
         $openid = I("post.openid");
@@ -127,15 +139,21 @@ class WechatController extends Controller
                 'phone' => $phone
             ))
                 ->save();
-            // 登录
-            $user = $model->field('uid,user')
-                ->where(array(
-                'phone' => $phone
-            ))
-                ->find();
-            $uid = $user['uid'];
-            $name = $user['user'];
-            $this->login($uid, $name);
+            if (strlen($this->return_url) > 0) {
+                redirect(U('mobile/profile', array(
+                    'id' => $openid
+                )));
+            } else {
+                // 登录
+                $user = $model->field('uid,user')
+                    ->where(array(
+                    'phone' => $phone
+                ))
+                    ->find();
+                $uid = $user['uid'];
+                $name = $user['user'];
+                $this->login($uid, $name);
+            }
         } else {
             $this->assign('phone', $phone);
             $this->assign('smscode', $smscode);

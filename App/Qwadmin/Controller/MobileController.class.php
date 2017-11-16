@@ -30,11 +30,27 @@ class MobileController extends Controller
         $id = I("get.id");
         if (strlen($id) > 0) {
             $model = M("em_notice");
-            $list = $model->where("contentid={$id}")
+            $list = $model->where(array(
+                "contentid" => $id,
+                "stauts" => 1
+            ))
                 ->order("createtime desc")
                 ->select();
             $this->assign("list", $list);
             $this->display("notices");
+        }
+    }
+
+    public function profile()
+    {
+        $id = I("get.id");
+        if (strlen($id) > 0) {
+            $model = M("Member");
+            $user = $model->where(array(
+                'openid' => $id
+            ))->find();
+            $this->assign('user', $user);
+            $this->display("profile");
         }
     }
 

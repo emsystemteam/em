@@ -14,6 +14,10 @@ class BuildingController extends ComController
 {
     public function index()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
         
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
@@ -38,26 +42,47 @@ class BuildingController extends ComController
             }
         }
 
+        
+        //如果不是超级管理员，需要添加当前登录用户数据权限
+        if($uid != 1){
+        	$member = M('member')->where("uid = $uid")->find();
+        	$phone = $member['phone'];
+        	if($where != ""){
+        		$where = $where . "and hh.tel = $phone";
+        	}else{
+        		$where ="hh.tel = $phone";
+        	}
+        }
 
         $emBuilding = M('em_building');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
-        $count = $emBuilding->field("{$prefix}em_building.*")
-            ->order($order)
-            ->where($where)
-            ->count();
-
-            $list = $emBuilding->field("{$prefix}em_building.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
+        $model = $emBuilding->field("{$prefix}em_building.*")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
             ->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
             ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_building.building_type = d1.dict_value and d1.dict_name = 'buildingType'")
             ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
-            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
-            ->limit($offset . ',' . $pagesize)
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'");
+        if($uid != 1){
+        	$model = $model->join("left join {$prefix}em_household hh ON {$prefix}em_building.village = hh.village");
+        }
+        $count = $model->count();
+
+        $listModel = $emBuilding->field("{$prefix}em_building.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
+            ->order($order)
+            ->where($where)
+            ->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
+            ->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
+            ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_building.building_type = d1.dict_value and d1.dict_name = 'buildingType'")
+            ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'");
+        if($uid != 1){
+        	$listModel= $listModel->join("left join {$prefix}em_household hh ON {$prefix}em_building.village = hh.village");
+        }
+        $list = $listModel->limit($offset . ',' . $pagesize)
             ->select();
-//         var_dump($list);
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
         $this->assign('list', $list);
@@ -183,7 +208,7 @@ class BuildingController extends ComController
         	M('em_building')->data($data)->where("building_id=$buildingId")->save();
         	addlog('编辑楼宇信息，楼宇ID：' . $buildingId);
         }
-        $this->success('操作成功！');
+        $this->success('操作成功！','index');
     }
 
 

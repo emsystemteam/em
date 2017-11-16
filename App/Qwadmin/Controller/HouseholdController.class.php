@@ -14,6 +14,22 @@ class HouseholdController extends ComController
 {
     public function index()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$member = M('member')->where("uid = $uid")->find();
+    		$phone = $member['phone'];
+    		$where = "tel = $phone";
+    		$emHousehold = M('em_household')->where($where)->find();
+    		$village = $emHousehold['village'];
+    		if(!$village){
+    			$this->error('您不属于任何小区，没有住户管理权限！');
+    		}
+    	}
         
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
@@ -40,6 +56,11 @@ class HouseholdController extends ComController
         		$where = "and {$prefix}em_household.nickname LIKE '%$keyword%'";
         	}
         }
+        
+        if($village){
+        	$where = "and {$prefix}em_household.village = $village";
+        }
+        
         $whereMovedIn = "{$prefix}em_household.auth_result = 1 ";
         $whereTapeAudit =  "{$prefix}em_household.auth_result = 2 ";
         $whereNotPass = "{$prefix}em_household.auth_result = 3 ";
@@ -336,7 +357,7 @@ class HouseholdController extends ComController
         	}
         	
         }
-        $this->success('操作成功！');
+        $this->success('操作成功！','index');
     }
 
     /**

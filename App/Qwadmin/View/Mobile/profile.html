@@ -10,89 +10,41 @@
 </style>
 <div class="main-container">
     <div class="main-content">
-      <div class="page-content">
+      
+      <div class="page-content" style="background-color:#793822;padding:30px;">
+      
+      	<img class="nav-user-photo" src="<if condition=" $user.head eq '' ">__PUBLIC__/qwadmin/avatars/avatar2.png
+            <else/> {$user.head} </if>" alt="{$user.user}" />
+           <strong style="font-size:25px;color:white;margin-left:15px;">{$user.user}</strong>
+      </div>
+      
+      <div class="page-content" style="background-color:#dddddd;">
         <div class="row">
-            <div class="col-sm-10 col-sm-offset-1">
-                <div class="login-container">
-                    <div class="space-6"></div>
-
-                    <div class="position-relative">
-                        <div id="login-box" class="login-box visible widget-box no-border">
-                            <div class="widget-body">
-                                <div class="widget-main">
-                                
-								              <img class="nav-user-photo" src="<if condition=" $user.head eq ''
-                            ">__PUBLIC__/qwadmin/avatars/avatar2.png
-                            <else/>
-                            {$user.head}</if>" alt="{$user.user}" />
-							              
-                                    <h4 class="header blue lighter bigger">
-                                          
-                                    </h4>
-
-                                    <div class="space-12"></div>
-
-                                    <form action="" method="post">
-                                        <fieldset>
-                                        
-                                           
-							              
-                                            <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="text" class="form-control" name="user"
-                                                                   placeholder="用户名"/>
-															<i class="ace-icon fa fa-user"></i>
-														</span>
-                                            </label>
-                                            
-                                            <div class="space-12"></div>
-                                            
-                                            <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" name="password"
-                                                                   placeholder="密码"/>
-															<i class="ace-icon fa fa-lock"></i>
-														</span>
-                                            </label>
-                                            
-                                            <div class="space-12"></div>
-                                            
-                                            <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" name="password"
-                                                                   placeholder="邮箱"/>
-															<i class="ace-icon fa fa-envelope"></i>
-														</span>
-                                            </label>
-                                            
-                                            <div class="space-12"></div>
-                                            
-                                            <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" class="form-control" name="password"
-                                                                   placeholder="地址"/>
-															<i class="ace-icon fa fa-bank"></i>
-														</span>
-                                            </label>
-                                            
-                                            <div class="space-12"></div>
-                                            
-			                                <button class="btn btn-info col-xs-12" type="submit">
-			                                    <i class="ce-icon fa fa-save"></i>
-			                                    保存
-			                                </button>
-
-                                        </fieldset>
-                                    </form>
-                                </div><!-- /.widget-main -->
-                            </div><!-- /.widget-body -->
-                        </div><!-- /.login-box -->
-                    </div><!-- /.position-relative -->
-
-                </div>
-            </div><!-- /.col -->
+			<div class="form-group">
+			     <div class="col-sm-9">
+			         <span class="help-inline col-xs-12 col-sm-7">
+					 	<span>手机</span>
+					 	<span>{$user.phone}</span>
+					</span>
+			    </div>
+			</div>
         </div><!-- /.row -->
-        </div>
+       </div>
+       
+       <div class="page-content" style="background-color:#dddddd;margin-top:3px;">
+        <div class="row">
+			<div class="form-group">
+			     <div class="col-sm-9">
+			         <span class="help-inline col-xs-12 col-sm-7">
+					 	<span>手机</span>
+					 	<span>{$user.phone}</span>
+					</span>
+			    </div>
+			</div>
+        </div><!-- /.row -->
+       </div>
+        
+        
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->
 
@@ -104,6 +56,7 @@
 		    <p>首页</p>
 		    </a>
 		  </div>
+
 		  <div class="btn-group" role="group">
 		    <a type="button" class="btn btn-danger" href="{:U('wechat/index?url=profile')}">
 		    <i class="ace-icon fa fa-user fa-2x white"></i>

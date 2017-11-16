@@ -70,8 +70,10 @@
 											<tr>
 												<td>{$val['noticetitle']}</td>
 												<td>{$val['createtime']}</td>
-												<td><php>echo '<a class="linkShowModal" href="javascript:void(0);" val="'.$val['id'].'">查看小区</a>';</php></td>
+												<td>
+												<php>echo '<a class="linkShowModal" href="javascript:void(0);" val="'.$val['id'].'">查看小区</a>';</php></td>
 												<td class="center">
+												<php>echo '<a class="sendmsg" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-send"></i>发送微信</a>';</php>
 												 <php>echo '<a class="linkOpenModal" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-plus"></i>关联小区</a>';</php>
 												<a href="{:U('editnotice',array('contentid'=>$model['id'],'id'=>$val['id']))}"><i class="fa fa-edit"></i>编辑</a>
 												 <php>echo '<a class="deletenotice" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-trash"></i>删除</a>';</php>
@@ -199,6 +201,92 @@
 	              }
 	          });
 	      });
+	});
+	$('.sendmsg').click(function(){
+		var noticeid=$(this).attr('val');
+		var sendData = {
+				noticeid :noticeid
+			};
+		bootbox.confirm({
+            title: "系统提示",
+            message: "是否要发送？",
+            callback: function (result) {
+            	if (result) {
+        		$.ajax({
+        			type : "post",
+        			url : "__URL__/getvillagetonoticebyid",
+        			dataType : "json",
+        			data : sendData,
+        			success : function(data) {
+        				if (data.status == "1") {
+        					if(data.message.length>0){
+        						var totalselect=new Array();
+        						for(var i=0;i<data.message.length;i++){
+        							totalselect.push(data.message[i].villageid);//选中楼宇id
+        						}
+        						var sendData = {
+        								noticeid :noticeid,
+        								totalselect:totalselect
+        							};
+        						//指定楼宇群发微信消息
+        						$.ajax({
+        							type : "post",
+        							url : "__URL__/sendWechatSms",
+        							dataType : "json",
+        							data : sendData,
+        							success : function(data) {
+        									bootbox.dialog({
+        										title : '友情提示：',
+        										message : data.message,
+        										buttons : {
+        											"success" : {
+        												"label" : "确定",
+        												"className" : "btn-danger"
+        											}
+        										}
+        									});
+        							},
+        							error : function(XMLHttpRequest, textStatus, errorThrown) {
+        							}
+        						});
+        					}else{
+        						bootbox.alert({
+                                    buttons: {
+                                        ok: {
+                                            label: '确定',
+                                            className: 'btn-myStyle'
+                                        }
+                                    },
+                                    message:  '没有关联楼宇',
+                                    title: "提示信息",
+                                });
+        					}
+        				} else{
+        					bootbox.alert({
+                                buttons: {
+                                    ok: {
+                                        label: '确定',
+                                        className: 'btn-myStyle'
+                                    }
+                                },
+                                message:  data.message,
+                                title: "提示信息",
+                            });
+        				}
+        			},
+        			error : function(XMLHttpRequest, textStatus, errorThrown) {
+        			}
+        		});
+            }},
+            buttons: {
+                "cancel": {"label": "取消"},
+                "confirm": {
+                    "label": "确定",
+                    "className": "btn-danger"
+                }
+            }
+        });
+ 			
 	});
 	//打开模态框(查看小区)
 	$('.linkShowModal').click(function(){

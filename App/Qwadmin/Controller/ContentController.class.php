@@ -22,8 +22,8 @@ class ContentController extends ComController {
 		$list = $m->where ( 'status=1' )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
-		$contenttype=M('em_dictionary')->where('dict_name=' . '"contenttype"' )->select();
-		$this->assign ( 'contenttype', $contenttype);
+		$contenttype = M ( 'em_dictionary' )->where ( 'dict_name=' . '"contenttype"' )->select ();
+		$this->assign ( 'contenttype', $contenttype );
 		$this->assign ( 'list', $list );
 		$this->assign ( 'page', $page );
 		$this->display ();
@@ -39,13 +39,13 @@ class ContentController extends ComController {
 			$pagesize = 10; // 每页数量
 			$offset = $pagesize * ($p - 1); // 计算记录偏移量
 			$m = M ( 'em_notice' );
-			$condition['stauts'] = 1;
-			$condition['contentid'] = $id;
-			if(I('noticetitle')){
-				$condition['noticetitle']=I('noticetitle');
+			$condition ['stauts'] = 1;
+			$condition ['contentid'] = $id;
+			if (I ( 'noticetitle' )) {
+				$condition ['noticetitle'] = I ( 'noticetitle' );
 			}
-			$count = $m->where ($condition)->count ();
-			$list = $m->where ($condition)->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+			$count = $m->where ( $condition )->count ();
+			$list = $m->where ( $condition )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
@@ -101,6 +101,66 @@ class ContentController extends ComController {
 		}
 	}
 	
+	// 指定楼宇发送微信
+	public function sendWechatSms() {
+		$noticeid = I ( 'noticeid' ); // 文章id
+		$totalselect = I ( 'totalselect' ); // 选择楼宇
+		if ($noticeid) {
+			if ($totalselect && count ( $totalselect ) > 0) {
+				$condition = array (); // 查询条件
+				$condition ['village'] = array (
+						'in',
+						$totalselect 
+				);
+				$M = M ( 'member' );
+				$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone' )->where ( $condition )->field ( 'qw_member.*,qw_em_household.household_name' )->select ();
+				$notice = M ( 'em_notice' )->join ( 'qw_em_contentmanager on qw_em_notice.contentid=qw_em_contentmanager.id' )->where ( 'qw_em_notice.id=' . $noticeid )->field ( 'qw_em_notice.*,qw_em_contentmanager.contenttitile' )->find ();
+				// 发送模板消息
+				foreach ( $Member as $row ) {
+					$template = array (
+							'touser' => $row [openid],
+							'template_id' => 'A5_-g44qYqhuyu9wTb9aHHZta9HFgp2XbW9G20L5hsU',
+							'url' => 'http://www.bontion.com/em/Content/editnotice/contentid/' . $notice ['contentid'] . '/id/' . $notice ['id'] . '.html',
+							'topcolor' => '#7B68EE',
+							'data' => array (
+									'first' => array (
+											'value' => $notice ['contenttitile'],
+											'color' => "#743A3A" 
+									),
+									'keyword1' => array (
+											'value' => $notice ['noticetitle'],
+											'color' => '#743A3A' 
+									),
+									'keyword2' => array (
+											'value' => $row ['household_name'],
+											'color' => '#743A3A' 
+									),
+									'remark' => array (
+											'value' => '',
+											'color' => '#743A3A' 
+									) 
+							) 
+					);
+					send_wechat_template ( $template );
+					$this->ajaxReturn ( array (
+							'status' => 1,
+							'message' => '发送成功' 
+					) );
+				}
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '没有关联楼宇' 
+				) );
+			}
+		} else {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '没有选择文章' 
+			) );
+		}
+	}
+	
 	// 获取关联文章的小区列表
 	public function getvillagetonoticebyid() {
 		$noticeid = $_POST ['noticeid']; // 文章id
@@ -152,7 +212,7 @@ class ContentController extends ComController {
 			$this->error ( '参数错误！' );
 		}
 		$model = M ( 'em_contentmanager' )->where ( 'id=' . $id )->find ();
-		$this->assign ( 'contentid',$id);
+		$this->assign ( 'contentid', $id );
 		$this->display ( 'form' );
 	}
 	// 编辑文章
@@ -163,7 +223,7 @@ class ContentController extends ComController {
 		}
 		$model = M ( 'em_notice' )->where ( 'id=' . $id )->find ();
 		$this->assign ( 'model', $model );
-		$this->assign ( 'contentid',$_GET ['contentid']);
+		$this->assign ( 'contentid', $_GET ['contentid'] );
 		$this->display ( 'form' );
 	}
 	// 添加或更新文章
@@ -177,7 +237,7 @@ class ContentController extends ComController {
 			$model->modifier = session ( 'uid' );
 			$flag = $model->save ();
 			if ($flag) {
-				$this->success ( "保存成功",'detail/id/'.I('contentid'));
+				$this->success ( "保存成功", 'detail/id/' . I ( 'contentid' ) );
 				addlog ( '信息模板保存成功，ID：' . $model->id );
 			} else {
 				$this->success ( "保存失败" );
@@ -188,7 +248,7 @@ class ContentController extends ComController {
 			$model->status = 1;
 			$flag = $model->add ();
 			if ($flag) {
-				$this->success ( "创建成功" ,'detail/id/'.I('contentid'));
+				$this->success ( "创建成功", 'detail/id/' . I ( 'contentid' ) );
 				addlog ( '文章创建成功，ID：' . $model->id );
 			} else {
 				$this->error ( "创建失败" );
@@ -206,7 +266,7 @@ class ContentController extends ComController {
 			) );
 		} else {
 			$m = M ( 'em_notice' );
-			$m->stauts =0;
+			$m->stauts = 0;
 			$m->modifytime = date ( 'y-m-d H:i:s', time () );
 			$m->modifier = session ( 'uid' );
 			$flag = $m->where ( 'id=' . $id )->save ();
@@ -225,14 +285,13 @@ class ContentController extends ComController {
 		}
 	}
 	
-	
 	// 删除内容
 	public function deletecontent() {
 		$id = isset ( $_GET ['id'] ) ? intval ( $_GET ['id'] ) : false;
 		if (! $id) {
 			$this->ajaxReturn ( array (
 					'status' => 0,
-					'message' => '参数传递错误'
+					'message' => '参数传递错误' 
 			) );
 		} else {
 			$m = M ( 'em_contentmanager' );
@@ -244,19 +303,19 @@ class ContentController extends ComController {
 				addlog ( '删除成功，ID：' . $m->id );
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => '删除成功'
+						'message' => '删除成功' 
 				) );
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,
-						'message' => '删除错误'
+						'message' => '删除错误' 
 				) );
 			}
 		}
 	}
 	
-	//保存内容
-	public function updatecontent(){
+	// 保存内容
+	public function updatecontent() {
 		$model = D ( 'em_contentmanager' );
 		if (! empty ( $_POST )) {
 			$model->create (); // 收集表单数据
@@ -264,38 +323,38 @@ class ContentController extends ComController {
 		if (! empty ( $model->id )) { // 更新
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
 			$model->modifier = session ( 'uid' );
-			$model->contenttitile= I('contenttitile');
-			$model->contenttype = I('contenttype');
+			$model->contenttitile = I ( 'contenttitile' );
+			$model->contenttype = I ( 'contenttype' );
 			$flag = $model->save ();
 			if ($flag) {
 				addlog ( '内容管理保存成功，ID：' . $model->id );
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => '保存内容成功'
+						'message' => '保存内容成功' 
 				) );
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,
-						'message' => '保存内容失败'
+						'message' => '保存内容失败' 
 				) );
 			}
 		} else { // 新增
 			$model->createtime = date ( 'y-m-d H:i:s', time () );
 			$model->creater = session ( 'uid' );
 			$model->status = 1;
-			$model->contenttitile= I('contenttitile');
-			$model->contenttype = I('contenttype');
+			$model->contenttitile = I ( 'contenttitile' );
+			$model->contenttype = I ( 'contenttype' );
 			$flag = $model->add ();
 			if ($flag) {
 				addlog ( '创建内容成功，ID：' . $model->id );
 				$this->ajaxReturn ( array (
 						'status' => 1,
-						'message' => '创建内容成功'
+						'message' => '创建内容成功' 
 				) );
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,
-						'message' => '创建内容失败'
+						'message' => '创建内容失败' 
 				) );
 			}
 		}
@@ -304,20 +363,19 @@ class ContentController extends ComController {
 	/**
 	 * webuploader 上传文件
 	 */
-	public function ajax_upload(){
+	public function ajax_upload() {
 		// 根据自己的业务调整上传路径、允许的格式、文件大小
-		$resulut=ajax_upload('/Upload/image/');
-		if(count($resulut)>0){
+		$resulut = ajax_upload ( '/Upload/image/' );
+		if (count ( $resulut ) > 0) {
 			$this->ajaxReturn ( array (
 					'status' => 1,
-					'message' => $resulut
+					'message' => $resulut 
 			) );
-		}else{
+		} else {
 			$this->ajaxReturn ( array (
 					'status' => 0,
-					'message' => '附件上传失败'
+					'message' => '附件上传失败' 
 			) );
 		}
-		
 	}
 }

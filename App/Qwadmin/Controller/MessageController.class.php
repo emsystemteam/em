@@ -28,7 +28,7 @@ class MessageController extends ComController {
 	
 	// 微信模板管理
 	public function wechatsmsindex() {
-		//图文模板
+		// 图文模板
 		$m = M ( 'em_news' );
 		$list = $m->where ( 'status=1' )->order ( 'createtime desc' )->select ();
 		$this->assign ( 'list', $list );
@@ -119,91 +119,6 @@ class MessageController extends ComController {
 		}
 	}
 	
-	// 指定身份发送微信
-	public function sendWechatSms() {
-		$smsmodelid = I ( 'smsmodelid' ); // 短信模板
-		$totalselect = I ( 'totalselect' ); // 选择楼宇
-		$authresult = I ( 'authresult' ); // 住户状态
-		$householdtype = I ( 'householdtype' ); // 住户身份
-		if ($smsmodelid) {
-			if ($totalselect && count ( $totalselect ) > 0) {
-				if ($authresult && count ( $authresult ) > 0) {
-					if ($householdtype && count ( $householdtype ) > 0) {
-						$condition = array (); // 查询条件
-						$condition ['house'] = array (
-								'in',
-								$totalselect 
-						);
-						$condition ['auth_result'] = array (
-								'in',
-								$authresult 
-						);
-						$House = M ( 'em_household' );
-						$mobileArray = $House->where ( $condition )->getField ( 'tel', true );
-						if ($mobileArray [0] != null) {
-							// 查询短信模板
-							$smsmodel = M ( 'em_smsmodel' )->where ( 'id=' . $smsmodelid )->find ();
-							if ($smsmodel) {
-								// 根据号码查询openid号
-								$map ['phone'] = array (
-										'in',
-										$mobileArray 
-								);
-								$openids = M ( 'member' )->where ( $map )->getField ( 'openid', true );
-								if ($openids) {
-									if (count ( $openids ) == 1) { // 批量发送，至少2条
-										array_push ( $openids, '' );
-									}
-									$result = send_wechat_message ( $openids, $smsmodel ['smscontent'] );
-									if ($result == 0) { // 成功
-										$this->ajaxReturn ( array (
-												'status' => 1,
-												'message' => '微信发送成功' 
-										) );
-									} else {
-										$this->ajaxReturn ( array (
-												'status' => 0,
-												'message' => '微信发送失败,失败码:' . $result 
-										) );
-									}
-								} else {
-									$this->ajaxReturn ( array (
-											'status' => 0,
-											'message' => '没有任何手机号关注过公众号' 
-									) );
-								}
-							}
-						} else {
-							$this->ajaxReturn ( array (
-									'status' => 0,
-									'message' => '没有查询到楼宇中符合发送条件的住户信息' 
-							) );
-						}
-					} else {
-						$this->ajaxReturn ( array (
-								'status' => 0,
-								'message' => '没有选择住户身份' 
-						) );
-					}
-				} else {
-					$this->ajaxReturn ( array (
-							'status' => 0,
-							'message' => '没有选择住户状态' 
-					) );
-				}
-			} else {
-				$this->ajaxReturn ( array (
-						'status' => 0,
-						'message' => '没有选择楼宇' 
-				) );
-			}
-		} else {
-			$this->ajaxReturn ( array (
-					'status' => 0,
-					'message' => '没有选择短信模板' 
-			) );
-		}
-	}
 	
 	// 指定身份发送短信
 	public function sendSms() {

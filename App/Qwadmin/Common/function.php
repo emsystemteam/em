@@ -183,6 +183,42 @@ function send_wechat_custommsg($msgarray) {
 }
 
 /**
+ * 发送公众号模板消息（单条）
+ *
+ * @param openid $openid
+ * @param
+ *        	$message
+ * @param 发送消息数组 $msgarray
+ *        	1.文本： $msgarray['touser'] = $openids;
+ *      		    $msgarray ['touser'] = $row [openid];
+					$msgarray ['template_id'] = 'QHTI-PVG7XPhuGWWpi5gr7KmQcE8H-cS8W63IKCoDHw';
+					$msgarray ['url'] = 'http://www.bontion.com/em/Content/editnotice/contentid/'.$notice['contentid'].'/id/'.$notice['id'].'.html';
+					$msgarray ['data']  = array (
+							array (
+									'first'=>$notice ['noticetitle'],
+									'keyword1' => $notice ['noticetitle'],
+									'keyword2' => $notice ['noticecontent'],
+									'keyword3' => $notice ['noticecontent'],
+									'remark' => $notice ['noticecontent'],
+							) 
+					);
+ */
+function send_wechat_template($msgarray) {
+	$appid = "wx8c9d50dc3aea1225";
+	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
+	$access_token = get_access_token ( $appid, $secret );
+	if (empty ( $access_token ))
+		return - 3;
+		$url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$access_token}";
+		$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
+		$json = json_decode ( $res );
+		if (isset ( $json->errcode )) {
+			return $json->errcode;
+		}
+		return - 4;
+}
+
+/**
  * 获取访问令牌
  *
  * @param string $appid

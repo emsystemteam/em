@@ -1,15 +1,11 @@
 <include file="Public/head"/>
 <body style="margin-bottom:80px;">
 <style>
-.mobile-icon{
-    line-height:96px;
-    color:#ffffff;
-}
-.mobile-panel{
-	width:96px;
-	height:96px;
-	text-align:center;
-	margin:20px;
+.nav-user-photo{
+	width:72px;
+	height:72px;
+	border-radius: 100%;
+    border: 2px solid #FFF;
 }
 </style>
 <div class="main-container">
@@ -28,7 +24,7 @@
 								              <img class="nav-user-photo" src="<if condition=" $user.head eq ''
                             ">__PUBLIC__/qwadmin/avatars/avatar2.png
                             <else/>
-                            __ROOT__{$user.head}</if>" alt="{$user.user}" />
+                            {$user.head}</if>" alt="{$user.user}" />
 							              
                                     <h4 class="header blue lighter bigger">
                                           

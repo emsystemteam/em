@@ -120,7 +120,7 @@ class ContentController extends ComController {
 					$template = array (
 							'touser' => $row [openid],
 							'template_id' => 'A5_-g44qYqhuyu9wTb9aHHZta9HFgp2XbW9G20L5hsU',
-							'url' => 'http://www.bontion.com/em/Content/editnotice/contentid/' . $notice ['contentid'] . '/id/' . $notice ['id'] . '.html',
+							'url' => 'http://www.bontion.com/em/mobile/detail/id/' . $notice ['id'] . '.html',
 							'topcolor' => '#7B68EE',
 							'data' => array (
 									'first' => array (
@@ -141,12 +141,17 @@ class ContentController extends ComController {
 									) 
 							) 
 					);
-					send_wechat_template ( $template );
-					$this->ajaxReturn ( array (
-							'status' => 1,
-							'message' => '发送成功' 
-					) );
+					$result=send_wechat_template ( $template );
+					if($result==0){
+						addlog ( '微信发送文章成功，ID：' . $row ['household_name']);
+					}else{
+						addlog ( '微信发送文章失败，ID：' . $result);
+					}
 				}
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '发送成功'
+				) );
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,

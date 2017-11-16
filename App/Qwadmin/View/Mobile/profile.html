@@ -25,13 +25,13 @@
                             <div class="widget-body">
                                 <div class="widget-main">
                                 
-								              <div class="img-circle mobile-panel" style="background-color:#00c883;">
-								              	<i class="ace-icon fa fa-user fa-4x mobile-icon"></i>
-								              	<img src="{$user.head}" />
-								              </div> 
+								              <img class="nav-user-photo" src="<if condition=" $user.head eq ''
+                            ">__PUBLIC__/qwadmin/avatars/avatar2.png
+                            <else/>
+                            __ROOT__{$user.head}</if>" alt="{$user.user}" />
 							              
                                     <h4 class="header blue lighter bigger">
-                                         
+                                          
                                     </h4>
 
                                     <div class="space-12"></div>

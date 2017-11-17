@@ -1,36 +1,22 @@
 <include file="Public/head"/>
 <body style="margin-bottom:80px;">
+<style>
+.acticle-title {
+	font-size:25px;
+	font-weight:bold;
+	margin-top:10px;
+}
+.acticle-body {
+	margin-top:20px;
+}
+</style>
 <div class="main-container">
     <div class="main-content">
       <div class="page-content">
-        <div class="row">
-
-            <div class="col-xs-12">
-	            <div  class="form-horizontal" >
-					<div class="form-group">
-	                     <label class="col-sm-1 control-label no-padding-right" for="form-field-1">标题</label>
-	                     <div class="col-sm-9">
-	                         <input type="text" class="form-control" value="{$noticetitle}" readonly="readonly">
-	                     </div>
-	                 </div>
-	                 
-	                 <div class="form-group">
-	                     <label class="col-sm-1 control-label no-padding-right" for="form-field-1">封面</label>
-	                     <div class="col-sm-9">
-	                          <img id="duotu_img" src="__ROOT__{$noticepicture}" width="360" height="200" alt="" onerror="this.src='__PUBLIC__/qwadmin/images/no-pic.jpg'"/>
-	                     </div>
-	                 </div>
-	                 
-	                 <div class="form-group">
-	                     <label class="col-sm-1 control-label no-padding-right" for="form-field-1">内容</label>
-	                     <div class="col-sm-9">
-	                         <textarea name="newscontent" id="newscontent" rows="8" class="form-control" readonly="readonly">{$noticecontent}</textarea>
-	                     </div>
-	                 </div>
-	           </div>
-           </div>
-            
-        </div><!-- /.row -->
+          <div class="text-center acticle-title">{$noticetitle} </div>
+          <div class="text-center"><hr> </div>
+	      <div class="text-center"><img id="duotu_img" src="__ROOT__{$noticepicture}" width="360" height="200" alt="" onerror="this.src='__PUBLIC__/qwadmin/images/no-pic.jpg'"/></div>
+	      <div class="acticle-body">{$noticecontent}</div>
         </div>
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->

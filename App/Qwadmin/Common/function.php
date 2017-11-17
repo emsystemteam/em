@@ -153,7 +153,7 @@ $_msg_template = array (
 
 /**
  * 发送公众号消息（单条）
- * 
+ *
  * @param openid $openid        	
  * @param
  *        	$message
@@ -183,25 +183,125 @@ function send_wechat_custommsg($msgarray) {
 }
 
 /**
+ * 上传图文消息内的图片获取URL【订阅号与服务号认证后均可用】
+ *
+ * @param 图片上传路径 $uploadurl        	
+ * @return 微信上传图片的URL，可用于后续群发中，放置到图文消息中。
+ */
+function uploadimg($uploadurl) {
+	$appid = "wx8c9d50dc3aea1225";
+	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
+	$access_token = get_access_token ( $appid, $secret );
+	$url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$access_token}";
+	$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
+	$json = json_decode ( $res );
+	return $json->url;
+}
+
+/**
+ * 图片上传创建永久素材
+ *
+ * @param 图片路径 $filename        	
+ * @return unknown
+ */
+function addMaterial($filename) {
+	$appid = "wx8c9d50dc3aea1225";
+	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
+	$access_token = get_access_token ( $appid, $secret );
+	$curl = 'https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token='.$access_token;
+	$result = _request($curl,true,'POST',$filename);
+	/* 	if ($result){
+		$json = json_decode($result,true);
+		if (!$json || !empty($json['errcode'])) {
+		 $this->errCode = $json['errcode'];
+		 $this->errMsg = $json['errmsg'];
+		 return false;
+		 } 
+		return $json;
+	} */
+	return $result;  
+}
+function _request($curl, $https = true, $method = 'GET', $data = null) {
+	// 1.创建一个新cURL资源
+	$ch = curl_init ();
+	
+	// 2.设置URL和相应的选项
+	curl_setopt ( $ch, CURLOPT_SAFE_UPLOAD, false );
+	// 要访问的网站
+	curl_setopt ( $ch, CURLOPT_URL, $curl );
+	// 启用时会将头文件的信息作为数据流输出。
+	curl_setopt ( $ch, CURLOPT_HEADER, false );
+	// 将curl_exec()获取的信息以字符串返回，而不是直接输出。
+	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+	
+	if ($https) {
+		// FALSE 禁止 cURL 验证对等证书（peer's certificate）。
+		curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, true ); // 验证主机
+	}
+	if ($method == 'POST') {
+		// 发送 POST 请求
+		curl_setopt ( $ch, CURLOPT_POST, true );
+		// 全部数据使用HTTP协议中的 "POST" 操作来发送。
+		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data );
+	}
+	
+	// 3.抓取URL并把它传递给浏览器
+	$content = curl_exec ( $ch );
+	if ($content === false) {
+		return "网络请求出错: " . curl_error ( $ch );
+		exit ();
+	}
+	
+	// 4.关闭cURL资源，并且释放系统资源
+	curl_close ( $ch );
+	
+	return $content;
+}
+
+/**
+ * 开发人员预览图文消息接口-供测试用
+ *
+ * @param 传来的消息数组 $msgarray
+ *        	//文本
+ *        	{
+ *        	"touser":"OPENID",
+ *        	"text":{
+ *        	"content":"CONTENT"
+ *        	},
+ *        	"msgtype":"text"
+ *        	}
+ */
+function preview($msgarray) {
+	$appid = "wx8c9d50dc3aea1225";
+	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
+	$access_token = get_access_token ( $appid, $secret );
+	$url = "https://api.weixin.qq.com/cgi-bin/message/mass/preview?access_token={$access_token}";
+	$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
+	$json = json_decode ( $res );
+	return $json->errcode;
+}
+
+/**
  * 发送公众号模板消息（单条）
  *
- * @param openid $openid
+ * @param openid $openid        	
  * @param
  *        	$message
  * @param 发送消息数组 $msgarray
  *        	1.文本： $msgarray['touser'] = $openids;
- *      		    $msgarray ['touser'] = $row [openid];
-					$msgarray ['template_id'] = 'QHTI-PVG7XPhuGWWpi5gr7KmQcE8H-cS8W63IKCoDHw';
-					$msgarray ['url'] = 'http://www.bontion.com/em/Content/editnotice/contentid/'.$notice['contentid'].'/id/'.$notice['id'].'.html';
-					$msgarray ['data']  = array (
-							array (
-									'first'=>$notice ['noticetitle'],
-									'keyword1' => $notice ['noticetitle'],
-									'keyword2' => $notice ['noticecontent'],
-									'keyword3' => $notice ['noticecontent'],
-									'remark' => $notice ['noticecontent'],
-							) 
-					);
+ *        	$msgarray ['touser'] = $row [openid];
+ *        	$msgarray ['template_id'] = 'QHTI-PVG7XPhuGWWpi5gr7KmQcE8H-cS8W63IKCoDHw';
+ *        	$msgarray ['url'] = 'http://www.bontion.com/em/Content/editnotice/contentid/'.$notice['contentid'].'/id/'.$notice['id'].'.html';
+ *        	$msgarray ['data'] = array (
+ *        	array (
+ *        	'first'=>$notice ['noticetitle'],
+ *        	'keyword1' => $notice ['noticetitle'],
+ *        	'keyword2' => $notice ['noticecontent'],
+ *        	'keyword3' => $notice ['noticecontent'],
+ *        	'remark' => $notice ['noticecontent'],
+ *        	)
+ *        	);
  */
 function send_wechat_template($msgarray) {
 	$appid = "wx8c9d50dc3aea1225";
@@ -209,13 +309,13 @@ function send_wechat_template($msgarray) {
 	$access_token = get_access_token ( $appid, $secret );
 	if (empty ( $access_token ))
 		return - 3;
-		$url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$access_token}";
-		$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
-		$json = json_decode ( $res );
-		if (isset ( $json->errcode )) {
-			return $json->errcode;
-		}
-		return - 4;
+	$url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={$access_token}";
+	$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
+	$json = json_decode ( $res );
+	if (isset ( $json->errcode )) {
+		return $json->errcode;
+	}
+	return - 4;
 }
 
 /**
@@ -267,7 +367,7 @@ function http_call($url, $parameters) {
 
 /**
  * 上传文件类型控制 此方法仅限ajax上传使用
- * 
+ *
  * @param string $path
  *        	字符串 保存文件路径示例： /Upload/image/
  * @param string $format
@@ -291,12 +391,12 @@ function ajax_upload($path = 'file', $format = 'empty', $maxSize = '5242880') {
 					'png',
 					'bmp' 
 			)  /*
-			                                                      * ,
-			                                                      * 'photo' => array('jpg', 'jpeg', 'png'),
-			                                                      * 'flash' => array('swf', 'flv'),
-			                                                      * 'media' => array('swf', 'flv', 'mp3', 'wav', 'wma', 'wmv', 'mid', 'avi', 'mpg', 'asf', 'rm', 'rmvb'),
-			                                                      * 'file' => array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'htm', 'html', 'txt', 'zip', 'rar', 'gz', 'bz2','pdf')
-			                                                      */
+			   * ,
+			   * 'photo' => array('jpg', 'jpeg', 'png'),
+			   * 'flash' => array('swf', 'flv'),
+			   * 'media' => array('swf', 'flv', 'mp3', 'wav', 'wma', 'wmv', 'mid', 'avi', 'mpg', 'asf', 'rm', 'rmvb'),
+			   * 'file' => array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'htm', 'html', 'txt', 'zip', 'rar', 'gz', 'bz2','pdf')
+			   */
 	);
 	if (! empty ( $_FILES )) {
 		// 上传文件配置

@@ -187,12 +187,12 @@
     	       // 选择文件的按钮。可选。  
     	       // 内部根据当前运行是创建，可能是input元素，也可能是flash.  
     	       pick: '#filePicker',  
-    	       fileSingleSizeLimit: 5 * 1024 * 1024,    // 5 M
+    	       fileSingleSizeLimit: 1 * 1024 * 1024,    // 1 M 微信中图片仅支持jpg/png格式，大小必须在1MB以下。
     	       // 只允许选择图片文件。  
     	       accept: {  
     	           title: 'Images',  
-    	           extensions: 'gif,jpg,jpeg,bmp,png',  
-    	           mimeTypes: '.gif,.jpg,.jpeg,.bmp,.png'  
+    	           extensions: 'jpg,png',  
+    	           mimeTypes: '.jpg,.png'  
     	       },  
     	       method:'POST',  
     	   });  

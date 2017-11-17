@@ -96,7 +96,7 @@
 														<div class="tab-content-panel">
 															<div class="tab-text-panel active">
 																<div class="text-edit">
-																	<textarea placeholder="请输入要发送的文字消息..." name="con"></textarea>
+																	<textarea id="content" placeholder="请输入要发送的文字消息..." name="content"></textarea>
 																</div>
 																<div class="edit-toobar">
 																	还可以输入<span class="count">600</span>字
@@ -184,6 +184,36 @@
 	<include file="Public/footerjs" />
 	<script type="text/javascript">
 	$(function(){
+		//发送消息
+		$('#btnsend').click(function(){
+			var newsid=$('.tw-item').attr('id');
+			if(newsid!=""){
+			var sendData = {
+					id :newsid
+				};
+			$.ajax({
+				type : "post",
+				url : "__URL__/preview",
+				dataType : "json",
+				data : sendData,
+				success : function(data) {
+					debugger;
+					bootbox.dialog({
+						title : '友情提示：',
+						message : data.message,
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+			}
+		});
 		$('#tabbable ul li').click(function(){
 			var number=$(this).index();//知道选择了那个标签
 		});
@@ -202,10 +232,10 @@
 			var id= $(this).attr('val');
 			var title= $(this).attr('title');
 			$('#ejb').html('');
-			var itemhtml="<div class='tw-item'><span class='label bgm-red'>图文</span><a href='javascript:;' class='tw-link'>"+title+"</a></div>";
+			var itemhtml="<div id="+id+" class='tw-item'><span class='label bgm-red'>图文</span><a href='javascript:;' class='tw-link'>"+title+"</a></div>";
 			$('#ejb').html(itemhtml);
 			var tabs=$("#tabs");
-			debugger;
+			newsid=id;
 			$('#theModal').modal('hide');
 		});
 	});

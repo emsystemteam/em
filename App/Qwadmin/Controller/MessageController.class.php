@@ -26,6 +26,44 @@ class MessageController extends ComController {
 		$this->display ();
 	}
 	
+	// 预览图文消息
+	public function preview() {
+		$id = I ( 'id' );
+		$users=M('member')->where('openid is not null')->select();
+		foreach ($users as $row){
+			$new=M('em_news')->where('id='.$id)->find();
+			$msgarray ['touser'] = $row['openid'];
+			$msgarray ['msgtype'] = 'news';
+			$msgarray ['news'] ['articles'] = array (
+					array (
+							'title' => $new['newstitle'],
+							'description' => $new['newssummary'],
+							'picurl' => 'http://www.bontion.com/em/'. $new['newspicture'],
+							'url' => 'http://www.bontion.com/em/News/edit/id/'. $new['id'].'.html'
+					)
+					
+			);
+			
+			send_wechat_custommsg ( $msgarray );
+		}
+		
+		/*
+		 * $msgarray = array (
+		 * 'touser' => 'oCsSbxOg6qambejlyzT8SPtQ1b_s',
+		 * 'msgtype' => 'text',
+		 * 'text' => array (
+		 * 'content' => $content
+		 * )
+		 * );
+		 * $filename= '/Upload/image/2017-11-10/5a05a4f85dba5.png';
+		 * $data = array('media'=>'@'.$filename);
+		 * $result = addMaterial( $data);
+		 */
+		$this->ajaxReturn ( array (
+				'status' => 1,
+				'message' => $msgarray
+		) );
+	}
 	// 微信模板管理
 	public function wechatsmsindex() {
 		// 图文模板
@@ -118,7 +156,6 @@ class MessageController extends ComController {
 			}
 		}
 	}
-	
 	
 	// 指定身份发送短信
 	public function sendSms() {

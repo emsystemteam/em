@@ -11,6 +11,7 @@
 namespace Qwadmin\Controller;
 
 use Think\Controller;
+use Think\Model;
 
 class MobileController extends Controller
 {
@@ -49,7 +50,14 @@ class MobileController extends Controller
             $user = $model->where(array(
                 'openid' => $id
             ))->find();
+            
+            // 住户信息
+            $house = new Model();
+            $sql = "select * from qw_em_village v,qw_em_household d,qw_em_house h,qw_em_building b,qw_em_unit u where d.VILLAGE=VILLAGE_ID and HOUSE_ID=d.HOUSE and h.unit=unit_id and h.building=building_id and TEL='{$user['phone']}'";
+            $voList = $house->query($sql);
+            
             $this->assign('user', $user);
+            $this->assign('list', $voList);
             $this->display("profile");
         }
     }

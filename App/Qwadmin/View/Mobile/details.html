@@ -1,106 +1,65 @@
-<include file="Public/head" />
+<include file="Public/head"/>
+<body style="margin-bottom:80px;">
 <style>
-#editor {
-	overflow: scroll;
-	max-height: 300px
+.acticle-title {
+	font-size:25px;
+	font-weight:bold;
+	margin-top:10px;
+}
+.acticle-body {
+	margin-top:20px;
+}
+.acticle-date {
+	margin-top:10px;
+	margin-bottom:10px;
+	color: #8c8c8c;
+}
+img{
+    width:100%;
+    height:auto;
 }
 </style>
-<body style="margin-bottom: 80px;">
-	<div class="main-container">
-		<div class="main-content">
-			<div class="page-content">
-				<div class="row">
+<div class="main-container">
+    <div class="main-content">
+      <div class="page-content">
+          <div class="text-center acticle-title">{$noticetitle} </div>
+          <div class="acticle-date">{$createtime} <span style="color: #607fa6;">安徽物业在线</span></div>
+	      <div class="text-center"><img id="duotu_img" src="__ROOT__{$noticepicture}" width="360" height="200" alt="" onerror="this.src='__PUBLIC__/qwadmin/images/no-pic.jpg'"/></div>
+	      <div class="acticle-body">{$noticecontent}</div>
+        </div>
+    </div><!-- /.main-content -->
+</div><!-- /.main-container -->
 
-					<div class="col-xs-12">
-						<div class="form-horizontal">
-							<div class="form-group">
-								<label class="col-sm-1 control-label no-padding-right"
-									for="form-field-1">标题</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control" value="{$noticetitle}"
-										readonly="readonly">
-								</div>
-							</div>
 
-							     <div class="form-group">
-	                     <label class="col-sm-1 control-label no-padding-right" for="form-field-1">封面</label>
-	                     <div class="col-sm-9">
-	                          <img id="duotu_img" src="__ROOT__{$noticepicture}" width="360" height="200" alt="" onerror="this.src='__PUBLIC__/qwadmin/images/no-pic.jpg'"/>
-	                     </div>
-	                 </div>
-								<div class="form-group">
-								<label class="col-sm-1 control-label no-padding-right"
-									for="form-field-1">内容</label>
-									<div class="col-sm-4">
-										<div class="widget-box widget-color-green">
-											<div class="widget-header widget-header-small">  </div>
-											<div class="widget-body">
-												<div class="widget-main no-padding">
-												<div class="wysiwyg-editor" id="editor2">
-													<p>{$noticecontent}</p>
-												</div>
-											</div>
-										</div>
-									</div>
-									</div>
-							</div>
-						</div>
-					</div>
+<!-- basic scripts -->
 
-				</div>
-				<!-- /.row -->
-			</div>
-		</div>
-		<!-- /.main-content -->
-	</div>
-	<!-- /.main-container -->
-		<script src="__PUBLIC__/qwadmin/js/jquery.js"></script>
-		<script src="__PUBLIC__/qwadmin/js/bootstrap.js"></script>
-		<script src="__PUBLIC__/qwadmin/js/jquery.hotkeys"></script>
-		<script src="__PUBLIC__/qwadmin/js/bootstrap-wysiwyg.js"></script>
-		<script src="__PUBLIC__/qwadmin/js/ace/elements.wysiwyg.js"></script>
-		<script src="__PUBLIC__/qwadmin/js/ace/ace.js"></script>
-	<!-- inline scripts related to this page -->
-	<script type="text/javascript">
-	function unescapeHTML (a){
-		   a = "" + a;
-		    return a.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'");
-	 	}
-		jQuery(function($) {
-			$(document).on('click', '.toolbar a[data-target]', function(e) {
-				e.preventDefault();
-				var target = $(this).data('target');
-				$('.widget-box.visible').removeClass('visible');//hide others
-				$(target).addClass('visible');//show target
-			});
-			$(function(){
-				var content=unescapeHTML($('p').html());
-				$('#editor2').html(content).attrs('readonly','readonly').css({'height':'300px'}).ace_wysiwyg({
-					toolbar_place: function() {
-						return $(this).closest('.widget-box')
-						       .find('.widget-header').prepend(toolbar)
-							   .find('.wysiwyg-toolbar').addClass('inline');
-					},
-					toolbar:
-					[
-						'bold',
-						null,
-						'strikethrough',
-						null,
-						'insertunorderedlist',
-						'insertorderedlist',
-						null,
-						'justifyleft',
-						'justifycenter',
-						'justifyright'
-					],
-					speech_button: false
-				});
-			
-			});
-			
-		});
-	</script>
+<!--[if !IE]> -->
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
+</script>
 
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
+</script>
+<![endif]-->
+<script type="text/javascript">
+    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
+</script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    jQuery(function ($) {
+        $(document).on('click', '.toolbar a[data-target]', function (e) {
+            e.preventDefault();
+            var target = $(this).data('target');
+            $('.widget-box.visible').removeClass('visible');//hide others
+            $(target).addClass('visible');//show target
+        });
+    });
+    $("title").html("安徽物业在线"); 
+</script>
 </body>
 </html>

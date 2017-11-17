@@ -30,10 +30,13 @@ hr{
            <strong style="font-size:30px;color:white;margin-left:15px;">{$user.user}</strong>
       </div>
       
-      <div class="page-content" style="background-color:#eeeeee;">
+      
+    <!-- 业主姓名（*彬彬） 手机号 微信号  小区 楼宇 单元 房号 -->
+	<volist name="list" id="vo" empty="">
+	
+	 <div class="page-content" style="background-color:#eeeeee;">
         <div class="row">
-			<!-- 业主姓名（*彬彬） 手机号 微信号  小区 楼宇 单元 房号 -->
-			<volist name="list" id="vo" empty="">
+			
 				<div class="form-group">
 				     <div class="col-sm-9">
 				         <span class="help-inline col-xs-12 col-sm-7">
@@ -63,7 +66,12 @@ hr{
 				    </div>
 				</div>
 				<div class="col-xs-12 col-sm-7"><hr></div>
+			</div>
+		</div>	
 				
+      <div class="page-content" style="background-color:#eeeeee; margin-top:4px;">
+        <div class="row">
+			
 				<div class="form-group">
 				     <div class="col-sm-9">
 				         <span class="help-inline col-xs-12 col-sm-7">
@@ -78,7 +86,7 @@ hr{
 				     <div class="col-sm-9">
 				         <span class="help-inline col-xs-12 col-sm-7">
 						 	<span class="profile-lable">楼宇:</span>
-						 	<span class="profile-value">{$vo.house_name}</span>
+						 	<span class="profile-value">{$vo.building_name}</span>
 						</span>
 				    </div>
 				</div>
@@ -88,7 +96,7 @@ hr{
 				     <div class="col-sm-9">
 				         <span class="help-inline col-xs-12 col-sm-7">
 						 	<span class="profile-lable">单元:</span>
-						 	<span class="profile-value">{$vo.unit}</span>
+						 	<span class="profile-value">{$vo.unit_name}</span>
 						</span>
 				    </div>
 				</div>
@@ -98,15 +106,15 @@ hr{
 				     <div class="col-sm-9">
 				         <span class="help-inline col-xs-12 col-sm-7">
 						 	<span class="profile-lable">房号:</span>
-						 	<span class="profile-value">{$vo.floor}</span>
+						 	<span class="profile-value">{$vo.house_name}</span>
 						</span>
 				    </div>
 				</div>
-				
-			</volist>
+				<div class="col-xs-12 col-sm-7"><hr></div>
 			
         </div><!-- /.row -->
        </div>
+      </volist>
        
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->

@@ -71,9 +71,11 @@ class MobileController extends Controller
                 'id' => $id
             ))->find();
             if ($notice) {
+                $str = "&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;";
+                $html = htmlspecialchars_decode($notice['noticecontent']);
                 $this->assign("noticetitle", $notice['noticetitle']);
                 $this->assign("noticepicture", $notice['noticepicture']);
-                $this->assign("noticecontent", $notice['noticecontent']);
+                $this->assign("noticecontent", $html);
             }
             $this->display("details");
         }

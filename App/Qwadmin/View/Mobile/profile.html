@@ -7,6 +7,18 @@
 	border-radius: 100%;
     border: 2px solid #FFF;
 }
+.profile-lable{
+	font-size:16px;
+}
+.profile-value{
+	font-size:18px;
+	font-weight:bold;
+}
+hr{
+	border-top: 1px solid #dddddd;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
 </style>
 <div class="main-container">
     <div class="main-content">
@@ -15,36 +27,87 @@
       
       	<img class="nav-user-photo" src="<if condition=" $user.head eq '' ">__PUBLIC__/qwadmin/avatars/avatar2.png
             <else/> {$user.head} </if>" alt="{$user.user}" />
-           <strong style="font-size:25px;color:white;margin-left:15px;">{$user.user}</strong>
+           <strong style="font-size:30px;color:white;margin-left:15px;">{$user.user}</strong>
       </div>
       
-      <div class="page-content" style="background-color:#dddddd;">
+      <div class="page-content" style="background-color:#eeeeee;">
         <div class="row">
-			<div class="form-group">
-			     <div class="col-sm-9">
-			         <span class="help-inline col-xs-12 col-sm-7">
-					 	<span>手机</span>
-					 	<span>{$user.phone}</span>
-					</span>
-			    </div>
-			</div>
+			<!-- 业主姓名（*彬彬） 手机号 微信号  小区 楼宇 单元 房号 -->
+			<volist name="list" id="vo" empty="">
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">业主:</span>
+						 	<span class="profile-value">{$vo.household_name}</span>
+						</span>
+				    </div>
+				</div>
+				<div class="col-xs-12 col-sm-7"><hr></div>
+				
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">手机:</span>
+					 		<span class="profile-value">{$user.phone}</span>
+						</span>
+				    </div>
+				</div>
+				<div class="col-xs-12 col-sm-7"><hr></div>
+				
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">微信:</span>
+						 	<span class="profile-value">{$vo.wechat_account}</span>
+						</span>
+				    </div>
+				</div>
+				<div class="col-xs-12 col-sm-7"><hr></div>
+				
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">小区:</span>
+						 	<span class="profile-value">{$vo.village_name}</span>
+						</span>
+				    </div>
+				</div>
+				<div class="col-xs-12 col-sm-7"><hr></div>
+				
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">楼宇:</span>
+						 	<span class="profile-value">{$vo.house_name}</span>
+						</span>
+				    </div>
+				</div>
+				<div class="col-xs-12 col-sm-7"><hr></div>
+				
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">单元:</span>
+						 	<span class="profile-value">{$vo.unit}</span>
+						</span>
+				    </div>
+				</div>
+				<div class="col-xs-12 col-sm-7"><hr></div>
+				
+				<div class="form-group">
+				     <div class="col-sm-9">
+				         <span class="help-inline col-xs-12 col-sm-7">
+						 	<span class="profile-lable">房号:</span>
+						 	<span class="profile-value">{$vo.floor}</span>
+						</span>
+				    </div>
+				</div>
+				
+			</volist>
+			
         </div><!-- /.row -->
        </div>
        
-       <div class="page-content" style="background-color:#dddddd;margin-top:3px;">
-        <div class="row">
-			<div class="form-group">
-			     <div class="col-sm-9">
-			         <span class="help-inline col-xs-12 col-sm-7">
-					 	<span>手机</span>
-					 	<span>{$user.phone}</span>
-					</span>
-			    </div>
-			</div>
-        </div><!-- /.row -->
-       </div>
-        
-        
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->
 

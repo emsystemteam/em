@@ -19,6 +19,10 @@ hr{
 	margin-top: 5px;
 	margin-bottom: 10px;
 }
+.user-name-top{
+    text-shadow: 2px 2px 0px #000;
+    vertical-align:middle;
+}
 </style>
 <div class="main-container">
     <div class="main-content">
@@ -27,7 +31,7 @@ hr{
       
       	<img class="nav-user-photo" src="<if condition=" $user.head eq '' ">__PUBLIC__/qwadmin/avatars/avatar2.png
             <else/> {$user.head} </if>" alt="{$user.user}" />
-           <strong style="font-size:30px;color:white;margin-left:15px;">{$user.user}</strong>
+           <strong class="user-name-top" style="font-size:30px;color:white;margin-left:15px;">{$user.user}</strong>
       </div>
       
       

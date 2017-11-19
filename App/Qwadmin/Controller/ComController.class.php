@@ -108,6 +108,22 @@ class ComController extends BaseController
         return $tree;
     }
 
+    protected function getCurrentVillage($uid){
+    	$prefix = C('DB_PREFIX');
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$member = M('member')->where("uid = $uid")->find();
+    		$phone = $member['phone'];
+    		$where = "tel = $phone";
+    		$emHousehold = M('em_household')->field("h.village")
+    		->join("left join {$prefix}em_house_household hh ON {$prefix}em_household.household_id = hh.household_id")
+    		->join("left join {$prefix}em_house h ON hh.house_id = h.house_id")
+    		->where($where)->find();
+    		$village = $emHousehold['village'];
+    	}
+    	return $village;
+    }
+    
     public function check_login(){
         session_start();
         $flag = false;
@@ -152,7 +168,7 @@ class ComController extends BaseController
     	$cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
     	
     	$objPHPExcel->getActiveSheet(0)->mergeCells('A1:'.$cellName[$cellNum-1].'1');//合并单元格
-    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', $expTitle.'  Export time:'.date('Y-m-d H:i:s'));
+    	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', $expTitle.'  Export time:'.date('Y-m-d H:i:s').'  (*)号必填');
     	for($i=0;$i<$cellNum;$i++){
     		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'2', $expCellName[$i][1]);
     	}

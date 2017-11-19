@@ -128,11 +128,9 @@ DROP TABLE IF EXISTS `qw_em_household`;
 CREATE TABLE `qw_em_household` (
   `HOUSEHOLD_ID` int(11) NOT NULL AUTO_INCREMENT,
   `HOUSEHOLD_NAME` varchar(255) DEFAULT NULL COMMENT '住户名称',
-  `VILLAGE` int(11) NOT NULL COMMENT '所属小区',
   `CREATE_TIME` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   `MODIFY_TIME` timestamp NULL DEFAULT NULL COMMENT '修改时间',
   `OPERATOR` int(11) DEFAULT NULL,
-  `HOUSE` int(11) NOT NULL COMMENT '所属房屋',
   `REMARK` varchar(1000) DEFAULT NULL,
   `NICKNAME` varchar(255) DEFAULT NULL COMMENT '昵称',
   `TEL` varchar(20) DEFAULT NULL COMMENT '手机号',
@@ -149,17 +147,29 @@ CREATE TABLE `qw_em_household` (
   `FIRST_LOGIN_TIME` timestamp NULL DEFAULT NULL COMMENT '注册/首次登陆时间',
   `AUTH_TIME` timestamp NULL DEFAULT NULL COMMENT '迁入/认证时间',
   `MOVE_REASON` varchar(255) DEFAULT NULL COMMENT '迁入原因',
-  `AUTH_RESULT` int(11) DEFAULT NULL COMMENT '认证结果',
+  `AUTH_RESULT` int(11) DEFAULT NULL COMMENT '认证结果（1.已迁入，2.带审核，3.未通过，4.已迁出）',
   `LOGIN_TIMES` int(11) DEFAULT NULL COMMENT '登录次数',
   `LAST_LOGIN_TIME` timestamp NULL DEFAULT NULL COMMENT '最后一次登录时间',
-  `HOUSEHOLD_TYPE` int(11) DEFAULT NULL COMMENT '住户类型，关联字典表',
-  `HOUSEHOLD_STATUS` int(11) DEFAULT NULL COMMENT '住户身份（1.业主本人，2.亲属，3.租客，4.其他）',
+  `HOUSEHOLD_TYPE` int(11) DEFAULT NULL COMMENT '住户类型，关联字典表（1.集体户口，2城镇户口，3.农村居民户口）',
   PRIMARY KEY (`HOUSEHOLD_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='房屋住户信息表';
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COMMENT='房屋住户信息表';
 
 -- ----------------------------
 -- Records of qw_em_household
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for qw_em_house_household
+-- ----------------------------
+DROP TABLE IF EXISTS `qw_em_house_household`;
+CREATE TABLE `qw_em_house_household` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `HOUSE_ID` int(11) NOT NULL,
+  `HOUSEHOLD_ID` int(11) NOT NULL,
+  `HOUSEHOLD_STATUS` int(11) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='房屋住户信息关联表，多对多关系';
+
 
 -- ----------------------------
 -- Table structure for qw_em_parking_lot

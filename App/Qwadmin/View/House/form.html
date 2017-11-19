@@ -26,7 +26,7 @@
                         <form class="form-horizontal" action="{:U('update')}" method="post">
 							<input name="house_id" value="{$em_house['house_id']}" type="hidden" />
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区：</label>
                                 <div class="col-sm-9">
                                     <select id="village" name="village" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
@@ -37,10 +37,11 @@
                                             >{$val.village_name}</option>
                                         </volist>
                                     </select>
+                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇： </label>
                                 <div class="col-sm-9">
                                     <select id="building" name="building" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
@@ -51,10 +52,11 @@
                                             >{$val.building_name}</option>
                                         </volist>
                                     </select>
+                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元： </label>
                                 <div class="col-sm-9">
                                     <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
@@ -65,13 +67,14 @@
                                             >{$val.unit_name}</option>
                                         </volist>
                                     </select>
+                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                                 </div>
                             </div>
 
                             <div class="space-4"></div>
 
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 所在楼层</label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 所在楼层：</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="FLOOR" id="FLOOR" placeholder="所在楼层" class="col-xs-10 col-sm-5" value="{$em_house['floor']}">
                             	</div>
@@ -80,16 +83,17 @@
                             <div class="space-4"></div>
 
 							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 房号 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 房号:</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="HOUSE_NAME" id="HOUSE_NAME" placeholder="房号" class="col-xs-10 col-sm-5" value="{$em_house['house_name']}">
+                            		<span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                             	</div>
                             </div>
 							
 							<div class="space-4"></div>
 							
 							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 建筑面积 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 建筑面积:</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="BUILD_UP_AREA" id="BUILD_UP_AREA" placeholder="建筑面积" class="col-xs-10 col-sm-5" value="{$em_house['build_up_area']}">
                             	</div>
@@ -98,7 +102,7 @@
                             <div class="space-4"></div>
 
 							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 套内面积 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 套内面积:</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="SET_IN_AREA" id="SET_IN_AREA" placeholder="套内面积" class="col-xs-10 col-sm-5" value="{$em_house['set_in_area']}">
                             	</div>
@@ -107,7 +111,7 @@
                             <div class="space-4"></div>
                             
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 公摊面积 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 公摊面积:</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="POLL_AREA" id="POLL_AREA" placeholder="公摊面积" class="col-xs-10 col-sm-5" value="{$em_house['poll_area']}">
                             	</div>
@@ -116,7 +120,7 @@
                             <div class="space-4"></div>
                             
 							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 房屋类型 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 房屋类型:</label>
                                 <div class="col-sm-9">
                                 	<select id="house_type" name="house_type" class="rcol-xs-10 col-sm-5">
                                         <volist name="houseTypes" id="val">
@@ -132,7 +136,7 @@
                             <div class="space-4"></div>
                             
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 房屋结构 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 房屋结构:</label>
                                 <div class="col-sm-9">
                                 	<select id="house_structure" name="house_structure" class="rcol-xs-10 col-sm-5">
                                         <volist name="houseStructures" id="val">

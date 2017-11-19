@@ -13,6 +13,7 @@
         <div class="main-content-inner">
             <!-- #section:basics/content.breadcrumbs -->
             <!-- /section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
             <div class="page-content">
             	<include file="Public/set"/>
                 <!-- /section:settings.box -->
@@ -26,10 +27,7 @@
                                     <select id="village" name="village" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
                                         <volist name="villages" id="val">
-                                            <option value="{$val['village_id']}"
-                                            <if condition="$val['village_id'] eq $em_household['village']">selected="selected"
-                                            </if>
-                                            >{$val.village_name}</option>
+                                            <option value="{$val['village_id']}">{$val.village_name}</option>
                                         </volist>
                                     </select>
                                 </div>
@@ -40,10 +38,7 @@
                                     <select id="building" name="building" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
                                         <volist name="buildings" id="val">
-                                            <option value="{$val['building_id']}"
-                                            <if condition="$val['building_id'] eq $em_household['building']">selected="selected"
-                                            </if>
-                                            >{$val.building_name}</option>
+                                            <option value="{$val['building_id']}">{$val.building_name}</option>
                                         </volist>
                                     </select>
                                 </div>
@@ -54,10 +49,7 @@
                                     <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
                                         <volist name="units" id="val">
-                                            <option value="{$val['unit_id']}"
-                                            <if condition="$val['unit_id'] eq $em_household['unit']">selected="selected"
-                                            </if>
-                                            >{$val.unit_name}</option>
+                                            <option value="{$val['unit_id']}">{$val.unit_name}</option>
                                         </volist>
                                     </select>
                                 </div>
@@ -71,13 +63,22 @@
                                     <select id="house" name="house" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
                                         <volist name="houses" id="val">
-                                            <option value="{$val['house_id']}"
-                                            <if condition="$val['house_id'] eq $em_household['house']">selected="selected"
-                                            </if>
-                                            >{$val.house_name}</option>
+                                            <option value="{$val['house_id']}">{$val.house_name}</option>
                                         </volist>
                                     </select>
                                 </div>
+                            </div>
+                            
+                            <div class="space-4"></div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户身份</label>
+                                <div class="col-sm-9">
+                                	<select id="household_status" name="household_status" class="rcol-xs-10 col-sm-5">
+                                        <volist name="householdStatuss" id="val">
+                                            <option value="{$val['dict_value']}">{$val.dict_key}</option>
+                                        </volist>
+                                    </select>
+                            	</div>
                             </div>
 
                             <div class="space-4"></div>

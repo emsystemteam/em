@@ -18,6 +18,14 @@ class BuildingController extends ComController
     	if($uid == null){
     		$this->error('您还未登录！');
     	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有楼宇管理权限！');
+    		}
+    	}
         
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
@@ -44,7 +52,7 @@ class BuildingController extends ComController
 
         
         //如果不是超级管理员，需要添加当前登录用户数据权限
-        if($uid != 1){
+        /* if($uid != 1){
         	$member = M('member')->where("uid = $uid")->find();
         	$phone = $member['phone'];
         	if($where != ""){
@@ -52,36 +60,35 @@ class BuildingController extends ComController
         	}else{
         		$where ="hh.tel = $phone";
         	}
-        }
+        } */
 
         $emBuilding = M('em_building');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
-        $model = $emBuilding->field("{$prefix}em_building.*")
+        
+        if($currentVillage){
+        	$where['v.village_id'] = array('eq',$currentVillage);
+        }
+        
+        $count = $emBuilding->field("{$prefix}em_building.*")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
             ->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
             ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_building.building_type = d1.dict_value and d1.dict_name = 'buildingType'")
             ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
-            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'");
-        if($uid != 1){
-        	$model = $model->join("left join {$prefix}em_household hh ON {$prefix}em_building.village = hh.village");
-        }
-        $count = $model->count();
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
+        	->count();
 
-        $listModel = $emBuilding->field("{$prefix}em_building.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
+        $list = $emBuilding->field("{$prefix}em_building.*,v.village_name,b.user as user,d1.dict_key as buildingType,d2.dict_key as buildingStructure,d3.dict_key as buildingOrientation")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_building.village = v.village_id")
             ->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
             ->join("left join {$prefix}em_dictionary d1 ON {$prefix}em_building.building_type = d1.dict_value and d1.dict_name = 'buildingType'")
             ->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
-            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'");
-        if($uid != 1){
-        	$listModel= $listModel->join("left join {$prefix}em_household hh ON {$prefix}em_building.village = hh.village");
-        }
-        $list = $listModel->limit($offset . ',' . $pagesize)
+            ->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
+        	->limit($offset . ',' . $pagesize)
             ->select();
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
@@ -134,12 +141,28 @@ class BuildingController extends ComController
 
     public function edit()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有楼宇管理权限！');
+    		}
+    	}
 
         $vid = isset($_GET['building_id']) ? intval($_GET['building_id']) : false;
         if ($vid) {
             $prefix = C('DB_PREFIX');
             $em_building = M('em_building')->field("{$prefix}em_building.*")->where("{$prefix}em_building.building_id=$vid")->find();
-            $em_village = M('em_village')->field("village_id,village_name")->select();
+            
+            if($currentVillage){
+            	$map[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
+            }
+            $em_village = M('em_village')->field("village_id,village_name")->where($map)->select();
             
             $buildingTypes = M('em_dictionary')->field("dict_key,dict_value")
             ->where("dict_name = 'buildingType'")
@@ -214,15 +237,34 @@ class BuildingController extends ComController
 
     public function add()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有房屋管理权限！');
+    		}
+    	}
+    	
     	$prefix = C('DB_PREFIX');
     	$emVillage = M('em_village');
-    	$emVillages = $emVillage->field("village_id,village_name")->select();
+    	if($currentVillage){
+    		$map[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
+    	}
+    	$emVillages = $emVillage->field("village_id,village_name")->where($map)->select();
+    	
     	$buildingTypes = M('em_dictionary')->field("dict_key,dict_value")
     	->where("dict_name = 'buildingType'")
     	->select();
+    	
     	$buildingOrientations = M('em_dictionary')->field("dict_key,dict_value")
     	->where("dict_name = 'buildingOrientation'")
     	->select();
+    	
     	$buildingStructures = M('em_dictionary')->field("dict_key,dict_value")
     	->where("dict_name = 'buildingStructure'")
     	->select();
@@ -239,12 +281,25 @@ class BuildingController extends ComController
      */
     public function exportBuilding()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有楼宇管理权限！');
+    		}
+    	}
+    	
     	$xlsName  = "楼宇";
     	$xlsCell  = array(
     			array('building_id','楼宇编号'),
-    			array('building_name','楼宇名称'),
-    			array('village','所属小区'),
-    			array('unit_number','单元数量'),
+    			array('building_name','楼宇名称(*)'),
+    			array('village','所属小区(*)'),
+    			array('unit_number','单元数量(*)'),
     			array('floor_number','楼宇层数'),
     			array('building_type','楼宇类型'),
     			array('building_structure','楼宇结构'),
@@ -253,6 +308,10 @@ class BuildingController extends ComController
     			array('modify_time','修改时间'),
     			array('operator','操作人')
     	);
+    	
+    	if($currentVillage){
+    		$where['v.village_id'] = array('eq',$currentVillage);
+    	}
     	
     	$prefix = C('DB_PREFIX');
     	$emBuilding = M('em_building');
@@ -265,6 +324,7 @@ class BuildingController extends ComController
     	->join("left join {$prefix}em_dictionary d2 ON {$prefix}em_building.building_structure = d2.dict_value and d2.dict_name = 'buildingStructure'")
     	->join("left join {$prefix}em_dictionary d3 ON {$prefix}em_building.building_orientation = d3.dict_value and d3.dict_name = 'buildingOrientation'")
     	->join("left join {$prefix}member b ON {$prefix}em_building.operator = b.uid")
+    	->where($where)
     	->select();
     	
 //     	$em_village = $emVillage->field("{$prefix}em_village.*")->select();
@@ -324,6 +384,19 @@ class BuildingController extends ComController
      * @param unknown $insertData
      */
     public function batchInsert($insertData){
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有房屋管理权限！');
+    		}
+    	}
+    	
     	$prefix = C('DB_PREFIX');
     	$emBuilding = M('em_building');
     	$emVillage = M('em_village');
@@ -339,11 +412,15 @@ class BuildingController extends ComController
     		}
     		
     		$data['BUILDING_NAME'] = $buildingName;
-    		
     		$villageName= $buildingData[1];
-    		$em_village = $emVillage->where("village_name = '$villageName'")->find();
+    		
+    		if($currentVillage){
+    			$where[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
+    		}
+    		$where[$prefix.'em_village.village_name'] = array('eq',$villageName);
+    		$em_village = $emVillage->where($where)->find();
     		if(empty($em_village)){
-    			$this->error("小区名称：".$villageName."不存在");
+    			$this->error("小区名称：".$villageName."不存在,或者您不属于该小区");
     		}
     		$data['VILLAGE'] = $em_village['village_id'];
     	

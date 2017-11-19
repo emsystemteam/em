@@ -17,6 +17,14 @@ class UnitController extends ComController
     	if($uid == null){
     		$this->error('您还未登录！');
     	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有单元管理权限！');
+    		}
+    	}
         
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
@@ -40,7 +48,7 @@ class UnitController extends ComController
 
         
         //如果不是超级管理员，需要添加当前登录用户数据权限
-        if($uid != 1){
+        /* if($uid != 1){
         	$member = M('member')->where("uid = $uid")->find();
         	$phone = $member['phone'];
         	if($where != ""){
@@ -48,32 +56,31 @@ class UnitController extends ComController
         	}else{
         		$where ="hh.tel = $phone";
         	}
-        }
+        } */
 
         $emUnit = M('em_unit');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
-        $model= $emUnit->field("{$prefix}em_unit.*")
+        
+        if($currentVillage){
+        	$where['v.village_id'] = array('eq',$currentVillage);
+        }
+        
+        $count = $emUnit->field("{$prefix}em_unit.*")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_unit.village = v.village_id")
             ->join("left join {$prefix}member b ON {$prefix}em_unit.operator = b.uid")
-            ->join("left join {$prefix}em_building bd ON {$prefix}em_unit.building = bd.building_id");
-        if($uid != 1){
-        	$model = $model->join("left join {$prefix}em_household hh ON {$prefix}em_unit.village = hh.village");
-        }
-        $count = $model->count();
+            ->join("left join {$prefix}em_building bd ON {$prefix}em_unit.building = bd.building_id")
+        	->count();
 
-        $listModel = $emUnit->field("{$prefix}em_unit.*,v.village_name,b.user as user,bd.building_name")
+        $list = $emUnit->field("{$prefix}em_unit.*,v.village_name,b.user as user,bd.building_name")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_unit.village = v.village_id")
             ->join("left join {$prefix}member b ON {$prefix}em_unit.operator = b.uid")
-            ->join("left join {$prefix}em_building bd ON {$prefix}em_unit.building = bd.building_id");
-        if($uid != 1){
-        	$listModel= $listModel->join("left join {$prefix}em_household hh ON {$prefix}em_unit.village = hh.village");
-        }
-        $list = $listModel->limit($offset . ',' . $pagesize)
+            ->join("left join {$prefix}em_building bd ON {$prefix}em_unit.building = bd.building_id")
+        	->limit($offset . ',' . $pagesize)
             ->select();
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
@@ -143,13 +150,30 @@ class UnitController extends ComController
 
     public function edit()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有单元管理权限！');
+    		}
+    	}
 
         $vid = isset($_GET['unit_id']) ? intval($_GET['unit_id']) : false;
         if ($vid) {
             $prefix = C('DB_PREFIX');
             $em_unit= M('em_unit')->field("{$prefix}em_unit.*")->where("{$prefix}em_unit.unit_id=$vid")->find();
-            $em_village = M('em_village')->field("village_id,village_name")->select();
+            
+            if($currentVillage){
+            	$map[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
+            }
+            $em_village = M('em_village')->field("village_id,village_name")->where($map)->select();
             $village = $em_unit['village'];
+            
             $em_building = M('em_building')->field("building_id,building_name")->where("village = $village")->select();
         } else {
             $this->error('参数错误！');
@@ -207,9 +231,27 @@ class UnitController extends ComController
 
     public function add()
     {
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有单元管理权限！');
+    		}
+    	}
+    	
     	$prefix = C('DB_PREFIX');
+    	
+    	if($currentVillage){
+    		$map[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
+    	}
+    	
     	$emVillage = M('em_village');
-    	$emVillages = $emVillage->field("village_id,village_name")->select();
+    	$emVillages = $emVillage->field("village_id,village_name")->where($map)->select();
     	
     	$this->assign('villages', $emVillages);
         $this->display('form');

@@ -19,6 +19,14 @@ class VillageController extends ComController
     		$this->error('您还未登录！');
     	}
         
+    	//如果不是超级管理员，需要添加当前登录用户数据权限
+    	if($uid != 1){
+    		$currentVillage = $this->getCurrentVillage($uid);
+    		if(!$currentVillage){
+    			$this->error('您不属于任何小区，没有小区管理权限！');
+    		}
+    	}
+    	
         $p = isset($_GET['p']) ? intval($_GET['p']) : '1';
         $field = isset($_GET['field']) ? $_GET['field'] : '';
         $keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
@@ -47,7 +55,7 @@ class VillageController extends ComController
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
         //如果不是超级管理员，需要添加当前登录用户数据权限
-        if($uid != 1){
+        /* if($uid != 1){
         	$member = M('member')->where("uid = $uid")->find();
         	$phone = $member['phone'];
         	if($where != ""){
@@ -55,31 +63,27 @@ class VillageController extends ComController
         	}else{
         		$where ="hh.tel = $phone";
         	}
+        } */
+        
+        if($currentVillage){
+        	$where[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
         }
         
-        $model = $emVillage->field("{$prefix}em_village.*")
+        $count = $emVillage->field("{$prefix}em_village.*")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_sys_org s1 ON {$prefix}em_village.province = s1.org_id")
             ->join("left join {$prefix}em_sys_org s2 ON {$prefix}em_village.city = s2.org_id")
-            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id");
-        if($uid != 1){
-            $model = $model->join("left join {$prefix}em_household hh ON {$prefix}em_village.village_id = hh.village");
-        }
-        $count = $model->count();
+            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id")
+        	->count();
 
-        $listModel = $emVillage->field("{$prefix}em_village.*,s1.org_name as province,s2.org_name as city,s3.org_name as county")
+       	$list = $emVillage->field("{$prefix}em_village.*,s1.org_name as province,s2.org_name as city,s3.org_name as county")
             ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_sys_org s1 ON {$prefix}em_village.province = s1.org_id")
             ->join("left join {$prefix}em_sys_org s2 ON {$prefix}em_village.city = s2.org_id")
-            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id");
-        if($uid != 1){
-        	$listModel= $listModel->join("left join {$prefix}em_household hh ON {$prefix}em_village.village_id = hh.village");
-        }
-            /* ->join("left join {$prefix}em_sys_org s4 ON {$prefix}em_village.street = s4.org_id")
-            ->join("left join {$prefix}em_sys_org s5 ON {$prefix}em_village.neigh_committee = s5.org_id") */
-        $list = $listModel->limit($offset . ',' . $pagesize)
+            ->join("left join {$prefix}em_sys_org s3 ON {$prefix}em_village.county = s3.org_id")
+       		->limit($offset . ',' . $pagesize)
             ->select();
         $page = new \Think\Page($count, $pagesize);
         $page = $page->show();
@@ -316,7 +320,7 @@ class VillageController extends ComController
     public function exportExcelTemplate(){
     	$xlsName  = "导入小区模板";
     	$xlsCell  = array(
-    			array('village_name','小区名称'),
+    			array('village_name','小区名称(*)'),
     			array('province','省'),
     			array('city','市'),
     			array('county','县(区)'),

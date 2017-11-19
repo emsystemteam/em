@@ -80,29 +80,14 @@
 					                                    <thead>
 					                                    <tr>
 					                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
-					                                        <th class="center">所属小区</th>
-					                                        <th class="center">所属房屋</th>
-					                                        <th class="center">住户名称</th>
-					                                        <th class="center">昵称</th>
-					                                        <!-- <th class="center">住户类型</th> -->
-					                                        <th class="center">手机号</th>
-					                                        <th class="center">微信号</th>
-					                                        <th class="center">微信昵称</th>
-					                                        <th class="center">QQ</th>
-					                                        <th class="center">QQ昵称</th>
-					                                        <th class="center">支付宝</th>
-					                                        <th class="center">支付宝昵称</th>
-					                                       <!--  <th class="center">E-MAIL</th>
-					                                        <th class="center">家庭电话</th> -->
-					                                        <th class="center">业主卡号</th>
-					                                        <th class="center">门禁卡号</th>
-					                                        <!-- <th class="center">首次登录时间</th> -->
-					                                        <!--  <th class="center">迁入/认证时间</th>
-					                                        <th class="center">认证结果</th>
-					                                        <th class="center">登录次数</th> -->
-					                                        <!-- <th class="center">创建时间</th>
-					                                        <th class="center">修改时间</th>
-					                                        <th class="center">操作人</th> -->
+					                                        <th class="center">手机</th>
+					                                        <th class="center">姓名</th>
+					                                        <th class="center">小区</th>
+					                                        <th class="center">楼宇</th>
+					                                        <th class="center">单元</th>
+					                                        <th class="center">房号</th>
+					                                        <th class="center">住户身份</th>
+					                                        <th class="center">登录次数</th>
 					                                        <th class="center">操作</th>
 					                                    </tr>
 					                                    </thead>
@@ -112,42 +97,28 @@
 					                                        	<td class="center">
 					                                                <input class="householdIds" type="checkbox" name="householdIds[]" value="{$val['household_id']}">   
 					                                            </td>
-					                                        	<td class="center">{$val['village_name']}</td>
-					                                            <td class="center">{$val['house_name']}</td>
-					                                            <td class="center">{$val['household_name']}</td>
-					                                            <td class="center">{$val['nickname']}</td>
-					                                            <!-- <td class="center">{$val['household_type']}</td> -->
 					                                            <td class="center">{$val['tel']}</td>
-					                                            <td class="center">{$val['wechat_account']}</td>
-					                                            <td class="center">{$val['wechat_nickname']}</td>
-					                                            <td class="center">{$val['qq']}</td>
-					                                            <td class="center">{$val['qq_nickname']}</td>
-					                                            <td class="center">{$val['alipay_account']}</td>
-					                                            <td class="center">{$val['alipay_nickname']}</td>
-					                                            <!-- <td class="center">{$val['email']}</td>
-					                                            <td class="center">{$val['home_tel']}</td> -->
-					                                            <td class="center">{$val['card_number']}</td>
-					                                            <td class="center">{$val['door_card_number']}</td>
-					                                            <!-- <td class="center">{$val['first_login_number']}</td> -->
-					                                            <!-- <td class="center">{$val['auth_time']}</td>
-					                                            <td class="center">{$val['auth_result']}</td>
-					                                            <td class="center">{$val['login_times']}</td> -->
-					                                            <!-- <td>{$val['create_time']}</td>
-					                                            <td>{$val['modify_time']}</td>
-					                                            <td>{$val['user']}</td> -->
+					                                            <td class="center">{$val['household_name']}</td>
+					                                        	<td class="center">{$val['village_name']}</td>
+					                                        	<td class="center">{$val['building_name']}</td>
+					                                        	<td class="center">{$val['unit_name']}</td>
+					                                            <td class="center">{$val['house_name']}</td>
+					                                            <td class="center">{$val['household_status']}</td>
+					                                            <td class="center">{$val['login_times']}</td>
 					                                            <td class="center">
+		                                            				<a href="{:U('details',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
 					                                            	<a href="{:U('edit',array('household_id'=>$val['household_id']))}">修改</a>&nbsp;
-					                                            	<a id="out" href="javascript:;" val="{:U('movedOut',array('household_id'=>$val['household_id']))}">迁出房屋</a>&nbsp;
-					                                                <a class="del" href="javascript:;" val="{:U('del',array('householdIds'=>$val['household_id']))}" title="删除">删除</a>&nbsp;
+					                                            	<a class="out" href="javascript:;" val="{:U('movedOut',array('household_id'=>$val['household_id'],'house_id'=>$val['house_id']))}">迁出房屋</a>&nbsp;
+					                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">迁入房屋</a>&nbsp;
 					                                            </td>
 					                                        </tr>
 					                                    </volist>
 					                                    </tbody>
 					                                </table>
 					                            </form>
-					                            <div class="cf">
+					                            <!-- <div class="cf">
 					                                <input id="submit" class="btn btn-info" type="button" value="删除">
-					                            </div>
+					                            </div> -->
 					                            {$pageMovedIn}
 						                    </div>
 				                		</div>
@@ -184,30 +155,12 @@
 						                                    <thead>
 						                                    <tr>
 						                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
-						                                        <th class="center">所属小区</th>
-						                                        <!-- <th class="center">所属房屋</th> -->
-						                                        <th class="center">住户名称</th>
-						                                        <th class="center">昵称</th>
-						                                        <!-- <th class="center">住户类型</th> -->
-						                                        <th class="center">手机号</th>
-						                                        <th class="center">微信号</th>
-						                                        <th class="center">微信昵称</th>
+						                                        <th class="center">手机</th>
+					                                        	<th class="center">姓名</th>
+					                                        	<th class="center">小区</th>
+						                                        <th class="center">住户来源</th>
+						                                        <th class="center">注册时间</th>
 						                                        <th class="center">迁入申请</th>
-						                                        <!-- <th class="center">QQ</th>
-						                                        <th class="center">QQ昵称</th>
-						                                        <th class="center">支付宝</th>
-						                                        <th class="center">支付宝昵称</th>
-						                                        <th class="center">E-MAIL</th>
-						                                        <th class="center">家庭电话</th>
-						                                        <th class="center">业主卡号</th>
-						                                        <th class="center">门禁卡号</th> -->
-						                                        <!-- <th class="center">首次登录时间</th> -->
-						                                        <!--  <th class="center">迁入/认证时间</th>
-						                                        <th class="center">认证结果</th>
-						                                        <th class="center">登录次数</th> -->
-						                                        <!-- <th class="center">创建时间</th>
-						                                        <th class="center">修改时间</th>
-						                                        <th class="center">操作人</th> -->
 						                                        <th class="center">操作</th>
 						                                    </tr>
 						                                    </thead>
@@ -217,30 +170,14 @@
 						                                        	<td class="center">
 						                                                <input class="householdIds" type="checkbox" name="householdIds[]" value="{$val['household_id']}">   
 						                                            </td>
-						                                        	<td class="center">{$val['village_name']}</td>
-						                                            <!-- <td class="center">{$val['house_name']}</td> -->
-						                                            <td class="center">{$val['household_name']}</td>
-						                                            <td class="center">{$val['nickname']}</td>
-						                                            <!-- <td class="center">{$val['household_type']}</td> -->
 						                                            <td class="center">{$val['tel']}</td>
-						                                            <td class="center">{$val['wechat_account']}</td>
-						                                            <td class="center">{$val['wechat_nickname']}</td>
-						                                            <td class="center">{$val['move_reason']}</td>
-						                                            <!-- <td class="center">{$val['qq']}</td>
-						                                            <td class="center">{$val['qq_nickname']}</td>
-						                                            <td class="center">{$val['alipay_account']}</td>
-						                                            <td class="center">{$val['alipay_nickname']}</td>
-						                                            <td class="center">{$val['email']}</td>
-						                                            <td class="center">{$val['home_tel']}</td>
-						                                            <td class="center">{$val['card_number']}</td>
-						                                            <td class="center">{$val['door_card_number']}</td> -->
-						                                            <!-- <td class="center">{$val['first_login_number']}</td> -->
-						                                            <!-- <td class="center">{$val['auth_time']}</td>
-						                                            <td class="center">{$val['auth_result']}</td>
-						                                            <td class="center">{$val['login_times']}</td> -->
-						                                            <!-- <td>{$val['create_time']}</td>
-						                                            <td>{$val['modify_time']}</td>
-						                                            <td>{$val['user']}</td> -->
+						                                            <td class="center">{$val['household_name']}</td>
+						                                        	<td class="center">{$val['village_name']}</td>
+						                                        	<td class="center">
+						                                        		<?php if($val['openid']!=''){echo '微信';}else{echo '未知';} ?>
+						                                        	</td>
+						                                        	<td class="center">{$val['first_login_time']}</td>
+						                                        	<td class="center">{$val['move_reason']}</td>
 						                                            <td class="center">
 						                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">迁入房屋</a>&nbsp;
 						                                            	<!-- <a id="auditing" href="javascript:;">审核</a>&nbsp; -->
@@ -284,30 +221,11 @@
 		                                    <thead>
 		                                    <tr>
 		                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
-		                                        <th class="center">所属小区</th>
-		                                        <!-- <th class="center">所属房屋</th> -->
-		                                        <th class="center">住户名称</th>
-		                                        <th class="center">昵称</th>
-		                                        <!-- <th class="center">住户类型</th> -->
-		                                        <th class="center">手机号</th>
-		                                        <th class="center">微信号</th>
-		                                        <th class="center">微信昵称</th>
+		                                        <th class="center">手机</th>
+	                                        	<th class="center">姓名</th>
+	                                        	<th class="center">小区</th>
 		                                        <th class="center">迁入申请</th>
-		                                        <!-- <th class="center">QQ</th>
-		                                        <th class="center">QQ昵称</th>
-		                                        <th class="center">支付宝</th>
-		                                        <th class="center">支付宝昵称</th>
-		                                        <th class="center">E-MAIL</th>
-		                                        <th class="center">家庭电话</th>
-		                                        <th class="center">业主卡号</th>
-		                                        <th class="center">门禁卡号</th> -->
-		                                        <!-- <th class="center">首次登录时间</th> -->
-		                                        <!--  <th class="center">迁入/认证时间</th>
-		                                        <th class="center">认证结果</th>
-		                                        <th class="center">登录次数</th> -->
-		                                        <!-- <th class="center">创建时间</th>
-		                                        <th class="center">修改时间</th>
-		                                        <th class="center">操作人</th> -->
+		                                        <th class="center">注册时间</th>
 		                                        <th class="center">操作</th>
 		                                    </tr>
 		                                    </thead>
@@ -317,33 +235,14 @@
 		                                        	<td class="center">
 		                                                <input class="householdIds" type="checkbox" name="householdIds[]" value="{$val['household_id']}">   
 		                                            </td>
-		                                        	<td class="center">{$val['village_name']}</td>
-		                                            <!-- <td class="center">{$val['house_name']}</td> -->
+		                                        	<td class="center">{$val['tel']}</td>
 		                                            <td class="center">{$val['household_name']}</td>
-		                                            <td class="center">{$val['nickname']}</td>
-		                                            <!-- <td class="center">{$val['household_type']}</td> -->
-		                                            <td class="center">{$val['tel']}</td>
-		                                            <td class="center">{$val['wechat_account']}</td>
-		                                            <td class="center">{$val['wechat_nickname']}</td>
-		                                            <td class="center">{$val['move_reason']}</td>
-		                                            <!-- <td class="center">{$val['qq']}</td>
-		                                            <td class="center">{$val['qq_nickname']}</td>
-		                                            <td class="center">{$val['alipay_account']}</td>
-		                                            <td class="center">{$val['alipay_nickname']}</td>
-		                                            <td class="center">{$val['email']}</td>
-		                                            <td class="center">{$val['home_tel']}</td>
-		                                            <td class="center">{$val['card_number']}</td>
-		                                            <td class="center">{$val['door_card_number']}</td> -->
-		                                            <!-- <td class="center">{$val['first_login_number']}</td> -->
-		                                            <!-- <td class="center">{$val['auth_time']}</td>
-		                                            <td class="center">{$val['auth_result']}</td>
-		                                            <td class="center">{$val['login_times']}</td> -->
-		                                            <!-- <td>{$val['create_time']}</td>
-		                                            <td>{$val['modify_time']}</td>
-		                                            <td>{$val['user']}</td> -->
+		                                        	<td class="center">{$val['village_name']}</td>
+		                                        	<td class="center">{$val['move_reason']}</td>
+		                                        	<td class="center">{$val['first_login_time']}</td>
 		                                            <td class="center">
 		                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">迁入房屋</a>&nbsp;
-		                                            	<a href="{:U('detail',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
+		                                            	<a href="{:U('details',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
 		                                            	<a class="del" href="javascript:;" val="{:U('del',array('householdIds'=>$val['household_id']))}" title="删除后无法恢复，请谨慎操作。">删除</a>&nbsp;
 		                                            </td>
 		                                        </tr>
@@ -382,30 +281,10 @@
 		                                    <thead>
 		                                    <tr>
 		                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
-		                                        <th class="center">所属小区</th>
-		                                        <!-- <th class="center">所属房屋</th> -->
-		                                        <th class="center">住户名称</th>
-		                                        <th class="center">昵称</th>
-		                                        <!-- <th class="center">住户类型</th> -->
-		                                        <th class="center">手机号</th>
-		                                        <th class="center">微信号</th>
-		                                        <th class="center">微信昵称</th>
-		                                        <th class="center">迁入申请</th>
-		                                        <!-- <th class="center">QQ</th>
-		                                        <th class="center">QQ昵称</th>
-		                                        <th class="center">支付宝</th>
-		                                        <th class="center">支付宝昵称</th>
-		                                        <th class="center">E-MAIL</th>
-		                                        <th class="center">家庭电话</th>
-		                                        <th class="center">业主卡号</th>
-		                                        <th class="center">门禁卡号</th> -->
-		                                        <!-- <th class="center">首次登录时间</th> -->
-		                                        <!--  <th class="center">迁入/认证时间</th>
-		                                        <th class="center">认证结果</th>
-		                                        <th class="center">登录次数</th> -->
-		                                        <!-- <th class="center">创建时间</th>
-		                                        <th class="center">修改时间</th>
-		                                        <th class="center">操作人</th> -->
+		                                        <th class="center">手机</th>
+	                                        	<th class="center">姓名</th>
+	                                        	<th class="center">小区</th>
+		                                        <th class="center">注册时间</th>
 		                                        <th class="center">操作</th>
 		                                    </tr>
 		                                    </thead>
@@ -415,32 +294,12 @@
 		                                        	<td class="center">
 		                                                <input class="householdIds" type="checkbox" name="householdIds[]" value="{$val['household_id']}">   
 		                                            </td>
-		                                        	<td class="center">{$val['village_name']}</td>
-		                                            <!-- <td class="center">{$val['house_name']}</td> -->
+		                                        	<td class="center">{$val['tel']}</td>
 		                                            <td class="center">{$val['household_name']}</td>
-		                                            <td class="center">{$val['nickname']}</td>
-		                                            <!-- <td class="center">{$val['household_type']}</td> -->
-		                                            <td class="center">{$val['tel']}</td>
-		                                            <td class="center">{$val['wechat_account']}</td>
-		                                            <td class="center">{$val['wechat_nickname']}</td>
-		                                            <td class="center">{$val['move_reason']}</td>
-		                                            <!-- <td class="center">{$val['qq']}</td>
-		                                            <td class="center">{$val['qq_nickname']}</td>
-		                                            <td class="center">{$val['alipay_account']}</td>
-		                                            <td class="center">{$val['alipay_nickname']}</td>
-		                                            <td class="center">{$val['email']}</td>
-		                                            <td class="center">{$val['home_tel']}</td>
-		                                            <td class="center">{$val['card_number']}</td>
-		                                            <td class="center">{$val['door_card_number']}</td> -->
-		                                            <!-- <td class="center">{$val['first_login_number']}</td> -->
-		                                            <!-- <td class="center">{$val['auth_time']}</td>
-		                                            <td class="center">{$val['auth_result']}</td>
-		                                            <td class="center">{$val['login_times']}</td> -->
-		                                            <!-- <td>{$val['create_time']}</td>
-		                                            <td>{$val['modify_time']}</td>
-		                                            <td>{$val['user']}</td> -->
+		                                        	<td class="center">{$val['village_name']}</td>
+		                                        	<td class="center">{$val['first_login_time']}</td>
 		                                            <td class="center">
-		                                            	<a href="{:U('detail',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
+		                                            	<a href="{:U('details',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
 		                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">再次迁入</a>&nbsp;
 		                                            	<a class="del" href="javascript:;" val="{:U('del',array('householdIds'=>$val['household_id']))}" title="删除后无法恢复，请谨慎操作。">删除</a>&nbsp;
 		                                            </td>
@@ -562,7 +421,7 @@
         });
         
         //迁出
-        $("#out").click(function () {
+        $(".out").click(function () {
             var url = $(this).attr('val');
             bootbox.confirm({
                 title: "系统提示",

@@ -25,79 +25,111 @@
                         <!-- PAGE CONTENT BEGINS -->
                         <form class="form-horizontal" action="{:U('update')}" method="post">
 							<input name="household_id" value="{$em_household['household_id']}" type="hidden" />
-                            <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
-                                <div class="col-sm-9">
-                                    <select id="village" name="village" class="rcol-xs-10 col-sm-5">
-                                    	<option value="">--请选择--</option>
-                                        <volist name="villages" id="val">
-                                            <option value="{$val['village_id']}"
-                                            <if condition="$val['village_id'] eq $em_household['village']">selected="selected"
-                                            </if>
-                                            >{$val.village_name}</option>
-                                        </volist>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇 </label>
-                                <div class="col-sm-9">
-                                    <select id="building" name="building" class="rcol-xs-10 col-sm-5">
-                                    	<option value="">--请选择--</option>
-                                        <volist name="buildings" id="val">
-                                            <option value="{$val['building_id']}"
-                                            <if condition="$val['building_id'] eq $em_household['building']">selected="selected"
-                                            </if>
-                                            >{$val.building_name}</option>
-                                        </volist>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元 </label>
-                                <div class="col-sm-9">
-                                    <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
-                                    	<option value="">--请选择--</option>
-                                        <volist name="units" id="val">
-                                            <option value="{$val['unit_id']}"
-                                            <if condition="$val['unit_id'] eq $em_household['unit']">selected="selected"
-                                            </if>
-                                            >{$val.unit_name}</option>
-                                        </volist>
-                                    </select>
-                                </div>
-                            </div>
+							<if condition="$em_household['household_id'] eq ''">
+								<div class="form-group">
+	                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 ：</label>
+	                                <div class="col-sm-9">
+	                                    <select id="village" name="village" class="rcol-xs-10 col-sm-5">
+	                                    	<option value="">--请选择--</option>
+	                                        <volist name="villages" id="val">
+	                                            <option value="{$val['village_id']}"
+	                                            <if condition="$val['village_id'] eq $em_household['village']">selected="selected"
+	                                            </if>
+	                                            >{$val.village_name}</option>
+	                                        </volist>
+	                                    </select>
+	                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
+	                                </div>
+	                            </div>
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇：</label>
+	                                <div class="col-sm-9">
+	                                    <select id="building" name="building" class="rcol-xs-10 col-sm-5">
+	                                    	<option value="">--请选择--</option>
+	                                        <volist name="buildings" id="val">
+	                                            <option value="{$val['building_id']}"
+	                                            <if condition="$val['building_id'] eq $em_household['building']">selected="selected"
+	                                            </if>
+	                                            >{$val.building_name}</option>
+	                                        </volist>
+	                                    </select>
+	                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
+	                                </div>
+	                            </div>
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属单元： </label>
+	                                <div class="col-sm-9">
+	                                    <select id="unit" name="unit" class="rcol-xs-10 col-sm-5">
+	                                    	<option value="">--请选择--</option>
+	                                        <volist name="units" id="val">
+	                                            <option value="{$val['unit_id']}"
+	                                            <if condition="$val['unit_id'] eq $em_household['unit']">selected="selected"
+	                                            </if>
+	                                            >{$val.unit_name}</option>
+	                                        </volist>
+	                                    </select>
+	                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
+	                                </div>
+	                            </div>
+	
+	                            <div class="space-4"></div>
+	
+								<div class="form-group">
+	                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属房屋： </label>
+	                                <div class="col-sm-9">
+	                                    <select id="house" name="house" class="rcol-xs-10 col-sm-5">
+	                                    	<option value="">--请选择--</option>
+	                                        <volist name="houses" id="val">
+	                                            <option value="{$val['house_id']}"
+	                                            <if condition="$val['house_id'] eq $em_household['house']">selected="selected"
+	                                            </if>
+	                                            >{$val.house_name}</option>
+	                                        </volist>
+	                                    </select>
+	                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
+	                                </div>
+	                            </div>
+	                            <div class="space-4"></div>
+	                            <div class="form-group">
+	                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户身份：</label>
+	                                <div class="col-sm-9">
+	                                	<select id="household_status" name="household_status" class="rcol-xs-10 col-sm-5">
+	                                        <volist name="householdStatuss" id="val">
+	                                            <option value="{$val['dict_value']}"
+	                                            <if condition="$val['dict_value'] eq $em_household['household_status']">selected="selected"
+	                                            </if>
+	                                            >{$val.dict_key}</option>
+	                                        </volist>
+	                                    </select>
+	                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
+	                            	</div>
+	                            </div>
+	                            
+							<else />
+								<div class="form-group">
+	                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
+	                                <div class="col-sm-9">
+	                                    <select id="village" name="village" class="rcol-xs-10 col-sm-5" disabled="disabled">
+                                            <option value="{$em_household['village_id']}" >{$em_household['village_name']}</option>
+	                                    </select>
+	                                </div>
+	                            </div>
+							</if>
 
                             <div class="space-4"></div>
 
-							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属房屋 </label>
-                                <div class="col-sm-9">
-                                    <select id="house" name="house" class="rcol-xs-10 col-sm-5">
-                                    	<option value="">--请选择--</option>
-                                        <volist name="houses" id="val">
-                                            <option value="{$val['house_id']}"
-                                            <if condition="$val['house_id'] eq $em_household['house']">selected="selected"
-                                            </if>
-                                            >{$val.house_name}</option>
-                                        </volist>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="space-4"></div>
-
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户名称</label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户名称：</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="HOUSEHOLD_NAME" id="HOUSEHOLD_NAME" placeholder="住户名称" class="col-xs-10 col-sm-5" value="{$em_household['household_name']}">
+                            		<span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                             	</div>
                             </div>
 
                             <div class="space-4"></div>
 
 							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 昵称 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 昵称： </label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="NICKNAME" id="NICKNAME" placeholder="昵称 " class="col-xs-10 col-sm-5" value="{$em_household['nickname']}">
                             	</div>
@@ -106,9 +138,10 @@
 							<div class="space-4"></div>
 							
 							<div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 手机号 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 手机号 ：</label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="TEL" id="TEL" placeholder="手机号" class="col-xs-10 col-sm-5" value="{$em_household['tel']}">
+                            		<span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                             	</div>
                             </div>
 
@@ -245,21 +278,6 @@
 
                             <div class="space-4"></div>
                             
-                            <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-2"> 住户身份</label>
-                                <div class="col-sm-9">
-                                	<select id="household_status" name="household_status" class="rcol-xs-10 col-sm-5">
-                                        <volist name="householdStatuss" id="val">
-                                            <option value="{$val['dict_value']}"
-                                            <if condition="$val['dict_value'] eq $em_household['household_status']">selected="selected"
-                                            </if>
-                                            >{$val.dict_key}</option>
-                                        </volist>
-                                    </select>
-                            	</div>
-                            </div>
-                            
-                            <div class="space-4"></div>
                             <div class="col-md-offset-2 col-md-9">
                                 <button class="btn btn-info" type="submit">
                                     <i class="icon-ok bigger-110"></i>

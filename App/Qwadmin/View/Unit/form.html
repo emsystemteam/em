@@ -26,16 +26,17 @@
                         <form class="form-horizontal" action="{:U('update')}" method="post">
 							<input name="unit_id" value="{$em_unit['unit_id']}" type="hidden" />
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 单元名 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 单元名： </label>
                                 <div class="col-sm-9">
                                 	<input type="text" name="UNIT_NAME" id="UNIT_NAME" placeholder="单元名称" class="col-xs-10 col-sm-5" value="{$em_unit['unit_name']}">
+                            		<span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                             	</div>
                             </div>
 
                             <div class="space-4"></div>
 
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属小区 ：</label>
                                 <div class="col-sm-9">
                                     <select id="village" name="village" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
@@ -46,10 +47,11 @@
                                             >{$val.village_name}</option>
                                         </volist>
                                     </select>
+                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇 </label>
+                                <label class="col-sm-1 control-label no-padding-right" for="form-field-10"> 所属楼宇： </label>
                                 <div class="col-sm-9">
                                     <select id="building" name="building" class="rcol-xs-10 col-sm-5">
                                     	<option value="">--请选择--</option>
@@ -60,6 +62,7 @@
                                             >{$val.building_name}</option>
                                         </volist>
                                     </select>
+                                    <span style="font-weight:bold;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span>
                                 </div>
                             </div>
 

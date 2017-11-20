@@ -18,11 +18,28 @@ class MobileController extends Controller
 
     public function index()
     {
+        $data = array();
         $model = M("em_contentmanager");
         $list = $model->where("status=1")
             ->order("createtime desc")
             ->select();
+        $count = count($list);
+        for ($i = 0; $i < $count; $i ++) {
+            
+            $model = M("em_notice");
+            $note = $model->where(array(
+                "contentid" => $list[$i]['id'],
+                "stauts" => 1
+            ))
+                ->order("createtime desc")
+                ->limit(3)
+                ->select();
+            if (! $note)
+                $note = array();
+            array_push($data, $note);
+        }
         $this->assign("list", $list);
+        $this->assign("data", $data);
         $this->display("home");
     }
 

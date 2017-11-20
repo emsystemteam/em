@@ -68,11 +68,16 @@
             
             <div class="col-xs-12">
 				<table class="table table-hover table-bordered">
-					<volist name="list" id="vo" empty="">
+					<volist name="list" id="vo" empty="" key="k">
 						<tr>
 							<td style="padding:15px;">
-								<i class="ace-icon fa fa-book fa-1x green"></i>
-								<a href="{:U('mobile/notice',array('id'=>$vo['id']))}"><strong style="font-size:14px;">{$vo.contenttitile}</strong></a>
+								<i class="ace-icon fa fa-book fa-2x green"></i>
+								<strong style="font-size:18px;">{$vo.contenttitile}</strong> <a href="{:U('mobile/notice',array('id'=>$vo['id']))}">    更多 ...</a>
+								<ul>
+									<volist name="data[$k-1]" id="va" empty="">
+										<li><a href="{:U('mobile/detail',array('id'=>$va['id']))}"><strong style="font-size:14px;">{$va.noticetitle}</strong></a></li>
+									</volist>
+								</ul>
 							</td>
 						</tr>
 					</volist>

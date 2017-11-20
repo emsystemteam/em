@@ -208,8 +208,9 @@ function addMaterial($filename) {
 	$appid = "wx8c9d50dc3aea1225";
 	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
 	$access_token = get_access_token ( $appid, $secret );
-	$curl = 'https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token='.$access_token;
-	$result = _request($curl,true,'POST',$filename);
+	$curl = 'https://api.weixin.qq.com/cgi-bin/material/add_material?access_token='.$access_token;
+	$real_path = "{$_SERVER['DOCUMENT_ROOT']}{$filename}";
+	$result = http_post($curl,$real_path);
 	/* 	if ($result){
 		$json = json_decode($result,true);
 		if (!$json || !empty($json['errcode'])) {
@@ -220,6 +221,29 @@ function addMaterial($filename) {
 		return $json;
 	} */
 	return $result;  
+}
+
+
+function http_post($url ='' , $fileurl = '' )
+{
+	$curl = curl_init();
+	if(class_exists('\CURLFile')){
+		curl_setopt ( $curl, CURLOPT_SAFE_UPLOAD, true);
+		$data = array('media' => new \CURLFile($fileurl));
+	}else{
+		if (defined ( 'CURLOPT_SAFE_UPLOAD' )) {
+			curl_setopt ( $curl, CURLOPT_SAFE_UPLOAD, false );
+		}
+		$data = array('media' => '@' . realpath($fileurl));
+	}
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_POST, 1);
+	curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+	$output = curl_exec($curl);
+	curl_close($curl);
+	return $output;
 }
 function _request($curl, $https = true, $method = 'GET', $data = null) {
 	// 1.创建一个新cURL资源

@@ -88,9 +88,11 @@ class MobileController extends Controller
                 'id' => $id
             ))->find();
             if ($notice) {
+                $createtime = date('Y-m-d', strtotime($notice['createtime']));
+                $this->assign("createtime", $createtime);
                 $this->assign("noticetitle", $notice['noticetitle']);
                 $this->assign("noticepicture", $notice['noticepicture']);
-                $this->assign("noticecontent", $notice['noticecontent']);
+                $this->assign("noticecontent", htmlspecialchars_decode($notice['noticecontent']));
             }
             $this->display("details");
         }

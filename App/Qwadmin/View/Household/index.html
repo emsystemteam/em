@@ -88,6 +88,7 @@
 					                                        <th class="center">房号</th>
 					                                        <th class="center">住户身份</th>
 					                                        <th class="center">登录次数</th>
+					                                        <th class="center">是否绑定微信</th>
 					                                        <th class="center">操作</th>
 					                                    </tr>
 					                                    </thead>
@@ -105,6 +106,7 @@
 					                                            <td class="center">{$val['house_name']}</td>
 					                                            <td class="center">{$val['household_status']}</td>
 					                                            <td class="center">{$val['login_times']}</td>
+					                                            <td class="center"><?php if($val['openid']!=''){echo '是';}else{echo '否';} ?></td>
 					                                            <td class="center">
 		                                            				<a href="{:U('details',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
 					                                            	<a href="{:U('edit',array('household_id'=>$val['household_id']))}">修改</a>&nbsp;
@@ -161,6 +163,7 @@
 						                                        <th class="center">住户来源</th>
 						                                        <th class="center">注册时间</th>
 						                                        <th class="center">迁入申请</th>
+						                                        <th class="center">是否绑定微信</th>
 						                                        <th class="center">操作</th>
 						                                    </tr>
 						                                    </thead>
@@ -178,6 +181,7 @@
 						                                        	</td>
 						                                        	<td class="center">{$val['first_login_time']}</td>
 						                                        	<td class="center">{$val['move_reason']}</td>
+						                                        	<td class="center"><?php if($val['openid']!=''){echo '是';}else{echo '否';} ?></td>
 						                                            <td class="center">
 						                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">迁入房屋</a>&nbsp;
 						                                            	<!-- <a id="auditing" href="javascript:;">审核</a>&nbsp; -->
@@ -226,6 +230,7 @@
 	                                        	<th class="center">小区</th>
 		                                        <th class="center">迁入申请</th>
 		                                        <th class="center">注册时间</th>
+		                                        <th class="center">是否绑定微信</th>
 		                                        <th class="center">操作</th>
 		                                    </tr>
 		                                    </thead>
@@ -240,6 +245,7 @@
 		                                        	<td class="center">{$val['village_name']}</td>
 		                                        	<td class="center">{$val['move_reason']}</td>
 		                                        	<td class="center">{$val['first_login_time']}</td>
+		                                        	<td class="center"><?php if($val['openid']!=''){echo '是';}else{echo '否';} ?></td>
 		                                            <td class="center">
 		                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">迁入房屋</a>&nbsp;
 		                                            	<a href="{:U('details',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
@@ -285,6 +291,7 @@
 	                                        	<th class="center">姓名</th>
 	                                        	<th class="center">小区</th>
 		                                        <th class="center">注册时间</th>
+		                                        <th class="center">是否绑定微信</th>
 		                                        <th class="center">操作</th>
 		                                    </tr>
 		                                    </thead>
@@ -298,6 +305,7 @@
 		                                            <td class="center">{$val['household_name']}</td>
 		                                        	<td class="center">{$val['village_name']}</td>
 		                                        	<td class="center">{$val['first_login_time']}</td>
+		                                        	<td class="center"><?php if($val['openid']!=''){echo '是';}else{echo '否';} ?></td>
 		                                            <td class="center">
 		                                            	<a href="{:U('details',array('household_id'=>$val['household_id']))}">查看详情</a>&nbsp;
 		                                            	<a href="{:U('movedIn',array('household_id'=>$val['household_id']))}">再次迁入</a>&nbsp;

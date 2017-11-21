@@ -1,14 +1,93 @@
 <include file="Mobile/head"/>
-<body>
-
+<body style="background-color:#eeeeee;">
+<style>
+.section1>ul{
+    list-style: none;
+    display: flex;
+    justify-content:space-around;
+    align-items:center;
+    width: 100%;
+    height: 20vw;
+    background-color:#ffffff;
+    padding-right:30px;
+}
+ .section1>ul>li{
+    width: 25%;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 0px;
+}
+</style>
 <div id="header" data-role="header" data-id="header" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
     <h1 style="color: #ffffff;">安徽物业在线</h1>
 </div><!-- /header -->
 
+	<section class="section1">
+		<ul>
+		    <li>
+		        <i class="fa fa-volume-up fa-2x" style="color:#e38a30;"></i>
+		        <div style="margin-top:5px;">小区公告</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-usd fa-2x" style="color:#0874d9;"></i>
+		        <div style="margin-top:5px;">事物投票</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-user fa-2x" style="color:#26e44c;"></i>
+		        <div style="margin-top:5px;">选举投票</div>
+		    </li>
+		    <li>
+		        <i class="n fa fa-credit-card fa-2x" style="color:#13d5f0;"></i>
+		        <div style="margin-top:5px;">治理透明</div>
+		    </li>
+		</ul>
+	</section>
+	
+	<section class="section1" style="margin-top: -4vw;">
+		<ul>
+		    <li>
+		        <i class="fa fa-usd fa-2x" style="color:#df591a;"></i>
+		        <div style="margin-top:5px;">一键缴费</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-usd fa-2x" style="color:#15b0de;"></i>
+		        <div style="margin-top:5px;">物业报修</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-gbp fa-2x" style="color:#d1ce11;"></i>
+		        <div style="margin-top:5px;">办事指南</div>
+		    </li>
+		    <li>
+		        <i class="n fa fa-credit-card fa-2x" style="color:#f0ad14;"></i>
+		        <div style="margin-top:5px;">周边服务</div>
+		    </li>
+		</ul>
+	</section>
+	
+	<section class="section1" style="margin-top: -4vw;">
+		<ul>
+		    <li>
+		        <i class="fa fa-qrcode fa-2x" style="color:#c6e677;"></i>
+		        <div style="margin-top:5px;">生活福利</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-usd fa-2x" style="color:#8c73ce;"></i>
+		        <div style="margin-top:5px;">房屋租售</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-question-circle fa-2x" style="color:#8c73ce;"></i>
+		        <div style="margin-top:5px;">邻里求助</div>
+		    </li>
+		    <li>
+		        <i class="n fa fa-credit-card fa-2x" style="color:#ff1e85;"></i>
+		        <div style="margin-top:5px;">邻里闲置</div>
+		    </li>
+		</ul>
+	</section>
 
-
+<div  style="background-color:#ffffff;">
      <volist name="list" id="vo" empty="" key="k">
-         <br/>&nbsp;&nbsp;<strong style="font-size:18px;">{$vo.contenttitile}</strong> <a href="{:U('mobile/notice',array('id'=>$vo['id']))}">    更多 ...</a>
+         <br/>&nbsp;&nbsp;<strong style="font-size:18px;">{$vo.contenttitile}</strong> <a href="{:U('mobile/notice',array('id'=>$vo['id']))}" class="pull-right">更多 ...&nbsp;&nbsp;</a>
          <ol data-role="listview"  >
 	 <volist name="data[$k-1]" id="va" empty="">
 		<li><a href="{:U('mobile/detail',array('id'=>$va['id']))}"><strong style="font-size:14px;">{$va.noticetitle}</strong></a></li>
@@ -16,19 +95,15 @@
 		  </ol>
      </volist>
       
-       <div data-role="footer" data-position="fixed"  data-tap-toggle="false">
-        <div data-role="navbar">
-            <ul>
-                 <li><a href="{:U('mobile/index')}" data-icon="home" class="ui-btn-active">首页</a></li>
-                 <li><a href="{:U('wechat/index?url=profile')}" data-icon="user" >我</a></li>
-            </ul>
-        </div><!-- /navbar -->
-     </div><!-- /footer -->
-
-
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
-    $("title").html("首页 - 乐助科技");  
-</script>
+	<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="{:U('mobile/index')}" data-icon="home" class="ui-btn-active ui-state-persist">首页</a></li>
+				<li><a href="{:U('wechat/index?url=profile')}" data-icon="user" >我</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /footer -->
+</div>
 </body>
+<include file="Mobile/bottom"/>
 </html>

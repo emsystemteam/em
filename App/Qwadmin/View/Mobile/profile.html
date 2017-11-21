@@ -24,14 +24,15 @@
         <strong class="user-name-top">{$user.user}</strong>
       </div>
 
-		<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
-        <div data-role="navbar">
-            <ul>
-                 <li><a href="{:U('mobile/index')}" data-icon="home">首页</a></li>
-                 <li><a href="{:U('wechat/index?url=profile')}" data-icon="user" class="ui-btn-active">我</a></li>
-            </ul>
-        </div><!-- /navbar -->
-       </div><!-- /footer -->
+	<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="{:U('mobile/index')}" data-icon="home">首页</a></li>
+				<li><a href="{:U('wechat/index?url=profile')}" data-icon="user" class="ui-btn-active ui-state-persist">我</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /footer -->
        
 </body>
+<include file="Mobile/bottom"/>
 </html>

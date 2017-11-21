@@ -26,43 +26,71 @@ class MessageController extends ComController {
 		$this->display ();
 	}
 	
-	// 预览图文消息
+	// 群发图文消息
+	public function sendAllByTag() {
+		$id = I ( 'id' );
+		$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
+		$array = array (
+				'filter' => array ( // 用于设定图文消息的接收者
+						'is_to_all' => true, // 是否向全部用户发送，值为true或false，选择true该消息群发给所有用户，选择false可根据tag_id发送给指定群组的用户
+						'tag_id' => ''  // 群发到的标签的tag_id，参加用户管理中用户分组接口，若is_to_all值为true，可不填写tag_id
+				),
+				'mpnews' => array ( // 用于设定即将发送的图文消息
+						'media_id' => $new ['media_id']  // 用于群发的消息的media_id
+				),
+				'msgtype' => 'mpnews'  // 群发的消息类型，图文消息为mpnews，文本消息为text，语音为voice，音乐为music，图片为image，视频为video，卡券为wxcard
+		);
+		$result = sendAllByTag ( $msgarray );
+		if ($result->errcode == '0') { // 成功
+			$this->ajaxReturn ( array (
+					'status' => 1,
+					'message' => $result 
+			) );
+		} else {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => $result->errmsg 
+			) );
+		}
+	}
+	
+	// 预览图文消息(开发使用)
 	public function preview() {
 		$id = I ( 'id' );
-		/* $users = M ( 'member' )->where ( 'openid is not null' )->select ();
-		 foreach ( $users as $row ) {
-			$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
-			$msgarray ['touser'] = $row ['openid'];
-			$msgarray ['msgtype'] = 'news';
-			$msgarray ['news'] ['articles'] = array (
-					array (
-							'title' => $new ['newstitle'],
-							'description' => $new ['newssummary'],
-							'picurl' => 'http://www.bontion.com/em/' . $new ['newspicture'],
-							'url' => 'http://www.bontion.com/em/News/edit/id/' . $new ['id'] . '.html' 
-					) 
-			
-			);
-			
-			send_wechat_custommsg ( $msgarray );
-		} */
+		$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
+		$users = M ( 'member' )->where ( 'openid is not null' )->select ();
+		if (msgtype == '0') { // 发送文本
+			foreach ( $users as $row ) {
+				$msgarray = array (
+						'touser' => $row ['openid'],
+						'msgtype' => 'text',
+						'text' => array (
+								'content' => $new ['newscontent'] 
+						) 
+				);
+				$result = preview ( $msgarray );
+			}
+			$this->ajaxReturn ( array (
+					'status' => 1,
+					'message' =>'发送成功'
+			) );
+		} else { // 发送图文
+			foreach ( $users as $row ) {
+				$msgarray = array (
+						'touser' => $row ['openid'],
+						'msgtype' => 'mpnews',
+						'mpnews' => array (
+								'media_id' => $new ['media_id'] 
+						) 
+				);
+				$result = preview ( $msgarray );
+			}
+			$this->ajaxReturn ( array (
+					'status' => 1,
+					'message' => '发送成功'
+			) );
+		}
 		
-		$msgarray = array (
-				'touser' => 'oCsSbxOg6qambejlyzT8SPtQ1b_s',
-				'msgtype' => 'text',
-				'text' => array (
-						'content' => $content 
-				) 
-		);
-		$filename = '/em/Upload/image/2017-11-10/5a05a4f85dba5.png';
-		$data = array (
-				'media' => '@' . $filename 
-		);
-		$result = addMaterial ( $filename);
-		$this->ajaxReturn ( array (
-				'status' => 1,
-				'message' => $result
-		) );
 	}
 	// 微信模板管理
 	public function wechatsmsindex() {

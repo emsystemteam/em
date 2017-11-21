@@ -120,7 +120,7 @@ class ContentController extends ComController {
 					$template = array (
 							'touser' => $row [openid],
 							'template_id' => 'A5_-g44qYqhuyu9wTb9aHHZta9HFgp2XbW9G20L5hsU',
-							'url' => 'http://www.bontion.com/em/mobile/detail/id/' . $notice ['id'] . '.html',
+							'url' => __DOMAIN__.__APP__.'/em/mobile/detail/id/' . $notice ['id'] . '.html',
 							'topcolor' => '#7B68EE',
 							'data' => array (
 									'first' => array (

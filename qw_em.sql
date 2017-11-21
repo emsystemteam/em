@@ -391,6 +391,9 @@ CREATE TABLE `qw_em_news` (
   `modifier` int(11) DEFAULT NULL COMMENT '修改人',
   `modifytime` datetime DEFAULT NULL COMMENT '修改时间',
   `status` int(11) DEFAULT NULL COMMENT '状态：1启用,0禁用',
+  `thumb_media_id` varchar(200) NOT NULL COMMENT '图文消息的封面图片素材id（必须是永久mediaID）',
+  `media_id` varchar(200) NOT NULL COMMENT '最终图文素材的id',
+  `url` varchar(255) DEFAULT NULL COMMENT '封面图片素材url',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='图文主表';
 

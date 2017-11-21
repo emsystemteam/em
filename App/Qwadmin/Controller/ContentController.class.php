@@ -42,7 +42,7 @@ class ContentController extends ComController {
 			$condition ['stauts'] = 1;
 			$condition ['contentid'] = $id;
 			if (I ( 'noticetitle' )) {
-				$condition ['noticetitle'] = I ( 'noticetitle' );
+				$condition ['noticetitle'] =array('like','%'.I ( 'noticetitle' ).'%') ;
 			}
 			$count = $m->where ( $condition )->count ();
 			$list = $m->where ( $condition )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();

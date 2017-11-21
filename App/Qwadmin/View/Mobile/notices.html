@@ -1,60 +1,24 @@
-<include file="Public/head"/>
-<body style="margin-bottom:80px;">
-<div class="main-container">
-    <div class="main-content">
-      <div class="page-content">
-        <div class="row">
+<include file="Mobile/head"/>
+<body>
 
-            <div class="col-xs-12">
-				<table class="table table-hover table-bordered">
-					<volist name="list" id="vo" empty="">
-						<tr>
-							<td style="padding:15px;">
-								<a href="{:U('mobile/detail',array('id'=>$vo['id']))}">
-									<strong style="font-size:14px;">{$vo.noticetitle}</strong></br>
-									<small style="font-size:10px;">{$vo.createtime}</small>
-								</a>
-							</td>
-						</tr>
-					</volist>
-				</table>
-           </div>
-           
-        </div><!-- /.row -->
-        </div>
-    </div><!-- /.main-content -->
-</div><!-- /.main-container -->
+<div id="header" data-role="header" data-id="header" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
+    <h1 style="color: #ffffff;">乐助科技</h1>
+    <a href="#" onclick="javascript:history.go(-1);" data-ajax="false" data-direction="reverse" data-icon="back" data-iconpos="notext" data-shadow="false" data-icon-shadow="false">Back</a>
+</div><!-- /header -->
 
-
-<!-- basic scripts -->
-
-<!--[if !IE]> -->
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
-</script>
-
-<!-- <![endif]-->
-
-<!--[if IE]>
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
-</script>
-<![endif]-->
-<script type="text/javascript">
-    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
-</script>
-
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
-    jQuery(function ($) {
-        $(document).on('click', '.toolbar a[data-target]', function (e) {
-            e.preventDefault();
-            var target = $(this).data('target');
-            $('.widget-box.visible').removeClass('visible');//hide others
-            $(target).addClass('visible');//show target
-        });
-    });
-
-</script>
+<div>
+	<ul data-role="listview">
+		<volist name="list" id="vo" empty="">
+			<li>
+				<a href="{:U('mobile/detail',array('id'=>$vo['id']))}" >
+					<h2>{$vo.noticetitle}</h2>
+					<p>{$vo.createtime}</p>
+				</a>
+			</li>
+		</volist>
+	</ul>
+</div>
 </body>
 </html>
+
+

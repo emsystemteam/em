@@ -1,5 +1,9 @@
 <include file="Public/head"/>
-<body style="margin-bottom:80px;">
+<body>
+<div id="header" data-role="header" data-id="header" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
+    <h1 style="color: #ffffff;">乐助科技</h1>
+    <a href="#" onclick="javascript:history.go(-1);" data-ajax="false" data-direction="reverse" data-icon="back" data-iconpos="notext" data-shadow="false" data-icon-shadow="false">Back</a>
+</div><!-- /header -->
 <style>
 .acticle-title {
 	font-size:25px;
@@ -19,7 +23,7 @@ img{
     height:auto;
 }
 </style>
-<div class="main-container">
+<div class="main-container"  style="margin:10px;">
     <div class="main-content">
       <div class="page-content">
           <div class="text-center acticle-title">{$noticetitle} </div>
@@ -29,37 +33,5 @@ img{
         </div>
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->
-
-
-<!-- basic scripts -->
-
-<!--[if !IE]> -->
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
-</script>
-
-<!-- <![endif]-->
-
-<!--[if IE]>
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
-</script>
-<![endif]-->
-<script type="text/javascript">
-    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
-</script>
-
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
-    jQuery(function ($) {
-        $(document).on('click', '.toolbar a[data-target]', function (e) {
-            e.preventDefault();
-            var target = $(this).data('target');
-            $('.widget-box.visible').removeClass('visible');//hide others
-            $(target).addClass('visible');//show target
-        });
-    });
-    $("title").html("安徽物业在线"); 
-</script>
 </body>
 </html>

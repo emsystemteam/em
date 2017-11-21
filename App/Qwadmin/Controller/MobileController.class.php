@@ -97,18 +97,19 @@ class MobileController extends Controller
             $this->display("details");
         }
     }
-    
+
     // 手机端显示图文消息
-    public function news_detail() {
-    	if (isset ( $_GET ['id'] )) {
-    		$id = intval ( $_GET ['id'] );
-    		$m = M ( 'em_news' );
-    		$condition ['id'] = $id;
-    		$model = $m->where ( 'id=' . $id )->find ();
-    		$this->assign ( 'model', $model );
-    		$this->display ();
-    	} else {
-    		$this->error ( '没有找到任何图文素材信息' );
-    	}
+    public function news_detail()
+    {
+        if (isset($_GET['id'])) {
+            $id = intval($_GET['id']);
+            $m = M('em_news');
+            $condition['id'] = $id;
+            $model = $m->where('id=' . $id)->find();
+            $this->assign('model', $model);
+            $this->display();
+        } else {
+            $this->error('没有找到任何图文素材信息');
+        }
     }
 }

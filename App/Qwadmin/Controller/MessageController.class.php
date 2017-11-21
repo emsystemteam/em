@@ -28,53 +28,104 @@ class MessageController extends ComController {
 	
 	// 群发图文消息
 	public function sendAllByTag() {
-		$id = I ( 'id' );
-		$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
-		$array = array (
-				'filter' => array ( // 用于设定图文消息的接收者
-						'is_to_all' => true, // 是否向全部用户发送，值为true或false，选择true该消息群发给所有用户，选择false可根据tag_id发送给指定群组的用户
-						'tag_id' => ''  // 群发到的标签的tag_id，参加用户管理中用户分组接口，若is_to_all值为true，可不填写tag_id
-				),
-				'mpnews' => array ( // 用于设定即将发送的图文消息
-						'media_id' => $new ['media_id']  // 用于群发的消息的media_id
-				),
-				'msgtype' => 'mpnews'  // 群发的消息类型，图文消息为mpnews，文本消息为text，语音为voice，音乐为music，图片为image，视频为video，卡券为wxcard
-		);
-		$result = sendAllByTag ( $msgarray );
-		if ($result->errcode == '0') { // 成功
-			$this->ajaxReturn ( array (
-					'status' => 1,
-					'message' => $result 
-			) );
+		$msgtype = I ( 'msgtype' );
+		if ($msgtype == '0') { // 发送文本
+			$content = I ( 'content' );
+			if (trim ( $content ) != "" && count ( $content ) <= 600) {
+				$array = array (
+						'filter' => array ( // 用于设定图文消息的接收者
+								'is_to_all' => true, // 是否向全部用户发送，值为true或false，选择true该消息群发给所有用户，选择false可根据tag_id发送给指定群组的用户
+								'tag_id' => ''  // 群发到的标签的tag_id，参加用户管理中用户分组接口，若is_to_all值为true，可不填写tag_id
+						),
+						'text' => array (
+								'content' => $content 
+						),
+						'msgtype' => 'text'  // 群发的消息类型，图文消息为mpnews，文本消息为text，语音为voice，音乐为music，图片为image，视频为video，卡券为wxcard
+				);
+				$result = sendAllByTag ( $msgarray );
+				if ($result->errcode == '0') { // 成功
+					$this->addwechatlog ( 1, 0, $content );
+					addlog ( '群发消息成功-文本' );
+					$this->ajaxReturn ( array (
+							'status' => 1,
+							'message' => $result 
+					) );
+				} else {
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => $result->errmsg 
+					) );
+				}
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '文本内容不能为空，且不能超过600字' 
+				) );
+			}
 		} else {
-			$this->ajaxReturn ( array (
-					'status' => 0,
-					'message' => $result->errmsg 
-			) );
+			$id = I ( 'id' );
+			$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
+			$array = array (
+					'filter' => array ( // 用于设定图文消息的接收者
+							'is_to_all' => true, // 是否向全部用户发送，值为true或false，选择true该消息群发给所有用户，选择false可根据tag_id发送给指定群组的用户
+							'tag_id' => ''  // 群发到的标签的tag_id，参加用户管理中用户分组接口，若is_to_all值为true，可不填写tag_id
+					),
+					'mpnews' => array ( // 用于设定即将发送的图文消息
+							'media_id' => $new ['media_id']  // 用于群发的消息的media_id
+					),
+					'msgtype' => 'mpnews'  // 群发的消息类型，图文消息为mpnews，文本消息为text，语音为voice，音乐为music，图片为image，视频为video，卡券为wxcard
+			);
+			$result = sendAllByTag ( $msgarray );
+			if ($result->errcode == '0') { // 成功
+				$this->addwechatlog ( 1, 0, $new ['newstitle'] );
+				addlog ( '群发消息成功-图本' );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => $result 
+				) );
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => $result->errmsg 
+				) );
+			}
 		}
 	}
 	
 	// 预览图文消息(开发使用)
 	public function preview() {
-		$id = I ( 'id' );
-		$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
 		$users = M ( 'member' )->where ( 'openid is not null' )->select ();
-		if (msgtype == '0') { // 发送文本
-			foreach ( $users as $row ) {
-				$msgarray = array (
-						'touser' => $row ['openid'],
-						'msgtype' => 'text',
-						'text' => array (
-								'content' => $new ['newscontent'] 
-						) 
-				);
-				$result = preview ( $msgarray );
+		$msgtype = I ( 'msgtype' );
+		if ($msgtype == '0') { // 发送文本
+			$content = I ( 'content' );
+			if (trim ( $content ) != "" && count ( $content ) <= 600) {
+				foreach ( $users as $row ) {
+					$msgarray = array (
+							'touser' => $row ['openid'],
+							'msgtype' => 'text',
+							'text' => array (
+									'content' => $content 
+							) 
+					);
+					$result = preview ( $msgarray );
+				}
+				// 保存发送微信日志
+				$this->addwechatlog ( 1, 0, $content );
+				addlog ( '群发消息成功-文本（开发用）' );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '发送成功' 
+				) );
+			} else {
+				
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '文本内容不能为空，且不能超过600字' 
+				) );
 			}
-			$this->ajaxReturn ( array (
-					'status' => 1,
-					'message' =>'发送成功'
-			) );
 		} else { // 发送图文
+			$id = I ( 'id' );
+			$new = M ( 'em_news' )->where ( 'id=' . $id )->find ();
 			foreach ( $users as $row ) {
 				$msgarray = array (
 						'touser' => $row ['openid'],
@@ -85,12 +136,46 @@ class MessageController extends ComController {
 				);
 				$result = preview ( $msgarray );
 			}
+			$this->addwechatlog ( 1, 0, $new ['newstitle'] );
+			addlog ( '群发消息成功-图本（开发用）' );
 			$this->ajaxReturn ( array (
 					'status' => 1,
-					'message' => '发送成功'
+					'message' => '发送成功' 
 			) );
 		}
-		
+	}
+	
+	/**
+	 * 记录微信群发日志
+	 * 
+	 * @param 0短信，1微信 $msgtype        	
+	 * @param 发送数量 $amount        	
+	 * @param 发送内容 $content        	
+	 */
+	private function addwechatlog($msgtype, $amount = 0, $content) {
+		// 保存发送微信日志
+		$model = D ( 'em_smslog' );
+		$model->createtime = date ( 'y-m-d H:i:s', time () );
+		$model->creater = session ( 'uid' );
+		$model->smscontent = $content;
+		$model->msgtype = $msgtype;
+		$model->amount = $amount;
+		$model->add ();
+	}
+	
+	// 微信发送日志
+	public function wechatlog() {
+		$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
+		$pagesize = 10; // 每页数量
+		$offset = $pagesize * ($p - 1); // 计算记录偏移量
+		$m = M ( 'em_smslog' );
+		$count = $m->where ( 'msgtype=1' )->count ();
+		$list = $m->where ( 'msgtype=1' )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+		$page = new \Think\Page ( $count, $pagesize );
+		$page = $page->show ();
+		$this->assign ( 'list', $list );
+		$this->assign ( 'page', $page );
+		$this->display ();
 	}
 	// 微信模板管理
 	public function wechatsmsindex() {
@@ -245,13 +330,7 @@ class MessageController extends ComController {
 									}
 									if ($amount > 0) {
 										// 保存发送短信日志
-										$model = D ( 'em_smslog' );
-										$model->create ();
-										$model->createtime = date ( 'y-m-d H:i:s', time () );
-										$model->creater = session ( 'uid' );
-										$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
-										$model->amount = $amount;
-										$flag = $model->add ();
+										$this->addwechatlog ( 0, $amount, $smscontent );
 									}
 									
 									$this->ajaxReturn ( array (
@@ -305,8 +384,8 @@ class MessageController extends ComController {
 		$pagesize = 10; // 每页数量
 		$offset = $pagesize * ($p - 1); // 计算记录偏移量
 		$m = M ( 'em_smslog' );
-		$count = $m->count ();
-		$list = $m->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+		$count = $m->where ( 'msgtype=0' )->count ();
+		$list = $m->where ( 'msgtype=0' )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
 		$data = $this->getMessageSurplus ();
@@ -365,13 +444,8 @@ class MessageController extends ComController {
 				}
 				if ($amount > 0) {
 					// 保存发送短信日志
-					$model = D ( 'em_smslog' );
-					$model->create ();
-					$model->createtime = date ( 'y-m-d H:i:s', time () );
-					$model->creater = session ( 'uid' );
-					$model->smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
-					$model->amount = $amount;
-					$flag = $model->add ();
+					$smscontent = $smsmodel ['smscontent'] . '【' . $smsmodel ['signname'] . '】';
+					$this->addwechatlog ( 0, $amount, $smscontent );
 				}
 				
 				$this->ajaxReturn ( array (

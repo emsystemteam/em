@@ -328,6 +328,7 @@ CREATE TABLE `qw_em_smslog` (
   `creater` int(11) DEFAULT NULL COMMENT '创建人',
   `createtime` datetime DEFAULT NULL COMMENT '创建时间',
   `amount` int(11) DEFAULT NULL COMMENT '发送消息数量',
+  `msgtype` int(11) DEFAULT '0' COMMENT '短信类型0：手机短信;1：微信',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='短信发送记录';
 

@@ -71,7 +71,7 @@
 												<td>{$val['noticetitle']}</td>
 												<td>{$val['createtime']}</td>
 												<td class="center">
-												<php>echo '<a class="sendmsg" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-send"></i>发送微信</a>';</php>
+												<php>echo '<a class="sendmsg" href="javascript:void(0);" noticetitle="'.$val['noticetitle'].'" val="'.$val['id'].'"><i class="fa fa-send"></i>发送微信</a>';</php>
 													<a href="{:U('editnotice',array('contentid'=>$model['id'],'id'=>$val['id']))}"><i class="fa fa-edit"></i>编辑</a>
 												 <php>echo '<a class="deletenotice" href="javascript:void(0);" val="'.$val['id'].'"><i class="fa fa-trash"></i>删除</a>';</php>
 												</td>
@@ -85,7 +85,27 @@
 							{$page}
 							<!-- PAGE CONTENT ENDS -->
 						</div>
-					
+					<div class="modal fade" id="theModal" tabindex="-1" role="dialog"
+					aria-labelledby="theModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">发送微信文章</h4>
+							</div>
+							<div class="modal-body" style="height:100%">
+								<include file="msgoption" />
+							</div>
+							<div class="modal-footer">
+							<button type="button" class="btn btn-info submit" id="btnsendmsg"
+									data-dismiss="modal">保存</button>
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+							</div>
+					</div>
+				</div>
+			</div>
 						<!-- /.col -->
 					</div>
 						
@@ -103,17 +123,12 @@
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
 	$(function(){
-		$('.sendmsg').click(function(){
+		$('#btnsendmsg').click(function(){
 			var noticeid=$(this).attr('val');
 			var contentid=$('#contentid').val();
 			var sendData = {
 					contentid :contentid
 				};
-			bootbox.confirm({
-	            title: "系统提示",
-	            message: "是否要发送？",
-	            callback: function (result) {
-	            	if (result) {
 	        		$.ajax({
 	        			type : "post",
 	        			url : "__URL__/getvillagetocontentbyid",
@@ -170,16 +185,13 @@
 	        			error : function(XMLHttpRequest, textStatus, errorThrown) {
 	        			}
 	        		});
-	            }},
-	            buttons: {
-	                "cancel": {"label": "取消"},
-	                "confirm": {
-	                    "label": "确定",
-	                    "className": "btn-danger"
-	                }
-	            }
-	        });
-	 			
+		});
+		$('.sendmsg').click(function(){
+			  var obj = $(this);
+	          var noticetitle = obj.attr('noticetitle');
+	          $('#noticetitle').val(noticetitle);
+	          $('#contenttitile').val($('#hdfcontenttitile').val());
+			  $('#theModal').modal({});
 		});
 		//删除文章
 		 $(".deletenotice").on('click', function () {

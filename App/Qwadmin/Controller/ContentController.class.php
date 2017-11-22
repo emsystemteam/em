@@ -32,7 +32,9 @@ class ContentController extends ComController {
 	// 模块管理明细-文章列表
 	public function detail() {
 		if (isset ( $_GET ['id'] )) {
-			
+			$templates=M('em_dictionary')->where ('dict_name='.'"template"')->select();
+			$authResult = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"authResult"' )->order ( 'CREATE_TIME desc' )->select ();
+			$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"householdStatus"' )->order ( 'CREATE_TIME desc' )->select ();
 			$data ['noticetitle'] = isset ( $_POST ['smstype'] ) ? trim ( $_POST ['smstype'] ) : 1; // 默认短信
 			$id = intval ( $_GET ['id'] );
 			$p = isset ( $_GET ['p'] ) ? intval ( $_GET ['p'] ) : '1';
@@ -55,6 +57,9 @@ class ContentController extends ComController {
 			$this->assign ( 'list', $list );
 			$this->assign ( 'model', $content );
 			$this->assign ( 'page', $page );
+			$this->assign('templates',$templates);
+			$this->assign ( 'authResults', $authResult );
+			$this->assign ( 'holdtype', $holdtype );
 			$this->display ();
 		} else {
 			$this->error ( '没有找到任何文章信息' );
@@ -137,6 +142,7 @@ class ContentController extends ComController {
 						'in',
 						$totalselect 
 				);
+				
 				$M = M ( 'member' )->where ( 'openid is not null' );
 				$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone', 'left' )->join ( 'qw_em_house_household on qw_em_house_household.household_id=qw_em_household.household_id', 'left' )->join ( 'qw_em_house on qw_em_house.house_id=qw_em_house_household.house_id', 'left' )->where ( $condition )->distinct ( true )->field ( 'qw_member.openid,qw_em_household.household_name' )->select ();
 				$notice = M ( 'em_notice' )->join ( 'qw_em_contentmanager on qw_em_notice.contentid=qw_em_contentmanager.id' )->where ( 'qw_em_notice.id=' . $noticeid )->field ( 'qw_em_notice.*,qw_em_contentmanager.contenttitile' )->find ();
@@ -150,7 +156,7 @@ class ContentController extends ComController {
 					foreach ( $Member as $row ) {
 						$template = array (
 								'touser' => $row [openid],
-								'template_id' => 'A5_-g44qYqhuyu9wTb9aHHZta9HFgp2XbW9G20L5hsU',
+								'template_id' => __TEMPLATE_ID__,
 								'url' => $_SERVER ['HTTP_HOST'] . __ROOT__ . '/mobile/detail/id/' . $notice ['id'] . '.html',
 								'topcolor' => '#7B68EE',
 								'data' => array (

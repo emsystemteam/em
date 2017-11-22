@@ -42,7 +42,10 @@ class ContentController extends ComController {
 			$condition ['stauts'] = 1;
 			$condition ['contentid'] = $id;
 			if (I ( 'noticetitle' )) {
-				$condition ['noticetitle'] =array('like','%'.I ( 'noticetitle' ).'%') ;
+				$condition ['noticetitle'] = array (
+						'like',
+						'%' . I ( 'noticetitle' ) . '%' 
+				);
 			}
 			$count = $m->where ( $condition )->count ();
 			$list = $m->where ( $condition )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
@@ -57,23 +60,23 @@ class ContentController extends ComController {
 			$this->error ( '没有找到任何文章信息' );
 		}
 	}
-	// 文章关联小区
-	public function addvillagetonotice() {
+	// 内容关联小区
+	public function addvillagetocontent() {
 		$totalselect = $_POST ['totalselect']; // 选择小区
-		$noticeid = $_POST ['noticeid']; // 文章id
-		if (isset ( $totalselect ) && isset ( $noticeid )) {
+		$contentid = $_POST ['contentid']; // 内容id
+		if (isset ( $totalselect ) && isset ( $contentid )) {
 			// 之前的关联信息删除
-			$m = M ( 'em_noticetovillage' );
+			$m = M ( 'em_contenttovillage' );
 			$m->status = 0;
 			$m->modifytime = date ( 'y-m-d H:i:s', time () );
 			$m->modifier = session ( 'uid' );
-			$m->where ( 'noticeid=' . $noticeid )->save ();
+			$m->where ( 'contentid=' . $contentid )->save ();
 			// 添加新的关联信息
 			$m->startTrans ();
 			$result = true;
 			foreach ( $totalselect as $villageid ) {
 				$m->create ();
-				$m->noticeid = $noticeid;
+				$m->contentid = $contentid;
 				$m->villageid = $villageid;
 				$m->status = 1;
 				$m->createtime = date ( 'y-m-d H:i:s', time () );
@@ -100,7 +103,29 @@ class ContentController extends ComController {
 			) );
 		}
 	}
-	
+	// 获取文章内容
+	public function getContentbyId() {
+		$contentid = I ( 'contentid' ); // 内容id
+		if ($contentid) {
+			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $contentid )->find ();
+			if ($content) {
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => $content 
+				) );
+			} else {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '没有查到文章信息' 
+				) );
+			}
+		} else {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '参数传递错误' 
+			) );
+		}
+	}
 	// 指定楼宇发送微信
 	public function sendWechatSms() {
 		$noticeid = I ( 'noticeid' ); // 文章id
@@ -112,46 +137,57 @@ class ContentController extends ComController {
 						'in',
 						$totalselect 
 				);
-				$M = M ( 'member' );
-				$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone' )->where ( $condition )->field ( 'qw_member.*,qw_em_household.household_name' )->select ();
+				$M = M ( 'member' )->where ( 'openid is not null' );
+				$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone', 'left' )->join ( 'qw_em_house_household on qw_em_house_household.household_id=qw_em_household.household_id', 'left' )->join ( 'qw_em_house on qw_em_house.house_id=qw_em_house_household.house_id', 'left' )->where ( $condition )->distinct ( true )->field ( 'qw_member.openid,qw_em_household.household_name' )->select ();
 				$notice = M ( 'em_notice' )->join ( 'qw_em_contentmanager on qw_em_notice.contentid=qw_em_contentmanager.id' )->where ( 'qw_em_notice.id=' . $noticeid )->field ( 'qw_em_notice.*,qw_em_contentmanager.contenttitile' )->find ();
 				// 发送模板消息
-				foreach ( $Member as $row ) {
-					$template = array (
-							'touser' => $row [openid],
-							'template_id' => 'A5_-g44qYqhuyu9wTb9aHHZta9HFgp2XbW9G20L5hsU',
-							'url' => __DOMAIN__.__APP__.'/em/mobile/detail/id/' . $notice ['id'] . '.html',
-							'topcolor' => '#7B68EE',
-							'data' => array (
-									'first' => array (
-											'value' => $notice ['contenttitile'],
-											'color' => "#743A3A" 
-									),
-									'keyword1' => array (
-											'value' => $notice ['noticetitle'],
-											'color' => '#743A3A' 
-									),
-									'keyword2' => array (
-											'value' => $row ['household_name'],
-											'color' => '#743A3A' 
-									),
-									'remark' => array (
-											'value' => '',
-											'color' => '#743A3A' 
-									) 
-							) 
-					);
-					$result=send_wechat_template ( $template );
-					if($result==0){
-						addlog ( '微信发送文章成功，ID：' . $row ['household_name']);
-					}else{
-						addlog ( '微信发送文章失败，ID：' . $result);
+				if (count ( $Member ) == 0) {
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '没有找到可以发送的微信信息' 
+					) );
+				} else {
+					foreach ( $Member as $row ) {
+						$template = array (
+								'touser' => $row [openid],
+								'template_id' => 'A5_-g44qYqhuyu9wTb9aHHZta9HFgp2XbW9G20L5hsU',
+								'url' => $_SERVER ['HTTP_HOST'] . __ROOT__ . '/mobile/detail/id/' . $notice ['id'] . '.html',
+								'topcolor' => '#7B68EE',
+								'data' => array (
+										'first' => array (
+												'value' => $notice ['contenttitile'],
+												'color' => "#743A3A" 
+										),
+										'keyword1' => array (
+												'value' => $notice ['noticetitle'],
+												'color' => '#743A3A' 
+										),
+										'keyword2' => array (
+												'value' => $row ['household_name'],
+												'color' => '#743A3A' 
+										),
+										'remark' => array (
+												'value' => '',
+												'color' => '#743A3A' 
+										) 
+								) 
+						);
+						$result = send_wechat_template ( $template );
+						if ($result == 0) {
+							$this->ajaxReturn ( array (
+									'status' => 1,
+									'message' => '发送成功'
+							) );
+							addlog ( '微信发送文章成功，ID：' . $row ['household_name'] );
+						} else {
+							$this->ajaxReturn ( array (
+									'status' => 0,
+									'message' => '发送失败'
+							) );
+						}
+						
 					}
 				}
-				$this->ajaxReturn ( array (
-						'status' => 1,
-						'message' => '发送成功'
-				) );
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,
@@ -166,15 +202,33 @@ class ContentController extends ComController {
 		}
 	}
 	
-	// 获取关联文章的小区列表
-	public function getvillagetonoticebyid() {
-		$noticeid = $_POST ['noticeid']; // 文章id
-		if (isset ( $noticeid )) {
-			$list = M ( 'em_noticetovillage' )->join ( ' LEFT JOIN qw_em_village ON qw_em_village.VILLAGE_ID = qw_em_noticetovillage.villageid' )->field ( 'qw_em_village.VILLAGE_NAME,qw_em_noticetovillage.*' )->where ( 'status=1 and noticeid=' . $noticeid )->select ();
-			$this->ajaxReturn ( array (
-					'status' => 1,
-					'message' => $list 
-			) );
+	// 获取关联内容的小区列表
+	public function getvillagetocontentbyid() {
+		$contentid = $_POST ['contentid']; // 内容id
+		if (isset ( $contentid )) {
+			$content = M ( 'em_contentmanager' )->where ( 'id=' . $contentid )->find ();
+			if (! $content) {
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '没有找到内容信息' 
+				) );
+			} else {
+				if ($content ['allowallvillage'] == 1) { // 默认绑定所有小区
+					$list = M ( 'em_village' )->field ( 'qw_em_village.*,qw_em_village.village_id as villageid' )->select ();
+					$this->ajaxReturn ( array (
+							'status' => 1,
+							'message' => $list,
+							'allowallvillage' => 1 
+					) );
+				} else {
+					$list = M ( 'em_contenttovillage' )->join ( ' LEFT JOIN qw_em_village ON qw_em_village.VILLAGE_ID = qw_em_contenttovillage.villageid' )->field ( 'qw_em_village.VILLAGE_NAME,qw_em_contenttovillage.*' )->where ( 'status=1 and contentid=' . $contentid )->select ();
+					$this->ajaxReturn ( array (
+							'status' => 1,
+							'message' => $list,
+							'allowallvillage' => 0 
+					) );
+				}
+			}
 		} else {
 			$this->ajaxReturn ( array (
 					'status' => 0,
@@ -187,7 +241,7 @@ class ContentController extends ComController {
 	public function deleteVillage() {
 		$id = $_POST ['id']; // 文章id
 		if (isset ( $id )) {
-			$m = M ( 'em_noticetovillage' );
+			$m = M ( 'em_contenttovillage' );
 			$m->status = 0;
 			$m->modifytime = date ( 'y-m-d H:i:s', time () );
 			$m->modifier = session ( 'uid' );
@@ -325,42 +379,45 @@ class ContentController extends ComController {
 		if (! empty ( $_POST )) {
 			$model->create (); // 收集表单数据
 		}
-		if (! empty ( $model->id )) { // 更新
-			$model->modifytime = date ( 'y-m-d H:i:s', time () );
-			$model->modifier = session ( 'uid' );
-			$model->contenttitile = I ( 'contenttitile' );
-			$model->contenttype = I ( 'contenttype' );
-			$flag = $model->save ();
-			if ($flag) {
-				addlog ( '内容管理保存成功，ID：' . $model->id );
-				$this->ajaxReturn ( array (
-						'status' => 1,
-						'message' => '保存内容成功' 
-				) );
-			} else {
-				$this->ajaxReturn ( array (
-						'status' => 0,
-						'message' => '保存内容失败' 
-				) );
-			}
-		} else { // 新增
-			$model->createtime = date ( 'y-m-d H:i:s', time () );
-			$model->creater = session ( 'uid' );
-			$model->status = 1;
-			$model->contenttitile = I ( 'contenttitile' );
-			$model->contenttype = I ( 'contenttype' );
-			$flag = $model->add ();
-			if ($flag) {
-				addlog ( '创建内容成功，ID：' . $model->id );
-				$this->ajaxReturn ( array (
-						'status' => 1,
-						'message' => '创建内容成功' 
-				) );
-			} else {
-				$this->ajaxReturn ( array (
-						'status' => 0,
-						'message' => '创建内容失败' 
-				) );
+		if ($model->contenttitile == "" || trim ( $model->contenttitile ) == "") {
+			$this->ajaxReturn ( array (
+					'status' => 0,
+					'message' => '内容标题不为空' 
+			) );
+		} else {
+			if (! empty ( $model->id )) { // 更新
+				$model->modifytime = date ( 'y-m-d H:i:s', time () );
+				$model->modifier = session ( 'uid' );
+				$flag = $model->save ();
+				if ($flag) {
+					addlog ( '内容管理保存成功，ID：' . $model->id );
+					$this->ajaxReturn ( array (
+							'status' => 1,
+							'message' => '保存内容成功' 
+					) );
+				} else {
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '保存内容失败' 
+					) );
+				}
+			} else { // 新增
+				$model->createtime = date ( 'y-m-d H:i:s', time () );
+				$model->creater = session ( 'uid' );
+				$model->status = 1;
+				$flag = $model->add ();
+				if ($flag) {
+					addlog ( '创建内容成功，ID：' . $model->id );
+					$this->ajaxReturn ( array (
+							'status' => 1,
+							'message' => '创建内容成功' 
+					) );
+				} else {
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '创建内容失败' 
+					) );
+				}
 			}
 		}
 	}

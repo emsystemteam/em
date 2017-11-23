@@ -360,6 +360,8 @@ CREATE TABLE `qw_em_notice` (
   `modifier` int(11) DEFAULT NULL COMMENT '最后修改人id',
   `modifytime` datetime DEFAULT NULL COMMENT '最后一次修改时间',
   `stauts` int(11) DEFAULT '1' COMMENT '状态1正常0不显示',
+  `starttime` datetime DEFAULT NULL COMMENT '置顶开始日期',
+  `endtime` datetime DEFAULT NULL COMMENT '置顶结束日期',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='文章';
 

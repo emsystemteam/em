@@ -98,8 +98,8 @@
 								<include file="msgoption" />
 							</div>
 							<div class="modal-footer">
-							<button type="button" class="btn btn-info submit" id="btnsendmsg"
-									data-dismiss="modal">保存</button>
+							<!-- <button type="button" class="btn btn-info submit" id="btnsendmsg"
+									data-dismiss="modal">立即发送</button> -->
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal">关闭</button>
 							</div>
@@ -123,7 +123,7 @@
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
 	$(function(){
-		$('#btnsendmsg').click(function(){
+		/* $('#btnsendmsg').click(function(){
 			var noticeid=$(this).attr('val');
 			var contentid=$('#contentid').val();
 			var sendData = {
@@ -185,11 +185,14 @@
 	        			error : function(XMLHttpRequest, textStatus, errorThrown) {
 	        			}
 	        		});
-		});
+		}); */
 		$('.sendmsg').click(function(){
 			  var obj = $(this);
 	          var noticetitle = obj.attr('noticetitle');
-	          $('#noticetitle').val(noticetitle);
+	          var noticeid = obj.attr('val');
+	          $('#hfdselectnoticeid').val(noticeid);
+	          $('#titile').val(noticetitle);
+	          $('#summary').val(noticetitle);
 	          $('#contenttitile').val($('#hdfcontenttitile').val());
 			  $('#theModal').modal({});
 		});

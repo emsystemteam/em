@@ -7,7 +7,7 @@
     justify-content:space-around;
     align-items:center;
     width: 100%;
-    height: 115px;
+    height: 90px;
     background-color:#ffffff;
     padding-right:10px;
     padding-left:0px;
@@ -86,25 +86,28 @@
 		</ul>
 	</section>
 
-<div  style="background-color:#ffffff;">
-     <volist name="list" id="vo" empty="" key="k">
-         <br/>&nbsp;&nbsp;<strong style="font-size:18px;">{$vo.contenttitile}</strong> <a href="{:U('mobile/notice',array('id'=>$vo['id']))}" class="pull-right">更多 ...&nbsp;&nbsp;</a>
-         <ol data-role="listview"  >
-	 <volist name="data[$k-1]" id="va" empty="">
-		<li><a href="{:U('mobile/detail',array('id'=>$va['id']))}"><strong style="font-size:14px;">{$va.noticetitle}</strong></a></li>
-			 </volist>
-		  </ol>
-     </volist>
-      
-	<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
-		<div data-role="navbar">
-			<ul>
-				<li><a href="{:U('mobile/index')}" data-icon="home" class="ui-btn-active ui-state-persist">首页</a></li>
-				<li><a href="{:U('wechat/index?url=profile')}" data-icon="user" >我</a></li>
-			</ul>
-		</div><!-- /navbar -->
-	</div><!-- /footer -->
-</div>
+	<div  style="background-color:#ffffff;">
+	     <volist name="list" id="vo" empty="" key="k">
+	         <br/>&nbsp;&nbsp;<strong style="font-size:18px;">{$vo.contenttitile}</strong> <a href="{:U('mobile/notice',array('id'=>$vo['id']))}" class="pull-right">更多 ...&nbsp;&nbsp;</a>
+	         <ol data-role="listview" data-shadow="false" >
+		 <volist name="data[$k-1]" id="va" empty="">
+			<li><a href="{:U('mobile/detail',array('id'=>$va['id']))}"><strong style="font-size:14px;">{$va.noticetitle}</strong></a></li>
+				 </volist>
+			  </ol>
+	     </volist>
+	      
+		<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
+			<div data-role="navbar">
+				<ul>
+					<li><a href="{:U('mobile/index')}" data-icon="home" class="ui-btn-active ui-state-persist">首页</a></li>
+					<li><a href="{:U('wechat/index?url=profile')}" data-icon="user" data-ajax="false">我</a></li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /footer -->
+	</div>
 </body>
 <include file="Mobile/bottom"/>
+<script>
+
+</script>
 </html>

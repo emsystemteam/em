@@ -22,6 +22,7 @@ define('APP_DEBUG',true);//开启
 // 定义应用目录
 define('APP_PATH','./App/');
 define('BIND_MODULE','Qwadmin');
+define('DOMAIN','http://www.bontion.com');
 // 引入ThinkPHP入口文件
 require './ThinkPHP/ThinkPHP.php';
 

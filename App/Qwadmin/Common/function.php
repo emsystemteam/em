@@ -182,20 +182,34 @@ function send_wechat_custommsg($msgarray) {
 	return - 4;
 }
 
-/**
- * 上传图文消息内的图片获取URL【订阅号与服务号认证后均可用】
- *
- * @param 图片上传路径 $uploadurl        	
- * @return 微信上传图片的URL，可用于后续群发中，放置到图文消息中。
+/*
+ * 群发消息接口
+ * 第1步：上传素材(包括图片、视频、声音等，返回URL和MediaId,推荐)--addMaterial返回media_id/url
+ * 第2步：上传图文之新增永久图文素材--addNews/uploadNews(纯文本/图文)返回media_id
+ * 第3步：预览接口(非必须步骤，但建议保留)--preview
+ * 第4步:根据标签进行群发
  */
-function uploadimg($uploadurl) {
+function addNews($news) {
 	$appid = "wx8c9d50dc3aea1225";
 	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
 	$access_token = get_access_token ( $appid, $secret );
-	$url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$access_token}";
-	$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
-	$json = json_decode ( $res );
-	return $json->url;
+	$url = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=" . $access_token;
+	$array = array (
+			"articles" => array(                                /*若新增的是多图文素材，则此处应还有几段articles结构  */
+                                 array (
+							"title" => $news->newstitle,
+							"thumb_media_id" => $news->thumb_media_id, // 图文消息的封面图片素材id（必须是永久mediaID）
+							"author" => '乐助科技', // 作者
+							"digest" => $news->newssummary, // 图文消息的摘要，仅有单图文消息才有摘要，多图文此处为空
+							"show_cover_pic" => 1, // 是否显示封面，0为false，即不显示，1为true，即显示
+							"content" => $news->newscontent, // 图文消息的具体内容，支持HTML标签，必须少于2万字符，小于1M，且此处会去除JS
+							"content_source_url" => DOMAIN . __APP__ . '/mobile/news_detail/' . $news->id  // 图文消息的原文地址，即点击“阅读原文”后的URL
+					) 
+			) 
+	
+	);
+	$res = http_call ( $url, json_encode ( $array, JSON_UNESCAPED_UNICODE ) );
+	return json_decode ( $res, true );
 }
 
 /**
@@ -208,55 +222,41 @@ function addMaterial($filename) {
 	$appid = "wx8c9d50dc3aea1225";
 	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
 	$access_token = get_access_token ( $appid, $secret );
-	$curl = 'https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token='.$access_token;
-	$result = _request($curl,true,'POST',$filename);
-	/* 	if ($result){
-		$json = json_decode($result,true);
-		if (!$json || !empty($json['errcode'])) {
-		 $this->errCode = $json['errcode'];
-		 $this->errMsg = $json['errmsg'];
-		 return false;
-		 } 
-		return $json;
-	} */
-	return $result;  
+	$curl = 'https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=' . $access_token;
+	$real_path = "{$_SERVER['DOCUMENT_ROOT']}{$filename}";
+	$result = http_post ( $curl, $real_path );
+	return json_decode ( $result, true );
 }
-function _request($curl, $https = true, $method = 'GET', $data = null) {
-	// 1.创建一个新cURL资源
-	$ch = curl_init ();
-	
-	// 2.设置URL和相应的选项
-	curl_setopt ( $ch, CURLOPT_SAFE_UPLOAD, false );
-	// 要访问的网站
-	curl_setopt ( $ch, CURLOPT_URL, $curl );
-	// 启用时会将头文件的信息作为数据流输出。
-	curl_setopt ( $ch, CURLOPT_HEADER, false );
-	// 将curl_exec()获取的信息以字符串返回，而不是直接输出。
-	curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-	
-	if ($https) {
-		// FALSE 禁止 cURL 验证对等证书（peer's certificate）。
-		curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, true ); // 验证主机
+/**
+ * post上传媒体文件
+ *
+ * @param string $url        	
+ * @param string $fileurl        	
+ * @return mixed
+ */
+function http_post($url = '', $fileurl = '') {
+	$curl = curl_init ();
+	if (class_exists ( '\CURLFile' )) {
+		curl_setopt ( $curl, CURLOPT_SAFE_UPLOAD, true );
+		$data = array (
+				'media' => new \CURLFile ( $fileurl ) 
+		);
+	} else {
+		if (defined ( 'CURLOPT_SAFE_UPLOAD' )) {
+			curl_setopt ( $curl, CURLOPT_SAFE_UPLOAD, false );
+		}
+		$data = array (
+				'media' => '@' . realpath ( $fileurl ) 
+		);
 	}
-	if ($method == 'POST') {
-		// 发送 POST 请求
-		curl_setopt ( $ch, CURLOPT_POST, true );
-		// 全部数据使用HTTP协议中的 "POST" 操作来发送。
-		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data );
-	}
-	
-	// 3.抓取URL并把它传递给浏览器
-	$content = curl_exec ( $ch );
-	if ($content === false) {
-		return "网络请求出错: " . curl_error ( $ch );
-		exit ();
-	}
-	
-	// 4.关闭cURL资源，并且释放系统资源
-	curl_close ( $ch );
-	
-	return $content;
+	curl_setopt ( $curl, CURLOPT_URL, $url );
+	curl_setopt ( $curl, CURLOPT_POST, 1 );
+	curl_setopt ( $curl, CURLOPT_POSTFIELDS, $data );
+	curl_setopt ( $curl, CURLOPT_RETURNTRANSFER, 1 );
+	curl_setopt ( $curl, CURLOPT_SSL_VERIFYPEER, false );
+	$output = curl_exec ( $curl );
+	curl_close ( $curl );
+	return $output;
 }
 
 /**
@@ -282,6 +282,22 @@ function preview($msgarray) {
 	return $json->errcode;
 }
 
+/**
+ * 群发消息接口
+ * 
+ * @return 返回0代表成功
+ */
+function sendAllByTag($msgarray) {
+	// 1.获取全局access_token
+	$appid = "wx8c9d50dc3aea1225";
+	$secret = "bb7e6700ecb5fa8a384b2d119910b2f3";
+	$access_token = get_access_token ( $appid, $secret );
+	$url = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=" . $access_token;
+	// 2.发送数据
+	$res = http_call ( $url, json_encode ( $msgarray, JSON_UNESCAPED_UNICODE ) );
+	$json = json_decode ( $res );
+	return $json;
+}
 /**
  * 发送公众号模板消息（单条）
  *

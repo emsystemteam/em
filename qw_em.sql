@@ -328,6 +328,7 @@ CREATE TABLE `qw_em_smslog` (
   `creater` int(11) DEFAULT NULL COMMENT '创建人',
   `createtime` datetime DEFAULT NULL COMMENT '创建时间',
   `amount` int(11) DEFAULT NULL COMMENT '发送消息数量',
+  `msgtype` int(11) DEFAULT '0' COMMENT '短信类型0：手机短信;1：微信',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='短信发送记录';
 
@@ -342,6 +343,7 @@ CREATE TABLE `qw_em_contentmanager` (
   `modifier` int(11) DEFAULT NULL COMMENT '修改人id',
   `modifytime` datetime DEFAULT NULL COMMENT '最后一次修改时间',
   `status` int(11) DEFAULT '1' COMMENT '状态1生效，0失效',
+  `allowallvillage` tinyint(4) DEFAULT '0' COMMENT '是否绑定所有小区：0：不绑定；1：绑定',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='内容管理';
 
@@ -358,14 +360,15 @@ CREATE TABLE `qw_em_notice` (
   `modifier` int(11) DEFAULT NULL COMMENT '最后修改人id',
   `modifytime` datetime DEFAULT NULL COMMENT '最后一次修改时间',
   `stauts` int(11) DEFAULT '1' COMMENT '状态1正常0不显示',
+  `starttime` datetime DEFAULT NULL COMMENT '置顶开始日期',
+  `endtime` datetime DEFAULT NULL COMMENT '置顶结束日期',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='文章';
 
-
-DROP TABLE IF EXISTS `qw_em_noticetovillage`;
-CREATE TABLE `qw_em_noticetovillage` (
+DROP TABLE IF EXISTS `qw_em_contenttovillage`;
+CREATE TABLE `qw_em_contenttovillage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `noticeid` int(11) DEFAULT NULL COMMENT '关联文章',
+  `contentid` int(11) DEFAULT NULL COMMENT '关联内容管理',
   `villageid` int(11) DEFAULT NULL COMMENT '文章关联小区id',
   `creater` int(11) DEFAULT NULL COMMENT '创建人',
   `createtime` datetime DEFAULT NULL COMMENT '创建时间',
@@ -373,7 +376,7 @@ CREATE TABLE `qw_em_noticetovillage` (
   `modifytime` datetime DEFAULT NULL COMMENT '修改时间',
   `status` int(11) DEFAULT NULL COMMENT '状态1显示0不显示',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章管理哪些小区';
+) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COMMENT='内容管理关联哪些小区';
 
 
 ALTER TABLE `qw_member` ADD `openid` VARCHAR(32) NULL COMMENT '微信授权码' AFTER `t`;
@@ -391,6 +394,9 @@ CREATE TABLE `qw_em_news` (
   `modifier` int(11) DEFAULT NULL COMMENT '修改人',
   `modifytime` datetime DEFAULT NULL COMMENT '修改时间',
   `status` int(11) DEFAULT NULL COMMENT '状态：1启用,0禁用',
+  `thumb_media_id` varchar(200) NOT NULL COMMENT '图文消息的封面图片素材id（必须是永久mediaID）',
+  `media_id` varchar(200) NOT NULL COMMENT '最终图文素材的id',
+  `url` varchar(255) DEFAULT NULL COMMENT '封面图片素材url',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='图文主表';
 

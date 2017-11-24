@@ -69,7 +69,7 @@
 										href="{:U('Message/wechatsmsindex')}"> <i
 											class="green ace-icon fa fa-home bigger-120"></i>发消息
 									</a></li>
-									<li><a href="{:U('Message/wechatsmsindex')}">已发送 </a></li>
+									<li><a href="{:U('Message/wechatlog')}">已发送 </a></li>
 								</ul>
 								<div class="tab-content">
 									<div id="one" class="tab-pane fade in active">
@@ -96,7 +96,7 @@
 														<div class="tab-content-panel">
 															<div class="tab-text-panel active">
 																<div class="text-edit">
-																	<textarea id="content" placeholder="请输入要发送的文字消息..." name="content"></textarea>
+																	<textarea id="content" placeholder="请输入要发送的文字消息..." name="content" maxlength="600" ></textarea>
 																</div>
 																<div class="edit-toobar">
 																	还可以输入<span class="count">600</span>字
@@ -108,7 +108,7 @@
 															</div>
 														</div>
 													</div>
-													<div class="tab-pane fade" id="ejb">111</div>
+													<div class="tab-pane fade" id="ejb"></div>
 												</div>
 											</div>
 											<div class="col-md-offset-3 col-md-9">
@@ -184,20 +184,60 @@
 	<include file="Public/footerjs" />
 	<script type="text/javascript">
 	$(function(){
+		tabContent="文字";
 		//发送消息
 		$('#btnsend').click(function(){
+			debugger;
+			var msgtype=0;//判断是发送图文还好纯文本
+			var sendData="";
+			if(tabContent!="文字"){
+				msgtype=1;
+				
+				var newsid=$('.tw-item').attr('id');
+				if(newsid==undefined){
+					 bootbox.alert({
+	                     buttons: {
+	                         ok: {
+	                             label: '确定',
+	                             className: 'btn-myStyle'
+	                         }
+	                     },
+	                     message: '请选择一个图文素材模板',
+	                     title: "提示信息",
+	                 });
+					return;
+				}
+				msgtype=1;
+				sendData= {
+					id :newsid,msgtype:msgtype
+				};
+			}else{
+				if($.trim($('#content').val())==""){
+					 bootbox.alert({
+	                     buttons: {
+	                         ok: {
+	                             label: '确定',
+	                             className: 'btn-myStyle'
+	                         }
+	                     },
+	                     message: '文本内容不能为空',
+	                     title: "提示信息",
+	                 });
+					return;
+				}
+				sendData= {
+						msgtype:msgtype,content:$('#content').val()
+					};
+			}
 			var newsid=$('.tw-item').attr('id');
 			if(newsid!=""){
-			var sendData = {
-					id :newsid
-				};
+			var sendData 
 			$.ajax({
 				type : "post",
 				url : "__URL__/preview",
 				dataType : "json",
 				data : sendData,
 				success : function(data) {
-					debugger;
 					bootbox.dialog({
 						title : '友情提示：',
 						message : data.message,
@@ -220,7 +260,7 @@
 		//鼠标经过时切换tabs
 	    $("#tabs a").click(function(e){  
 	    	 //e.preventDefault();//阻止a链接的跳转行为  
-	    	 var num = $(this).index();
+	    	 tabContent=$(this).text();
 	    	 $(this).tab('show')
         });
         //弹出选择

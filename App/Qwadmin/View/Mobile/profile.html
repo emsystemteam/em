@@ -1,5 +1,5 @@
-<include file="Public/head"/>
-<body style="margin-bottom:80px;">
+<include file="Mobile/head"/>
+<body>
 <style>
 .nav-user-photo{
 	width:72px;
@@ -7,170 +7,59 @@
 	border-radius: 100%;
     border: 2px solid #FFF;
 }
-.profile-lable{
-	font-size:16px;
-}
-.profile-value{
-	font-size:18px;
-	font-weight:bold;
-}
-hr{
-	border-top: 1px solid #dddddd;
-	margin-top: 5px;
-	margin-bottom: 10px;
-}
 .user-name-top{
     text-shadow: 2px 2px 0px #000;
-    vertical-align:middle;
+    font-size:30px;
+    color:white;
+    margin-left:15px;
+    margin-top:-10px;
 }
 </style>
-<div class="main-container">
-    <div class="main-content">
-      
-      <div class="page-content" style="background-color:#793822;padding:30px;">
-      
-      	<img class="nav-user-photo" src="<if condition=" $user.head eq '' ">__PUBLIC__/qwadmin/avatars/avatar2.png
-            <else/> {$user.head} </if>" alt="{$user.user}" />
-           <strong class="user-name-top" style="font-size:30px;color:white;margin-left:15px;">{$user.user}</strong>
-      </div>
-      
-      
-    <!-- 业主姓名（*彬彬） 手机号 微信号  小区 楼宇 单元 房号 -->
-	<volist name="list" id="vo" empty="">
+<div id="header" data-role="header" data-id="header" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
+    <h1 style="color: #ffffff;">个人中心</h1>
+</div><!-- /header -->
+
+<!-- 个人基本信息 -->
+<div style="background-color:#793822;padding:30px;">
+	<img class="nav-user-photo" src="<if condition=" $user.head eq '' ">__PUBLIC__/qwadmin/avatars/avatar2.png  <else/> {$user.head} </if>" alt="{$user.user}" />
+    <strong class="user-name-top">{$user.user}</strong>
+</div>
 	
-	 <div class="page-content" style="background-color:#eeeeee;">
-        <div class="row">
-			
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">业主:</span>
-						 	<span class="profile-value">{$vo.household_name}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-				
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">手机:</span>
-					 		<span class="profile-value">{$user.phone}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-				
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">微信:</span>
-						 	<span class="profile-value">{$vo.wechat_account}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-			</div>
-		</div>	
-				
-      <div class="page-content" style="background-color:#eeeeee; margin-top:4px;">
-        <div class="row">
-			
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">小区:</span>
-						 	<span class="profile-value">{$vo.village_name}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-				
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">楼宇:</span>
-						 	<span class="profile-value">{$vo.building_name}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-				
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">单元:</span>
-						 	<span class="profile-value">{$vo.unit_name}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-				
-				<div class="form-group">
-				     <div class="col-sm-9">
-				         <span class="help-inline col-xs-12 col-sm-7">
-						 	<span class="profile-lable">房号:</span>
-						 	<span class="profile-value">{$vo.house_name}</span>
-						</span>
-				    </div>
-				</div>
-				<div class="col-xs-12 col-sm-7"><hr></div>
-			
-        </div><!-- /.row -->
-       </div>
-      </volist>
-       
-    </div><!-- /.main-content -->
-</div><!-- /.main-container -->
-
-    <div class="navbar-fixed-bottom" style="height:55px;">
-		<div class="btn-group btn-group-justified" role="group">
-		  <div class="btn-group" role="group">
-		    <a type="button" class="btn" href="{:U('mobile/index')}">
-		    <i class="ace-icon fa fa-home fa-2x white"></i>
-		    <p>首页</p>
-		    </a>
-		  </div>
-
-		  <div class="btn-group" role="group">
-		    <a type="button" class="btn btn-danger" href="{:U('wechat/index?url=profile')}">
-		    <i class="ace-icon fa fa-user fa-2x white"></i>
-		    <p>我</p>
-		    </a>
-		  </div>
+ <div style="margin:10px;">     
+    <!-- 业主姓名（*彬彬） 手机号 微信号  小区 楼宇 单元 房号 -->
+    <div data-role="none" data-collapsed="false" >  
+		<h4>基本信息</h4>
+		<ul data-role="listview">
+			<li>业主:{$name}</li>
+			<li>手机:{$phone}</li>
+			<li>微信:{$wechat}</li>
+		</ul>
+	</div>
+    <h4>小区信息</h4>
+	<volist name="villages" id="vi" empty="">
+		<div data-role="collapsible" data-collapsed="false">  
+			<h2>{$vi}</h2>
+			<ul data-role="listview">
+				<volist name="list" id="vo" empty="">
+					<if condition=" $vo.village_name eq $vi ">
+						<li>楼宇:{$vo.house_name} {$vo.building_name} 单元:{$vo.unit} {$vo.unit_name} 房号:{$vo.floor} {$vo.house_name}</a></li>
+					</if>
+				</volist>
+			</ul>
 		</div>
-    </div>
-    
-
-<!-- basic scripts -->
-
-<!--[if !IE]> -->
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
-</script>
-
-<!-- <![endif]-->
-
-<!--[if IE]>
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
-</script>
-<![endif]-->
-<script type="text/javascript">
-    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
-</script>
-
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
-    jQuery(function ($) {
-        $(document).on('click', '.toolbar a[data-target]', function (e) {
-            e.preventDefault();
-            var target = $(this).data('target');
-            $('.widget-box.visible').removeClass('visible');//hide others
-            $(target).addClass('visible');//show target
-        });
-    });
-    $("title").html("个人中心 - 乐助科技");  
-</script>
+	</volist>
+</div>
+	
+<!-- 底部导航条 -->
+<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
+	<div data-role="navbar">
+		<ul>
+			<li><a href="{:U('mobile/index')}" data-icon="home">首页</a></li>
+			<li><a href="{:U('wechat/index?url=profile')}" data-icon="user" class="ui-btn-active ui-state-persist" data-ajax="false">我</a></li>
+		</ul>
+	</div><!-- /navbar -->
+</div><!-- /footer -->
+       
 </body>
+<include file="Mobile/bottom"/>
 </html>

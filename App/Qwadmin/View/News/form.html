@@ -187,7 +187,7 @@
     	       // 选择文件的按钮。可选。  
     	       // 内部根据当前运行是创建，可能是input元素，也可能是flash.  
     	       pick: '#filePicker',  
-    	       fileSingleSizeLimit: 1 * 1024 * 1024,    // 1 M 微信中图片仅支持jpg/png格式，大小必须在1MB以下。
+    	       fileSingleSizeLimit: 2 * 1024 * 1024,    // 1 M 微信中图片仅支持jpg/png格式，大小必须在1MB以下。
     	       // 只允许选择图片文件。  
     	       accept: {  
     	           title: 'Images',  
@@ -240,7 +240,31 @@
     		   }
     	       $( '#'+file.id ).addClass('upload-state-done');  
     	   });  
-    	  
+    	   uploader.on("error",function (type){
+    	        if (type=="Q_TYPE_DENIED"){
+    	        	bootbox.alert({
+                        buttons: {
+                            ok: {
+                                label: '确定',
+                                className: 'btn-myStyle'
+                            }
+                        },
+                        message: '请上传JPG、PNG格式文件',
+                        title: "提示信息",
+                    });
+    	        }else if(type=="F_EXCEED_SIZE"){
+    	        	bootbox.alert({
+                        buttons: {
+                            ok: {
+                                label: '确定',
+                                className: 'btn-myStyle'
+                            }
+                        },
+                        message: '文件大小不能超过2M',
+                        title: "提示信息",
+                    });
+    	        }
+    	    });
     	   // 文件上传失败，显示上传出错。  
     	   uploader.on( 'uploadError', function( file ) {  
     	       var $li = $( '#'+file.id ),  

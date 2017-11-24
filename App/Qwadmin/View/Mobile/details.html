@@ -1,5 +1,9 @@
 <include file="Public/head"/>
-<body style="margin-bottom:80px;">
+<body>
+<div id="header" data-role="header" data-id="header" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
+    <h1 style="color: #ffffff;">乐助科技</h1>
+    <a href="#" onclick="javascript:history.go(-1);" data-ajax="false" data-direction="reverse" data-icon="back" data-iconpos="notext" data-shadow="false" data-icon-shadow="false">Back</a>
+</div><!-- /header -->
 <style>
 .acticle-title {
 	font-size:25px;
@@ -19,47 +23,16 @@ img{
     height:auto;
 }
 </style>
-<div class="main-container">
+<div class="main-container"  style="margin:10px;">
     <div class="main-content">
       <div class="page-content">
           <div class="text-center acticle-title">{$noticetitle} </div>
-          <div class="acticle-date">{$createtime} <span style="color: #607fa6;">安徽物业在线</span></div>
+          <div class="acticle-date">{$createtime} <a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI5ODU0MjYwMg==&scene=124#wechat_redirect"><span style="color: #607fa6;font-weight:bold;">安徽物业在线</span></a> </div>
 	      <div class="text-center"><img id="duotu_img" src="__ROOT__{$noticepicture}" width="360" height="200" alt="" onerror="this.src='__PUBLIC__/qwadmin/images/no-pic.jpg'"/></div>
 	      <div class="acticle-body">{$noticecontent}</div>
         </div>
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->
-
-
-<!-- basic scripts -->
-
-<!--[if !IE]> -->
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
-</script>
-
-<!-- <![endif]-->
-
-<!--[if IE]>
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
-</script>
-<![endif]-->
-<script type="text/javascript">
-    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
-</script>
-
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
-    jQuery(function ($) {
-        $(document).on('click', '.toolbar a[data-target]', function (e) {
-            e.preventDefault();
-            var target = $(this).data('target');
-            $('.widget-box.visible').removeClass('visible');//hide others
-            $(target).addClass('visible');//show target
-        });
-    });
-    $("title").html("安徽物业在线"); 
-</script>
 </body>
+<include file="Mobile/bottom"/>
 </html>

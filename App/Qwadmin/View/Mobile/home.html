@@ -1,136 +1,113 @@
-<include file="Public/head"/>
-<body style="margin-bottom:80px;">
+<include file="Mobile/head"/>
+<body style="background-color:#eeeeee;">
 <style>
-.mobile-icon{
-    line-height:60px;
-    color:#ffffff;
+.section1>ul{
+    list-style: none;
+    display: flex;
+    justify-content:space-around;
+    align-items:center;
+    width: 100%;
+    height: 90px;
+    background-color:#ffffff;
+    padding-right:10px;
+    padding-left:0px;
 }
-.mobile-panel{
-	width:60px;
-	height:60px;
-	text-align:center;
-	margin:0 auto;
-	margin-bottom:5px;
-}
-.col-xs-12{
-	padding:0px;
-}
-.col-xs-3{
-	widht: auto;
+ .section1>ul>li{
+    width: 25%;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 0px;
 }
 </style>
-<div class="main-container">
-    <div class="main-content">
-      <div class="page-content">
-        <div class="row">
-            <div class="thumbnail col-xs-12" style="padding:15px;">
-            
-	            <div class="form-inline">
-	               <div class="form-group col-xs-3 col-md-2 text-center">
-		              <div class="img-circle mobile-panel" style="background-color:#00c883;">
-		              <i class="ace-icon fa fa-money fa-2x mobile-icon"></i>
-		              </div> 
-		              <span>收费管理</span>
-	              </div>  
-	              
-	              
-	              <div class="form-group col-xs-3 col-md-2 text-center">
-		              <div class="img-circle mobile-panel" style="background-color:#f49055;">
-		              <i class="ace-icon fa fa-life-ring fa-2x mobile-icon"></i>
-		              </div> 
-		              <span>物业服务</span>
-	              </div>
-	              
-	              <div class="form-group  col-xs-3 col-md-2 text-center">
-		              <div class="img-circle mobile-panel" style="background-color:#fab655;">
-		              <i class="ace-icon fa fa-bar-chart fa-2x mobile-icon"></i>
-		              </div> 
-		              <span>投票表决</span>
-	              </div>
-	              
-	              <div class="form-group col-xs-3 col-md-2 text-center">
-		              <div class="img-circle mobile-panel" style="background-color:#579df5;">
-		              <i class="ace-icon fa fa-bank fa-2x mobile-icon"></i>
-		              </div>
-		              <span>生活服务</span>
-	              </div>
-	              
-	              <div class="form-group col-xs-3 col-md-2 text-center">
-		              <div class="img-circle mobile-panel" style="background-color:#3dc5f7;">
-		              <i class="ace-icon fa fa-shopping-cart fa-2x mobile-icon"></i>
-		              </div> 
-		              <span class="text-center">小区商家</span>
-	              </div>
-               </div>
-               
-            </div><!-- /.col -->
-            
-            
-            <div class="col-xs-12">
-				<table class="table table-hover table-bordered">
-					<volist name="list" id="vo" empty="">
-						<tr>
-							<td style="padding:15px;">
-								<i class="ace-icon fa fa-book fa-1x green"></i>
-								<a href="{:U('mobile/notice',array('id'=>$vo['id']))}"><strong style="font-size:14px;">{$vo.contenttitile}</strong></a>
-							</td>
-						</tr>
-					</volist>
-				</table>
-           </div>
-            
-        </div><!-- /.row -->
-        </div>
-    </div><!-- /.main-content -->
-</div><!-- /.main-container -->
+<div id="header" data-role="header" data-id="header" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
+    <h1 style="color: #ffffff;">安徽物业在线</h1>
+</div><!-- /header -->
 
-    <div class="navbar-fixed-bottom" style="height:55px;">
-		<div class="btn-group btn-group-justified" role="group">
-		  <div class="btn-group" role="group">
-		    <a type="button" class="btn btn-danger" href="{:U('mobile/index')}">
-		    <i class="ace-icon fa fa-home fa-2x white"></i>
-		    <p>首页</p>
-		    </a>
-		  </div>
-		  <div class="btn-group" role="group">
-		    <a type="button" class="btn" href="{:U('wechat/index?url=profile')}">
-		    <i class="ace-icon fa fa-user fa-2x white" ></i>
-		    <p>我</p>
-		    </a>
-		  </div>
-		</div>
-    </div> 
-    
+	<section class="section1">
+		<ul>
+		    <li>
+		        <i class="fa fa-volume-up fa-2x" style="color:#e38a30;"></i>
+		        <div style="margin-top:5px;">小区公告</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-ticket fa-2x" style="color:#0874d9;"></i>
+		        <div style="margin-top:5px;">事物投票</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-user fa-2x" style="color:#26e44c;"></i>
+		        <div style="margin-top:5px;">选举投票</div>
+		    </li>
+		    <li>
+		        <i class="n fa fa-building-o fa-2x" style="color:#13d5f0;"></i>
+		        <div style="margin-top:5px;">治理透明</div>
+		    </li>
+		</ul>
+	</section>
+	
+	<section class="section1" style="margin-top: -4vw;">
+		<ul>
+		    <li>
+		        <i class="fa fa-usd fa-2x" style="color:#df591a;"></i>
+		        <div style="margin-top:5px;">一键缴费</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-wrench fa-2x" style="color:#15b0de;"></i>
+		        <div style="margin-top:5px;">物业报修</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-compress fa-2x" style="color:#d1ce11;"></i>
+		        <div style="margin-top:5px;">办事指南</div>
+		    </li>
+		    <li>
+		        <i class="n fa fa-map-marker fa-2x" style="color:#f0ad14;"></i>
+		        <div style="margin-top:5px;">周边服务</div>
+		    </li>
+		</ul>
+	</section>
+	
+	<section class="section1" style="margin-top: -4vw;">
+		<ul>
+		    <li>
+		        <i class="fa fa-gift fa-2x" style="color:#c6e677;"></i>
+		        <div style="margin-top:5px;">生活福利</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-home fa-2x" style="color:#8c73ce;"></i>
+		        <div style="margin-top:5px;">房屋租售</div>
+		    </li>
+		    <li>
+		        <i class="fa fa-lightbulb-o fa-2x" style="color:#8c73ce;"></i>
+		        <div style="margin-top:5px;">邻里求助</div>
+		    </li>
+		    <li>
+		        <i class="n fa fa-bicycle fa-2x" style="color:#ff1e85;"></i>
+		        <div style="margin-top:5px;">邻里闲置</div>
+		    </li>
+		</ul>
+	</section>
 
-<!-- basic scripts -->
-
-<!--[if !IE]> -->
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
-</script>
-
-<!-- <![endif]-->
-
-<!--[if IE]>
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
-</script>
-<![endif]-->
-<script type="text/javascript">
-    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
-</script>
-
-<!-- inline scripts related to this page -->
-<script type="text/javascript">
-    jQuery(function ($) {
-        $(document).on('click', '.toolbar a[data-target]', function (e) {
-            e.preventDefault();
-            var target = $(this).data('target');
-            $('.widget-box.visible').removeClass('visible');//hide others
-            $(target).addClass('visible');//show target
-        });
-    });
-
-</script>
+	<div  style="background-color:#ffffff;">
+	     <volist name="list" id="vo" empty="" key="k">
+	         <br/>&nbsp;&nbsp;<strong style="font-size:18px;">{$vo.contenttitile}</strong> <a href="{:U('mobile/notice',array('id'=>$vo['id']))}" class="pull-right">更多 ...&nbsp;&nbsp;</a>
+	         <ol data-role="listview" data-shadow="false" >
+		 <volist name="data[$k-1]" id="va" empty="">
+			<li><a href="{:U('mobile/detail',array('id'=>$va['id']))}"><strong style="font-size:14px;">{$va.noticetitle}</strong></a></li>
+				 </volist>
+			  </ol>
+	     </volist>
+	      
+		<div data-role="footer" data-position="fixed"  data-tap-toggle="false">
+			<div data-role="navbar">
+				<ul>
+					<li><a href="{:U('mobile/index')}" data-icon="home" class="ui-btn-active ui-state-persist">首页</a></li>
+					<li><a href="{:U('wechat/index?url=profile')}" data-icon="user" data-ajax="false">我</a></li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /footer -->
+	</div>
 </body>
+<include file="Mobile/bottom"/>
+<script>
+
+</script>
 </html>

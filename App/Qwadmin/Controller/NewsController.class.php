@@ -39,7 +39,7 @@ class NewsController extends ComController {
 			$id = intval ( $_GET ['id'] );
 			$m = M ( 'em_news' );
 			$condition ['id'] = $id;
-			$model= $m->where ( 'id=' . $id )->find();
+			$model = $m->where ( 'id=' . $id )->find ();
 			$this->assign ( 'model', $model );
 			$this->display ( 'form' );
 		} else {
@@ -78,10 +78,26 @@ class NewsController extends ComController {
 			if (! empty ( $model->id )) { // 更新
 				$model->modifytime = date ( 'y-m-d H:i:s', time () );
 				$model->modifier = session ( 'uid' );
+				$news = M ( 'em_news' )->where ( 'id=' . $model->id )->find ();
+				if ($news ['newspicture'] != $model->newspicture) { // 如果更新了封面图片的话，要更新对应字段
+					$result = addMaterial ( __ROOT__ . $model->newspicture ); // 调用微信接口创建永久性图文素材
+					if ($result ['media_id'] != null) {
+						$model->thumb_media_id = $result ['media_id']; // 图文素材
+						$model->url = $result ['url']; // 图文素材
+						$res = addNews ( $model );
+						if ($res ['media_id'] != null) {
+							$model->media_id = $res ['media_id'];
+						} else {
+							$this->error ( $result ['errmsg'] );
+						}
+					} else {
+						$this->error ( $result ['errmsg'] );
+					}
+				}
 				$flag = $model->save ();
 				if ($flag) {
-					$this->success ( "保存成功", 'index' );
-					addlog ( '图文素材创建成功，ID：' . $model->id );
+					$this->success ( "图文素材保存成功", 'index' );
+					addlog ( '图文素材保存成功，ID：' . $model->id );
 				} else {
 					$this->success ( "保存失败" );
 				}
@@ -89,12 +105,19 @@ class NewsController extends ComController {
 				$model->createtime = date ( 'y-m-d H:i:s', time () );
 				$model->creater = session ( 'uid' );
 				$model->status = 1;
-				$flag = $model->add ();
-				if ($flag) {
-					$this->success ( "创建成功", 'index' );
-					addlog ( '图文素材保存成功，ID：' . $model->id );
+				$result = addMaterial ( __ROOT__ . $model->newspicture ); // 调用微信接口创建永久性图文素材
+				if ($result ['media_id'] != null) {
+					$model->thumb_media_id = $result ['media_id']; // 图文素材
+					$model->url = $result ['url']; // 图文素材
+					$flag = $model->add ();
+					if ($flag) {
+						$this->success ( "创建成功", 'index' );
+						addlog ( '图文素材创建成功，ID：' . $model->id );
+					} else {
+						$this->error ( "创建失败" );
+					}
 				} else {
-					$this->error ( "创建失败" );
+					$this->error ( $result ['errmsg'] );
 				}
 			}
 		}

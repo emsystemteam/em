@@ -1,0 +1,65 @@
+<include file="Public/head"/>
+<body style="margin-bottom:80px;">
+<style>
+.acticle-title {
+	font-size:25px;
+	font-weight:bold;
+	margin-top:10px;
+}
+.acticle-body {
+	margin-top:20px;
+}
+.acticle-date {
+	margin-top:10px;
+	margin-bottom:10px;
+	color: #8c8c8c;
+}
+img{
+    width:100%;
+    height:auto;
+}
+</style>
+<div class="main-container">
+    <div class="main-content">
+      <div class="page-content">
+          <div class="text-center acticle-title">{$model['newstitle']} </div>
+          <div class="acticle-date">{$model['createtime']} <a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI5ODU0MjYwMg==&scene=124#wechat_redirect"><span style="color: #607fa6;font-weight:bold;">安徽物业在线</span></a> </div>
+	      <div class="text-center"><img id="duotu_img" src="__ROOT__{$model['newspicture']}'" width="360" height="200" alt="" onerror="this.src='__PUBLIC__/qwadmin/images/no-pic.jpg'"/></div>
+	      <div class="acticle-body">{$model['newscontent']}</div>
+        </div>
+    </div><!-- /.main-content -->
+</div><!-- /.main-container -->
+
+
+<!-- basic scripts -->
+
+<!--[if !IE]> -->
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery.js'>" + "<" + "/script>");
+</script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='__PUBLIC__/qwadmin/js/jquery1x.js'>" + "<" + "/script>");
+</script>
+<![endif]-->
+<script type="text/javascript">
+    if ('ontouchstart' in document.documentElement) document.write("<script src='__PUBLIC__/qwadmin/js/jquery.mobile.custom.js'>" + "<" + "/script>");
+</script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    jQuery(function ($) {
+        $(document).on('click', '.toolbar a[data-target]', function (e) {
+            e.preventDefault();
+            var target = $(this).data('target');
+            $('.widget-box.visible').removeClass('visible');//hide others
+            $(target).addClass('visible');//show target
+        });
+    });
+    $("title").html("安徽物业在线"); 
+</script>
+</body>
+</html>

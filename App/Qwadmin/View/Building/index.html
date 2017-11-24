@@ -33,7 +33,7 @@
                                 <a class="btn btn-info" href="{:U('add')}" value="">新增</a>
                                 <a class="btn btn-info" href="{:U('exportBuilding')}" value="">导出</a>
                                 <a class="btn btn-info" href="{:U('exportExcelTemplate')}" value="">下载导入模板</a>
-                                <label class="inline">楼宇搜索</label>
+                                <label class="inline">&nbsp;&nbsp;楼宇搜索：</label>
                                 <select name="field" class="form-control">
                                     <option <if condition="I('field') eq building_name">selected</if> value="building_name">楼宇名</option>
                                 </select>
@@ -42,6 +42,13 @@
                                 <select name="order" class="form-control">
                                     <option <if condition="I('order') eq asc">selected</if> value="asc">修改时间升</option>
                                     <option <if condition="I('order') eq desc">selected</if> value="desc">修改时间降</option>
+                                </select>
+                                <label class="inline">&nbsp;&nbsp;小区：</label>
+                                <select id="villageSearch" name="villageSearch" class="form-control" style="width: 200px;">
+                                	<option value="0">--请选择--</option>
+                                	<volist name="listVillage" id="val">
+	                                    <option <if condition="I('villageSearch') eq $val['village_id']">selected</if> value="{$val['village_id']}">{$val['village_name']}</option>
+                                	</volist>
                                 </select>
                                 <button type="submit" class="btn btn-purple btn-sm">
                                     <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>

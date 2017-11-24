@@ -43,6 +43,21 @@
                                     <option <if condition="I('order') eq asc">selected</if> value="asc">修改时间升</option>
                                     <option <if condition="I('order') eq desc">selected</if> value="desc">修改时间降</option>
                                 </select>
+                                
+                                <label class="inline">&nbsp;&nbsp;小区：</label>
+                                <select id="villageSearch" name="villageSearch" class="form-control" style="width: 200px;">
+                                	<option value="0">--请选择--</option>
+                                	<volist name="listVillage" id="val">
+	                                    <option <if condition="I('villageSearch') eq $val['village_id']">selected</if> value="{$val['village_id']}">{$val['village_name']}</option>
+                                	</volist>
+                                </select>
+                                <label class="inline">&nbsp;&nbsp;楼宇：</label>
+                                <select id="buildingSearch" name="buildingSearch" class="form-control">
+                                	<option value="0">--请选择--</option>
+                                	<volist name="listBuilding" id="val">
+	                                    <option <if condition="I('buildingSearch') eq $val['building_id']">selected</if> value="{$val['building_id']}">{$val['building_name']}</option>
+                                	</volist>
+                                </select>
                                 <button type="submit" class="btn btn-purple btn-sm">
                                     <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
                                     Search
@@ -178,6 +193,19 @@
                 }
             });
         });
+        
+        $("#villageSearch").on("change", function () {
+			$("#buildingSearch").empty();
+		    var ob = $(this);
+		    var villageId = ob.val();
+		    $("#buildingSearch").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+		    var building = document.getElementById("buildingSearch");
+		    $.get("{:U('changeVillage')}?villageId=" + villageId, function (data) {
+		    	$(data).each(function(index,obj){
+		    		building.options[index+1] = new Option(obj.building_name,obj.building_id);
+		        });
+		    });
+		})
     })
 </script>
 </body>

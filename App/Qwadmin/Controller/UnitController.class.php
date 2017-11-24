@@ -30,6 +30,8 @@ class UnitController extends ComController
         $field = isset($_GET['field']) ? $_GET['field'] : '';
         $keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
         $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+        $villageSearch = isset($_GET['villageSearch']) ? $_GET['villageSearch'] : '';
+        $buildingSearch = isset($_GET['buildingSearch']) ? $_GET['buildingSearch'] : '';
         $where = '';
 
         $prefix = C('DB_PREFIX');
@@ -42,21 +44,22 @@ class UnitController extends ComController
         }
         if ($keyword <> '') {
             if ($field == 'unit_name') {
-            	$where = "{$prefix}em_unit.unit_name LIKE '%$keyword%'";
+            	$where[$prefix.'em_unit.unit_name'] = array('like','%'.$keyword.'%');
+//             	$where = "{$prefix}em_unit.unit_name LIKE '%$keyword%'";
             }
         }
-
         
-        //如果不是超级管理员，需要添加当前登录用户数据权限
-        /* if($uid != 1){
-        	$member = M('member')->where("uid = $uid")->find();
-        	$phone = $member['phone'];
-        	if($where != ""){
-        		$where = $where . "and hh.tel = $phone";
-        	}else{
-        		$where ="hh.tel = $phone";
-        	}
-        } */
+        if($villageSearch <> 0 && $villageSearch <> ''){
+        	$where[$prefix.'em_unit.village'] = array('eq',$villageSearch);
+//         	$where = "and h.village = $villageSearch";
+        	$searchBuildingMap[$prefix.'em_building.village'] = array('eq',$villageSearch);
+        	$buildings = M('em_building')->field("{$prefix}em_building.building_id,{$prefix}em_building.building_name")->where($searchBuildingMap)->select();
+        }
+        
+        if($buildingSearch <> 0 && $buildingSearch <> ''){
+        	$where[$prefix.'em_unit.building'] = array('eq',$buildingSearch);
+        }
+        
 
         $emUnit = M('em_unit');
         $pagesize = 10;#每页数量
@@ -64,7 +67,10 @@ class UnitController extends ComController
         
         if($currentVillage){
         	$where['v.village_id'] = array('eq',$currentVillage);
+        	$searchMap[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
         }
+        $villages = M('em_village')->field("{$prefix}em_village.village_id,{$prefix}em_village.village_name")->where($searchMap)->select();
+        
         
         $count = $emUnit->field("{$prefix}em_unit.*")
             ->order($order)
@@ -86,6 +92,8 @@ class UnitController extends ComController
         $page = $page->show();
         $this->assign('list', $list);
         $this->assign('page', $page);
+        $this->assign('listVillage', $villages);
+        $this->assign('listBuilding', $buildings);
         $this->display();
     }
 

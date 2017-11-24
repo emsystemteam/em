@@ -142,7 +142,7 @@ class VillageController extends ComController
 			$provinces = $emSysOrg->field("org_id,org_name")->where("org_type=1")->select();
 			$citys = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(2,$em_village['province']))->select();
 			$countys = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(3,$em_village['city']))->select();
-			trace($citys);
+// 			trace($citys);
 			/* $streets = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(4,$em_village['county']))->select();
 			$committees = $emSysOrg->field("org_id,org_name")->where("org_type='%d' and parent_id = '%s'",array(5,$em_village['street']))->select(); */
         } else {
@@ -347,25 +347,25 @@ class VillageController extends ComController
      */
     public function importExcel()
     {
-//     	dump($_FILES);
-    	if(!empty($_FILES)){
+    	if(!empty($_FILES['import']['name'])){
     		$upload = new \Think\Upload();                      // 实例化上传类
     		$upload->maxSize   = 10485760 ;                 // 设置附件上传大小
     		$upload->exts      = array('xls');       // 设置附件上传类型
     		$upload->rootPath  = './Public/Excel/';             // 设置附件上传根目录
     		$upload->autoSub   = false;                   // 将自动生成以当前时间的形式的子文件夹，关闭
     		
-//     		var_dump($upload);
     		
     		$info = $upload->upload();                             // 上传文件
-//     		var_dump($info);
 //     		$exts = $info['import']['ext'];                                 // 获取文件后缀
 			
     		$filename = $upload->rootPath.$info['import']['savename'];        // 生成文件路径名
     		
     		$readExcelResult = $this->importExecl($filename);
-    		$this->batchInsert($readExcelResult['data'][0]['Content']);
-    		$this->success('上传成功！');
+    		if($this->batchInsert($readExcelResult['data'][0]['Content'])){
+	    		$this->success('上传成功！');
+    		}else{
+    			$this->error('导入失败！');
+    		}
     	}else{
     		$this->error("请选择上传的文件");
     	}
@@ -376,6 +376,7 @@ class VillageController extends ComController
      * @param unknown $insertData
      */
     public function batchInsert($insertData){
+    	M()->startTrans();
     	$prefix = C('DB_PREFIX');
     	$emVillage = M('em_village');
     	$emSysOrg = M('em_sys_org');
@@ -393,7 +394,7 @@ class VillageController extends ComController
     		if(is_object($villageName)){
     			$villageName = $villageName->_toString();
     		}
-    		var_dump($villageName);
+//     		var_dump($villageName);
     		if(empty($villageName)){
     			$this->error("小区名称不能为空！");
     		}
@@ -449,8 +450,13 @@ class VillageController extends ComController
     		$data['CREATE_TIME'] = $timenow;
     		$data['MODIFY_TIME'] = $timenow;
     		
-    		$emVillage->data($data)->add();
+    		if(!$emVillage->data($data)->add()){
+    			M()->rollback();
+    			return  false;
+    		}
     	}
+    	M()->commit();
+    	return true;
     }
     
     /**

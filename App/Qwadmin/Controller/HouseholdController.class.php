@@ -32,8 +32,10 @@ class HouseholdController extends ComController
         $field = isset($_GET['field']) ? $_GET['field'] : '';
         $keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
         $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+        $villageSearch = isset($_GET['villageSearch']) ? $_GET['villageSearch'] : '';
+        $buildingSearch = isset($_GET['buildingSearch']) ? $_GET['buildingSearch'] : '';
+        
         $where = '';
-
         $tabname = isset($_GET['tabname']) ? $_GET['tabname'] : 'movedIn';
 
         $prefix = C('DB_PREFIX');
@@ -47,16 +49,27 @@ class HouseholdController extends ComController
 
         if($keyword <> ''){
         	if ($field == 'household_name') {
-        		$where = "and {$prefix}em_household.household_name LIKE '%$keyword%'";
+        		$where = $where . " and {$prefix}em_household.household_name LIKE '%$keyword%'";
         	}
         	if ($field == 'nickname') {
-        		$where = "and {$prefix}em_household.nickname LIKE '%$keyword%'";
+        		$where = $where . " and {$prefix}em_household.nickname LIKE '%$keyword%'";
         	}
+        }
+        if($villageSearch <> 0 && $villageSearch <> ''){
+        	$where = $where . " and h.village = $villageSearch";
+        	$searchBuildingMap[$prefix.'em_building.village'] = array('eq',$villageSearch);
+	        $buildings = M('em_building')->field("{$prefix}em_building.building_id,{$prefix}em_building.building_name")->where($searchBuildingMap)->select();
+        }
+        
+        if($buildingSearch <> 0 && $buildingSearch <> ''){
+        	$where = $where . " and h.building = $buildingSearch";
         }
         
         if($village){
-        	$where = "and h.village = $village";
+        	$where = $where . " and h.village = $village";
+        	$searchMap[$prefix.'em_village.village_id'] = array('eq',$village);
         }
+        $villages = M('em_village')->field("{$prefix}em_village.village_id,{$prefix}em_village.village_name")->where($searchMap)->select();
         
         $whereMovedIn = "{$prefix}em_household.auth_result = 1 ";
         $whereTapeAudit =  "{$prefix}em_household.auth_result = 2 ";
@@ -106,6 +119,8 @@ class HouseholdController extends ComController
         
         $tab = $tabname;
         $this->assign('tab', $tab);
+        $this->assign('listVillage', $villages);
+        $this->assign('listBuilding', $buildings);
         $this->display();
     }
     
@@ -188,9 +203,13 @@ class HouseholdController extends ComController
     	}
     	
     	$householdIds = isset($_REQUEST['householdIds']) ? $_REQUEST['householdIds'] : false;
+//     	$houseIds = isset($_REQUEST['houseIds']) ? $_REQUEST['houseIds'] : false;
     	if(!$householdIds){
     		$this->error('需要删除的住户为空，请选择住户！');
     	}
+    	/* if(!$houseIds){
+    		$this->error('需要删除的房屋为空，请选择！');
+    	} */
     	
     	if (is_array($householdIds)) {
     		foreach ($householdIds as $k => $v) {
@@ -202,11 +221,22 @@ class HouseholdController extends ComController
             }
         }
         
-        
         $map['HOUSEHOLD_ID'] = array('in', $householdIds);
         if (M('em_household')->where($map)->delete()) {
         	addlog('删除住户ID：' . $householdIds);
             $this->success('恭喜，住户删除成功！');
+            /* if(is_array($householdIds)){
+	            $count = count($householdIds);
+	            for($i=0;$i<$count;$i++){
+	            	$map2['HOUSEHOLD_ID'] = array('eq',$householdIds[i]);
+	            	$map2['HOUSE_ID'] = array('eq',$houseIds[i]);
+	            	M('em_house_household')->where($map2)->delete();
+	            }
+            }else{
+            	$map2['HOUSEHOLD_ID'] = array('eq',$householdIds);
+            	$map2['HOUSE_ID'] = array('eq',$houseIds);
+            	M('em_house_household')->where($map2)->delete();
+            } */
         } else {
             $this->error('参数错误！');
         }
@@ -283,6 +313,7 @@ class HouseholdController extends ComController
 
     public function update($ajax = '')
     {
+    	M()->startTrans();
     	$householdId = isset($_POST['household_id']) ? intval($_POST['household_id']) : false;
     	$data['HOUSE_NAME'] = isset($_POST['HOUSE_NAME']) ? trim($_POST['HOUSE_NAME']) : '';
     	if(!$householdId){
@@ -338,7 +369,10 @@ class HouseholdController extends ComController
         $data['HOME_TEL'] = isset($_POST['HOME_TEL']) ? trim($_POST['HOME_TEL']) : '';
         $data['CARD_NUMBER'] = isset($_POST['CARD_NUMBER']) ? trim($_POST['CARD_NUMBER']) : '';
         $data['DOOR_CARD_NUMBER'] = isset($_POST['DOOR_CARD_NUMBER']) ? trim($_POST['DOOR_CARD_NUMBER']) : '';
-        $data['AUTH_TIME'] = isset($_POST['AUTH_TIME']) ? trim($_POST['AUTH_TIME']) : NULL;
+        $authTime = isset($_POST['AUTH_TIME']) ? trim($_POST['AUTH_TIME']) : null;
+        if(!empty($authTime)){
+        	$data['AUTH_TIME'] = $authTime;
+        }
         $data['MOVE_REASON'] = isset($_POST['MOVE_REASON']) ? trim($_POST['MOVE_REASON']) : '';
         
         $data['HOUSEHOLD_TYPE'] = isset($_POST['household_type']) ? trim($_POST['household_type']) : '';
@@ -361,34 +395,56 @@ class HouseholdController extends ComController
                 $this->error('住户名称不能为空！');
             }
             
-            $householdId = M('em_household')->data($data)->add();
-            addlog('新增住户，住户ID：' . $householdId);
-            
+            if(!$householdId = M('em_household')->data($data)->add()){
+            	M()->rollback();
+            	addlog('新增住户信息异常!');
+            	$this->error('新增住户信息异常!');
+            }
             //住户和房屋关联表插入数据
             $householdStatus = isset($_POST['household_status']) ? trim($_POST['household_status']) : '';
-            $this->addHouseHousehold($houseId, $householdId, $householdStatus);
+            if(!$this->addHouseHousehold($houseId, $householdId, $householdStatus)){
+            	M()->rollback();
+            	addlog('新增住户和房屋关联信息异常!');
+            	$this->error('新增住户和房屋关联信息异常!');
+            }
             
             if($householdId){
             	if($member){
             		addlog('手机：' . $tel . "用户已经存在，不插入默认账户！");
             	}else{
-            		$this->addDefaultUser($data);
+            		if(!$this->addDefaultUser($data)){
+            			M()->rollback();
+            			addlog('新增默认用户异常!');
+            			$this->error('新增默认用户异常!');
+            		}
             	}
             }
             
+            addlog('新增住户，住户ID：' . $householdId);
+            
         } else {
         	$data['MODIFY_TIME'] = $timenow;
-        	M('em_household')->data($data)->where("household_id=$householdId")->save();
+        	if(!M('em_household')->data($data)->where("household_id=$householdId")->save()){
+        		M()->rollback();
+        		addlog('编辑住户信息异常，住户id：' . $householdId);
+        		$this->error('编辑住户信息异常!');
+        	}
         	addlog('编辑住户信息，住户ID：' . $householdId);
         	
         	//如果手机账户用户已经存在
         	if($member){
         		addlog('手机：' . $tel . "用户已经存在，不插入默认账户！");
         	}else{//如果手机账户用户不存在，默认插入新用户和用户组权限
-        		$this->addDefaultUser($data);
+        		if(!$this->addDefaultUser($data)){
+        			M()->rollback();
+        			addlog('新增默认用户异常!');
+        			$this->error('新增默认用户异常!');
+        		}
+//         		$this->addDefaultUser($data);
         	}
         	
         }
+        M()->commit();
         $this->success('操作成功！','index');
     }
 
@@ -397,7 +453,7 @@ class HouseholdController extends ComController
     	$houseAndHouseholdData['HOUSE_ID'] = $houseId;
     	$houseAndHouseholdData['HOUSEHOLD_ID'] = $householdId;
     	$houseAndHouseholdData['HOUSEHOLD_STATUS'] = $householdStatus;
-    	M('em_house_household')->data($houseAndHouseholdData)->add();
+    	return M('em_house_household')->data($houseAndHouseholdData)->add();
     }
     
     /**
@@ -418,7 +474,9 @@ class HouseholdController extends ComController
     	$memberData['t'] = date('Y-m-d H:i:s',time());
     	$uid = M('member')->data($memberData)->add();
     	if($uid){
-    		M('auth_group_access')->data(array('group_id' => 3, 'uid' => $uid))->add(); //默认用户组为普通用户，id为3，数据库普通用户 id不能变
+    		return M('auth_group_access')->data(array('group_id' => 3, 'uid' => $uid))->add(); //默认用户组为普通用户，id为3，数据库普通用户 id不能变
+    	}else{
+    		return false;
     	}
     }
 
@@ -551,8 +609,7 @@ class HouseholdController extends ComController
      */
     public function importExcel()
     {
-//     	dump($_FILES);
-    	if(!empty($_FILES)){
+    	if(!empty($_FILES['import']['name'])){
     		$upload = new \Think\Upload();                      // 实例化上传类
     		$upload->maxSize   = 10485760 ;                 // 设置附件上传大小
     		$upload->exts      = array('xls');       // 设置附件上传类型
@@ -568,8 +625,11 @@ class HouseholdController extends ComController
     		$filename = $upload->rootPath.$info['import']['savename'];        // 生成文件路径名
     		
     		$readExcelResult = $this->importExecl($filename);
-    		$this->batchInsert($readExcelResult['data'][0]['Content']);
-    		$this->success('导入成功！');
+    		if($this->batchInsert($readExcelResult['data'][0]['Content'])){
+	    		$this->success('导入成功！');
+    		}else{
+    			$this->error("导入失败！");
+    		}
     	}else{
     		$this->error("请选择上传的文件");
     	}
@@ -580,6 +640,7 @@ class HouseholdController extends ComController
      * @param unknown $insertData
      */
     public function batchInsert($insertData){
+    	M()->startTrans();
     	$prefix = C('DB_PREFIX');
     	$emHousehold = M('em_household');
     	$emVillage = M('em_village');
@@ -691,7 +752,10 @@ class HouseholdController extends ComController
     		
     		addlog('导入住户，住户ID：' . $householdId);
     		
-    		$this->addHouseHousehold($houseId, $householdId, $householdStatusId);
+    		if(!$this->addHouseHousehold($houseId, $householdId, $householdStatusId)){
+    			M()->rollback();
+    			return false;
+    		}
     		
     		
     		$member = M('member')->where("phone = $tel")->find();
@@ -699,10 +763,15 @@ class HouseholdController extends ComController
     			if($member){
     				addlog('手机：' . $tel . "用户已经存在，不插入默认账户！");
     			}else{
-    				$this->addDefaultUser($data);
+    				if(!$this->addDefaultUser($data)){
+    					M()->rollback();
+    					return false;
+    				}
     			}
     		}
     	}
+    	M()->commit();
+    	return true;
     }
     
     /**
@@ -783,6 +852,7 @@ class HouseholdController extends ComController
      * 迁入房屋
      */
     public function move(){
+    	M()->startTrans();
     	$householdId = isset($_POST['household_id']) ? intval($_POST['household_id']) : false;
     	if($householdId){
 //     		$data['HOUSE_NAME'] = isset($_POST['HOUSE_NAME']) ? trim($_POST['HOUSE_NAME']) : '';
@@ -815,20 +885,72 @@ class HouseholdController extends ComController
     		$timenow=date('Y-m-d H:i:s',time());
     		$data['MODIFY_TIME'] = $timenow;
     		$data['AUTH_TIME'] = $timenow;
-    		M('em_household')->data($data)->where("household_id=$householdId")->save();
+    		if(!M('em_household')->data($data)->where("household_id=$householdId")->save()){
+    			M()->rollback();
+    			$this->error("住户迁入异常！");
+    		}
     		addlog('住户迁入，住户ID：' . $householdId);
-    		$this->addHouseHousehold($houseId, $householdId,$householdStatus);
+    		if($this->addHouseHousehold($houseId, $householdId,$householdStatus)){
+    			M()->commit();
+    		}else{
+    			M()->rollback();
+    		}
     	}else{
     		$this->error("住户不存在！");
     	}
-    	
     	$this->success('操作成功！','index');
+    }
+    
+    public function batchMovedOut(){
+    	M()->startTrans();
+    	$householdIds = isset($_REQUEST['householdIds']) ? $_REQUEST['householdIds'] : false;
+    	$houseIds = isset($_REQUEST['houseIds']) ? $_REQUEST['houseIds'] : false;
+    	if(!$householdIds){
+    		$this->error('需要迁出的住户为空，请选择住户！');
+    	}
+    	if(!$houseIds){
+    		$this->error('需要迁出的房屋为空，请重新选择住户！');
+    	}
+    	
+    	$count = count($householdIds);
+    	for($i=0;$i<$count;$i++){
+    		$householdId = $householdIds[$i];
+    		$houseId = $houseIds[$i];
+    		$map['HOUSEHOLD_ID'] = array('eq', $householdId);
+    		$houseAndHousehold = M('em_house_household')->where("household_id=$householdId and house_id != $houseId")->find();
+    		if(empty($houseAndHousehold)){
+    			//迁入状态
+    			$householdStatusDict = M('em_dictionary')->where("dict_name = 'authResult' and dict_key = '已迁出'")->find();
+    			$data['AUTH_RESULT'] = $householdStatusDict['dict_value'];
+    			$data['AUTH_TIME'] = null;
+    		}
+    		$timenow=date('Y-m-d H:i:s',time());
+    		$data['MODIFY_TIME'] = $timenow;
+
+    		if(M('em_household')->data($data)->where($map)->save()){
+    			//删除住户和房屋关联关系
+    			$map['HOUSEHOLD_ID'] = array('eq', $householdId);
+    			$map['HOUSE_ID'] = array('eq', $houseId);
+    			if(!M('em_house_household')->where($map)->delete()){
+    				M()->rollback();
+    				$this->error('迁出住户id:' . $householdId . ',房屋id：' . $houseId . '时删除失败！');
+    			}else{
+	    			addlog('住户迁出，住户ID：' . $householdId);
+    			}
+    		}else{
+    			M()->rollback();
+    			$this->error('批量迁出失败！');
+    		}
+    	}
+    	M()->commit();
+    	$this->success('操作成功！');
     }
     
     /**
      * 迁出页面
      */
     public function movedOut(){
+    	M()->startTrans();
     	$householdId = isset($_REQUEST['household_id']) ? $_REQUEST['household_id'] : false;
     	$houseId = isset($_REQUEST['house_id']) ? $_REQUEST['house_id'] : false;
     	if(!$householdId){
@@ -845,7 +967,6 @@ class HouseholdController extends ComController
     	if(empty($houseAndHousehold)){
     		//迁入状态
     		$householdStatusDict = M('em_dictionary')->where("dict_name = 'authResult' and dict_key = '已迁出'")->find();
-    		trace($householdStatusDict);
     		$data['AUTH_RESULT'] = $householdStatusDict['dict_value'];
 	    	$data['AUTH_TIME'] = null;
     	}
@@ -857,9 +978,15 @@ class HouseholdController extends ComController
 	    	//删除住户和房屋关联关系
 	    	$map['HOUSEHOLD_ID'] = array('eq', $householdId);
 	    	$map['HOUSE_ID'] = array('eq', $houseId);
-    		M('em_house_household')->where($map)->delete();
+	    	
+    		if(M('em_house_household')->where($map)->delete()){
+		    	M()->commit();
+    		}else{
+				M()->rollback();    			
+    		}
 	    	addlog('住户迁出，住户ID：' . $householdId);
     	}else{
+    		M()->rollback();
     		$this->error("住户迁出失败！");
     	}
     }

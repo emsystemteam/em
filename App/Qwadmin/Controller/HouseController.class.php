@@ -31,6 +31,8 @@ class HouseController extends ComController
         $field = isset($_GET['field']) ? $_GET['field'] : '';
         $keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
         $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+        $villageSearch = isset($_GET['villageSearch']) ? $_GET['villageSearch'] : '';
+        $buildingSearch = isset($_GET['buildingSearch']) ? $_GET['buildingSearch'] : '';
         $where = '';
 
         $prefix = C('DB_PREFIX');
@@ -48,16 +50,16 @@ class HouseController extends ComController
         }
 
 
-        //如果不是超级管理员，需要添加当前登录用户数据权限
-        /* if($uid != 1){
-        	$member = M('member')->where("uid = $uid")->find();
-        	$phone = $member['phone'];
-        	if($where != ""){
-        		$where = $where . "and h.tel = $phone";
-        	}else{
-        		$where ="h.tel = $phone";
-        	}
-        } */
+        if($villageSearch <> 0 && $villageSearch <> ''){
+        	$where[$prefix.'em_house.village'] = array('eq',$villageSearch);
+        	//         	$where = "and h.village = $villageSearch";
+        	$searchBuildingMap[$prefix.'em_building.village'] = array('eq',$villageSearch);
+        	$buildings = M('em_building')->field("{$prefix}em_building.building_id,{$prefix}em_building.building_name")->where($searchBuildingMap)->select();
+        }
+        
+        if($buildingSearch <> 0 && $buildingSearch <> ''){
+        	$where[$prefix.'em_house.building'] = array('eq',$buildingSearch);
+        }
         
         $emHouse = M('em_house');
         $pagesize = 10;#每页数量
@@ -65,7 +67,10 @@ class HouseController extends ComController
         
         if($currentVillage){
         	$where['v.village_id'] = array('eq',$currentVillage);
+        	$searchMap[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
         }
+        $villages = M('em_village')->field("{$prefix}em_village.village_id,{$prefix}em_village.village_name")->where($searchMap)->select();
+        
         
         $count = $emHouse->field("{$prefix}em_house.*")
             ->order($order)
@@ -96,6 +101,8 @@ class HouseController extends ComController
         $page = $page->show();
         $this->assign('list', $list);
         $this->assign('page', $page);
+        $this->assign('listVillage', $villages);
+        $this->assign('listBuilding', $buildings);
         $this->display();
     }
 
@@ -387,25 +394,24 @@ class HouseController extends ComController
      */
     public function importExcel()
     {
-//     	dump($_FILES);
-    	if(!empty($_FILES)){
+    	if(!empty($_FILES['import']['name'])){
     		$upload = new \Think\Upload();                      // 实例化上传类
     		$upload->maxSize   = 10485760 ;                 // 设置附件上传大小
     		$upload->exts      = array('xls');       // 设置附件上传类型
     		$upload->rootPath  = './Public/Excel/';             // 设置附件上传根目录
     		$upload->autoSub   = false;                   // 将自动生成以当前时间的形式的子文件夹，关闭
     		
-//     		var_dump($upload);
     		
     		$info = $upload->upload();                             // 上传文件
-//     		var_dump($info);
-//     		$exts = $info['import']['ext'];                                 // 获取文件后缀
 			
     		$filename = $upload->rootPath.$info['import']['savename'];        // 生成文件路径名
     		
     		$readExcelResult = $this->importExecl($filename);
-    		$this->batchInsert($readExcelResult['data'][0]['Content']);
-    		$this->success('导入成功！');
+    		if($this->batchInsert($readExcelResult['data'][0]['Content'])){
+	    		$this->success('导入成功！');
+    		}else{
+    			$this->error('导入失败！');
+    		}
     	}else{
     		$this->error("请选择上传的文件");
     	}
@@ -416,6 +422,7 @@ class HouseController extends ComController
      * @param unknown $insertData
      */
     public function batchInsert($insertData){
+    	M()->startTrans();
     	$uid =  session('uid');
     	if($uid == null){
     		$this->error('您还未登录！');
@@ -508,8 +515,13 @@ class HouseController extends ComController
     		
     		$data['CREATE_TIME'] = $timenow;
     		$data['MODIFY_TIME'] = $timenow;
-    		$emHouse->data($data)->add();
+    		if(!$emHouse->data($data)->add()){
+    			M()->rollback();
+    			return false;
+    		}
     	}
+    	M()->commit();
+    	return true;
     }
     
     /**

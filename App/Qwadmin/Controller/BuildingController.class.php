@@ -31,6 +31,7 @@ class BuildingController extends ComController
         $field = isset($_GET['field']) ? $_GET['field'] : '';
         $keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
         $order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+        $villageSearch = isset($_GET['villageSearch']) ? $_GET['villageSearch'] : '';
         $where = '';
 
         $prefix = C('DB_PREFIX');
@@ -43,32 +44,30 @@ class BuildingController extends ComController
         }
         if ($keyword <> '') {
             if ($field == 'building_name') {
-            	$where = "{$prefix}em_building.building_name LIKE '%$keyword%'";
+            	$where[$prefix.'em_building.building_name'] = array('like','%'.$keyword.'%');
+//             	$where = "{$prefix}em_building.building_name LIKE '%$keyword%'";
             }
             if ($field == 'village_contacts') {
-            	$where = "{$prefix}em_building.building_type LIKE '%$keyword%'";
+            	$where[$prefix.'em_building.building_type'] = array('like','%'.$keyword.'%');
+//             	$where = "{$prefix}em_building.building_type LIKE '%$keyword%'";
             }
         }
 
+        if($villageSearch <> 0 && $villageSearch <> ''){
+//         	$where = "and {$prefix}em_building.village = $villageSearch";
+        	$where[$prefix.'em_building.village'] = array('eq',$villageSearch);
+        }
         
-        //如果不是超级管理员，需要添加当前登录用户数据权限
-        /* if($uid != 1){
-        	$member = M('member')->where("uid = $uid")->find();
-        	$phone = $member['phone'];
-        	if($where != ""){
-        		$where = $where . "and hh.tel = $phone";
-        	}else{
-        		$where ="hh.tel = $phone";
-        	}
-        } */
-
         $emBuilding = M('em_building');
         $pagesize = 10;#每页数量
         $offset = $pagesize * ($p - 1);//计算记录偏移量
         
         if($currentVillage){
         	$where['v.village_id'] = array('eq',$currentVillage);
+        	$searchMap[$prefix.'em_village.village_id'] = array('eq',$currentVillage);
         }
+        
+        $villages = M('em_village')->field("{$prefix}em_village.village_id,{$prefix}em_village.village_name")->where($searchMap)->select();
         
         $count = $emBuilding->field("{$prefix}em_building.*")
             ->order($order)
@@ -94,6 +93,7 @@ class BuildingController extends ComController
         $page = $page->show();
         $this->assign('list', $list);
         $this->assign('page', $page);
+        $this->assign('listVillage', $villages);
         $this->display();
     }
 
@@ -186,6 +186,7 @@ class BuildingController extends ComController
 
     public function update($ajax = '')
     {
+    	M()->startTrans();
     	$buildingId = isset($_POST['building_id']) ? intval($_POST['building_id']) : false;
     	$data['BUILDING_NAME'] = isset($_POST['BUILDING_NAME']) ? trim($_POST['BUILDING_NAME']) : '';
     	$village = isset($_POST['village']) ? trim($_POST['village']) : false;
@@ -214,7 +215,7 @@ class BuildingController extends ComController
             $buildingId = M('em_building')->data($data)->add();
             addlog('新增楼宇，楼宇ID：' . $buildingId);
             //如果单元数不为空，插入楼宇的同时插入单元
-            if($unitNumber != ''){
+            if($buildingId && $unitNumber){
             	for($i=1;$i<=$unitNumber;$i++){
             		$unitData['UNIT_NAME'] = $i."单元";
             		$unitData['VILLAGE'] = $village;
@@ -223,6 +224,10 @@ class BuildingController extends ComController
             		$unitData['MODIFY_TIME'] = $timenow;
             		$unitData['OPERATOR'] = session('uid');
             		$unitId = M('em_unit')->data($unitData)->add();
+            		if(!$unitId){
+            			M()->rollback();
+            			$this->error('插入楼宇：' . $data['BUILDING_NAME'] . '下的单元信息时异常！');
+            		}
             		addlog('新增单元，单元ID：' . $unitId);
             	}
             }
@@ -231,6 +236,7 @@ class BuildingController extends ComController
         	M('em_building')->data($data)->where("building_id=$buildingId")->save();
         	addlog('编辑楼宇信息，楼宇ID：' . $buildingId);
         }
+        M()->commit();
         $this->success('操作成功！','index');
     }
 
@@ -355,25 +361,25 @@ class BuildingController extends ComController
      */
     public function importExcel()
     {
-//     	dump($_FILES);
-    	if(!empty($_FILES)){
+    	if(!empty($_FILES['import']['name'])){
     		$upload = new \Think\Upload();                      // 实例化上传类
     		$upload->maxSize   = 10485760 ;                 // 设置附件上传大小
     		$upload->exts      = array('xls');       // 设置附件上传类型
     		$upload->rootPath  = './Public/Excel/';             // 设置附件上传根目录
     		$upload->autoSub   = false;                   // 将自动生成以当前时间的形式的子文件夹，关闭
     		
-//     		var_dump($upload);
     		
     		$info = $upload->upload();                             // 上传文件
-//     		var_dump($info);
 //     		$exts = $info['import']['ext'];                                 // 获取文件后缀
 			
     		$filename = $upload->rootPath.$info['import']['savename'];        // 生成文件路径名
     		
     		$readExcelResult = $this->importExecl($filename);
-    		$this->batchInsert($readExcelResult['data'][0]['Content']);
-    		$this->success('导入成功！');
+    		if($this->batchInsert($readExcelResult['data'][0]['Content'])){
+    			$this->success('导入成功！');
+    		}else{
+    			$this->error('导入失败！');
+    		}
     	}else{
     		$this->error("请选择上传的文件");
     	}
@@ -384,6 +390,7 @@ class BuildingController extends ComController
      * @param unknown $insertData
      */
     public function batchInsert($insertData){
+    	M()->startTrans();
     	$uid =  session('uid');
     	if($uid == null){
     		$this->error('您还未登录！');
@@ -453,7 +460,7 @@ class BuildingController extends ComController
     		addlog('导入楼宇信息,所属小区:' . $villageName . ',楼宇名称：' . $buildingName);
     		
     		//如果单元数不为空，插入楼宇的同时插入单元
-    		if($unitNumber != ''){
+    		if($buildingId && $unitNumber){
     			for($j=1;$j<=$unitNumber;$j++){
     				$unitData['UNIT_NAME'] = $j."单元";
     				$unitData['VILLAGE'] = $em_village['village_id'];
@@ -462,10 +469,16 @@ class BuildingController extends ComController
     				$unitData['MODIFY_TIME'] = $timenow;
     				$unitData['OPERATOR'] = session('uid');
     				$unitId = M('em_unit')->data($unitData)->add();
+    				if(!$unitId){
+    					M()->rollback();
+    					return false;
+    				}
     				addlog('新增单元，单元ID：' . $unitId);
     			}
     		}
     		
     	}
+    	M()->rollback();
+    	return true;
     }
 }

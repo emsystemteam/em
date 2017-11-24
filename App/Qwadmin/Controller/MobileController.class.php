@@ -70,11 +70,30 @@ class MobileController extends Controller
             
             // 住户信息
             $house = new Model();
-            $sql = "select * from qw_em_village v,qw_em_household d,qw_em_house h,qw_em_building b,qw_em_unit u where d.VILLAGE=VILLAGE_ID and HOUSE_ID=d.HOUSE and h.unit=unit_id and h.building=building_id and TEL='{$user['phone']}'";
+            $sql = "SELECT `c`.`FLOOR`,`c`.`UNIT`,`f`.`UNIT_NAME`,a.tel,`d`.`VILLAGE_NAME`,a.HOUSEHOLD_NAME,`a`.`WECHAT_ACCOUNT`,`e`.`BUILDING_NAME`,`c`.`HOUSE_NAME` FROM qw_em_household a LEFT JOIN qw_em_house_household b ON a.HOUSEHOLD_ID = b.HOUSEHOLD_ID LEFT JOIN qw_em_house c ON c.HOUSE_ID = b.HOUSE_ID LEFT JOIN qw_em_village d ON d.VILLAGE_ID = c.village LEFT JOIN qw_em_building e ON e.building_id = c.building LEFT JOIN qw_em_unit f ON f.unit_id = c.unit where a.tel='{$user['phone']}'";
             $voList = $house->query($sql);
             
+            // 按小区分组
+            $name = "";
+            $phone = "";
+            $wechat = "";
+            $villages = array();
+            $count = count($voList);
+            for ($i = 0; $i < $count; $i ++) {
+                $villageName = $voList[$i]['village_name'];
+                $name = $voList[$i]['household_name'];
+                $phone = $voList[$i]['tel'];
+                $wechat = $voList[$i]['wechat_account'];
+                if (in_array($villageName, $villages))
+                    continue;
+                array_push($villages, $villageName);
+            }
+            $this->assign('name', $name);
+            $this->assign('phone', $phone);
+            $this->assign('wechat', $wechat);
             $this->assign('user', $user);
             $this->assign('list', $voList);
+            $this->assign('villages', $villages);
             $this->display("profile");
         }
     }

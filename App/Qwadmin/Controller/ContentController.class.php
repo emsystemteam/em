@@ -50,7 +50,7 @@ class ContentController extends ComController {
 				);
 			}
 			$count = $m->where ( $condition )->count ();
-			$list = $m->where ( $condition )->order ( 'istop asc' )->order ( 'starttime desc' )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+			$list = $m->where ( $condition )->order ( 'istop desc,starttime desc,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
@@ -326,6 +326,12 @@ class ContentController extends ComController {
 			}
 			if (! strtotime ( $model->endtime )) { // 如果不是有效值
 				$model->endtime = null;
+			}
+			if(strtotime ( $model->starttime )-strtotime ( $model->endtime )>=0){
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '开始时间大于结束时间'
+				) );
 			}
 			$model->modifier = session ( 'uid' );
 			$flag = $model->save ();

@@ -282,7 +282,10 @@
     		    var start=new Date(startTime.replace("-", "/").replace("-", "/"));  
     		    var endTime=$("#endtime").val();  
     		    var end=new Date(endTime.replace("-", "/").replace("-", "/"));  
-    		    if(startTime!=""&&endTime!=""&&end<start){  
+    		    if(startTime==""||endTime==""){
+    		    	 return false;  
+    		    }
+    		    if(end<start){  
     		        return false;  
     		    }  
     		    return true;  

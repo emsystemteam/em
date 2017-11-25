@@ -50,7 +50,7 @@ class ContentController extends ComController {
 				);
 			}
 			$count = $m->where ( $condition )->count ();
-			$list = $m->where ( $condition )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+			$list = $m->where ( $condition )->order ( 'istop asc' )->order ( 'starttime desc' )->order ( 'createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
@@ -141,7 +141,7 @@ class ContentController extends ComController {
 		$authresult = I ( 'authresult' ); // 住户状态
 		$householdtype = I ( 'householdtype' ); // 住户身份
 		if ($template && $noticeid) {
-			if ($title &&$summary &&trim ( $title ) != "" &&trim ( $summary ) != "") {
+			if ($title && $summary && trim ( $title ) != "" && trim ( $summary ) != "") {
 				if ($totalselect && count ( $totalselect ) > 0) {
 					$condition ['qw_em_house_household.house_id'] = array (
 							'in',
@@ -156,19 +156,14 @@ class ContentController extends ComController {
 							$authresult 
 					);
 					$M = M ( 'member' )->where ( 'openid is not null' );
-					$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone', 'left' )
-								->join ( 'qw_em_house_household on qw_em_house_household.household_id=qw_em_household.household_id', 'left' )
-								->join ( 'qw_em_house on qw_em_house.house_id=qw_em_house_household.house_id', 'left' )
-								->where ( $condition )->distinct ( true )
-								->field ( 'qw_member.openid,qw_em_household.household_name' )
-								->select ();
+					$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone', 'left' )->join ( 'qw_em_house_household on qw_em_house_household.household_id=qw_em_household.household_id', 'left' )->join ( 'qw_em_house on qw_em_house.house_id=qw_em_house_household.house_id', 'left' )->where ( $condition )->distinct ( true )->field ( 'qw_member.openid,qw_em_household.household_name' )->select ();
 					if (count ( $Member ) == 0) {
 						$this->ajaxReturn ( array (
 								'status' => 0,
 								'message' => '没有找到可以发送的微信信息' 
 						) );
 					} else {
-						$error=0;
+						$error = 0;
 						foreach ( $Member as $row ) {
 							$message = array (
 									'touser' => $row [openid],
@@ -194,21 +189,20 @@ class ContentController extends ComController {
 											) 
 									) 
 							);
-							$result = send_wechat_template ( $message);
+							$result = send_wechat_template ( $message );
 							if ($result != 0) {
-								$error++;
-								
-							} 
+								$error ++;
+							}
 						}
-						if($error>0){
+						if ($error > 0) {
 							$this->ajaxReturn ( array (
 									'status' => 0,
-									'message' => '有'.$error.'条发送失败'
+									'message' => '有' . $error . '条发送失败' 
 							) );
-						}else{
+						} else {
 							$this->ajaxReturn ( array (
 									'status' => 1,
-									'message' => '发送成功'
+									'message' => '发送成功' 
 							) );
 						}
 						addlog ( '微信发送文章成功，ID：' . $row ['household_name'] );
@@ -324,24 +318,52 @@ class ContentController extends ComController {
 		}
 		if (! empty ( $model->id )) { // 更新
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
+			$model->istop = I ( 'post.istop', 0 );
+/* 			$model->starttime = I ( 'post.starttime', null );
+			$model->endtime= I ( 'post.endtime', null ); */
+			if (! strtotime ( $model->starttime )) { // 如果不是有效值
+				$model->starttime = null;
+			}
+			if (! strtotime ( $model->endtime )) { // 如果不是有效值
+				$model->endtime = null;
+			}
 			$model->modifier = session ( 'uid' );
 			$flag = $model->save ();
 			if ($flag) {
-				$this->success ( "保存成功", 'detail/id/' . I ( 'contentid' ) );
 				addlog ( '信息模板保存成功，ID：' . $model->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '信息模板保存成功' 
+				) );
 			} else {
-				$this->success ( "保存失败" );
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '信息模板保存失败' 
+				) );
 			}
 		} else { // 新增
 			$model->createtime = date ( 'y-m-d H:i:s', time () );
 			$model->creater = session ( 'uid' );
 			$model->status = 1;
+			$model->istop = I ( 'post.istop', 0 );
+			if (! strtotime ( $model->starttime )) { // 如果不是有效值
+				$model->starttime = null;
+			}
+			if (! strtotime ( $model->endtime )) { // 如果不是有效值
+				$model->endtime = null;
+			}
 			$flag = $model->add ();
 			if ($flag) {
-				$this->success ( "创建成功", 'detail/id/' . I ( 'contentid' ) );
-				addlog ( '文章创建成功，ID：' . $model->id );
+				addlog ( '信息模板保存成功，ID：' . $model->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '信息模板创建成功' 
+				) );
 			} else {
-				$this->error ( "创建失败" );
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '信息模板保存失败' 
+				) );
 			}
 		}
 	}

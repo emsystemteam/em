@@ -327,7 +327,8 @@ class ContentController extends ComController {
 			if (! strtotime ( $model->endtime )) { // 如果不是有效值
 				$model->endtime = null;
 			}
-			if(strtotime ( $model->starttime )-strtotime ( $model->endtime )>=0){
+			if(strtotime ( $model->starttime )&&strtotime ( $model->endtime )&&strtotime ( $model->starttime )-strtotime ( $model->endtime )>=0){
+				//都开始结束时间都填写了时校验
 				$this->ajaxReturn ( array (
 						'status' => 0,
 						'message' => '开始时间大于结束时间'

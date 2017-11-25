@@ -285,7 +285,7 @@
     		    if(startTime==""||endTime==""){
     		    	 return false;  
     		    }
-    		    if(end<start){  
+    		    if((startTime!=""&&endTime!="")&&end<start){  
     		        return false;  
     		    }  
     		    return true;  

@@ -1,0 +1,289 @@
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/js/ztree/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/js/ztree/demo.css" type="text/css">
+<script src="__PUBLIC__/qwadmin/js/jquery-1.9.1.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/ztree/jquery.ztree.core.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/ztree/jquery.ztree.excheck.min.js"></script>
+<BODY>
+<div class="row" id="selectmodel">
+	<div class="col-xs-12">
+	<input type="hidden" id="hfdselectnoticeid">
+	<input type="hidden" id="hdfcontenttitile" value="{$model['contenttitile']}">
+		<form class="form-horizontal" id="form" method="post"
+			onsubmit="return false;" action="{:U('update')}">
+			<!-- PAGE CONTENT BEGINS -->
+			<div class="form-group">
+				<label class="col-sm-2 control-label no-padding-right"
+					for="form-field-0"> 模板库选择</label>
+				<div class="col-sm-9">
+					<select id="template" name="template" class="col-xs-10 col-sm-5">
+						<volist name="templates" id="vo" empty="暂时无数据">
+							<option value='{$vo.dict_value}'>{$vo.dict_key}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2"> 会议标题</label>
+					<div class="col-sm-9">
+					<input type="text" name="titile" id="titile"  class="col-xs-10 col-sm-10">
+					</div>
+			</div>
+			<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2"> 会议简介</label>
+					<div class="col-sm-9">
+					<input type="text" name="summary" id="summary"  class="col-xs-10 col-sm-10">
+					</div>
+			</div>
+			<div class="space-4"></div>
+			<div class="form-group" id="mobileModel" style="display: none">
+				<label class="col-sm-2 control-label no-padding-right"
+					for="form-field-10">手机号码</label>
+				<div class="col-sm-9">
+					<textarea name="phoneNumber" id="phoneNumber"
+						class="col-xs-10 col-sm-5" placeholder="请输入手机号码,多号码用逗号隔开 "
+						style="height: 200px"></textarea>
+				</div>
+			</div>
+			<div id="moreModel">
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-1"> 选择楼宇 </label>
+					<div class="col-sm-9 checkbox">
+						<div class="content_wrap">
+							<div class="zTreeDemoBackground left">
+								<ul class="list">
+								<li class="title">
+								<input id="citySel" type="text" readonly value="" style="width:220px;" onclick="showMenu();" />
+								<div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+								<ul id="treeDemo" class="ztree" style="margin-top:0; width:180px; height: 150px;"></ul>
+							</div><!-- <a id="menuBtn" href="#" onclick="showMenu(); return false;">选择</a> --></li>
+							</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="space-4"></div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2"> 住户状态</label>
+					<div class="col-sm-9">
+						<div class="auth_result">
+							<volist name="authResults" id="vo" empty="暂时无数据"> <input
+								name="form-field-checkbox" type="checkbox" checked="checked"
+								value="{$vo.dict_value}" class="ace input-lg"> <span
+								class="lbl">{$vo.dict_key}</span> </volist>
+						</div>
+					</div>
+				</div>
+
+				<div class="space-4"></div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label no-padding-right"
+						for="form-field-2"> 住户身份</label>
+					<div class="col-sm-9">
+						<div class="holdtype">
+							<volist name="holdtype" id="vo" empty="暂时无数据"> <input
+								name="form-field-checkbox" type="checkbox" checked="checked"
+								value="{$vo.dict_value}" class="ace input-lg"> <span
+								class="lbl">{$vo.dict_key}</span> </volist>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-offset-3 col-md-9">
+				<button class="btn btn-info submit" id="btnsend" type="button">
+					<i class="icon-ok bigger-110"></i> 立即发送
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+</BODY>
+<script type="text/javascript">
+	$('#btnsend').click(function() {
+				if($('#summary').val()==""&&$('#titile').val()==""){
+					bootbox.dialog({
+						title : '友情提示：',
+						message : '标题或简介不能为空',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
+					return;
+				}
+				//指定身份发送	
+				//住户状态
+				var authresult = new Array();
+				var c = $('.auth_result input[type=checkbox]:checked');
+				$.each(c, function(i, v) {
+					authresult.push(v.value);
+				});
+				if (authresult.length == 0) {
+					bootbox.dialog({
+						title : '友情提示：',
+						message : '请选择住户状态',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
+					return;
+				}
+				//住户身份
+				var householdtype = new Array();
+				var h = $('.holdtype input[type=checkbox]:checked');
+				$.each(h, function(i, v) {
+					householdtype.push(v.value);
+				});
+				if (householdtype.length == 0) {
+					bootbox.dialog({
+						title : '友情提示：',
+						message : '请选择住户身份',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
+					return;
+				}
+				
+				var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+				var checkedNodes = zTreeObj.getCheckedNodes(true);
+				if (checkedNodes.length == 0) {
+					bootbox.dialog({
+						title : '友情提示：',
+						message : '请选择楼宇',
+						buttons : {
+							"success" : {
+								"label" : "确定",
+								"className" : "btn-info"
+							}
+						}
+					});
+					return;
+				}
+				var totalselect = new Array();//选中多少楼宇
+				for (var i = 0; i < checkedNodes.length; i++) {
+						if(checkedNodes[i].level>0){
+							totalselect.push(checkedNodes[i].id);	
+						}
+						
+				}
+				//立即发送
+				var sendData = {
+					template:$('#template').val(),//微信模板
+					noticeid:$('#hfdselectnoticeid').val(),
+					title : $('#titile').val(),//标题
+					summary:$('#summary').val(),//简介
+					totalselect : totalselect,//楼宇
+					authresult : authresult,//住户状态
+					householdtype : householdtype//住户身份
+				};
+				$.ajax({
+					type : "post",
+					url : "__URL__/sendWechatSms",
+					dataType : "json",
+					data : sendData,
+					success : function(data) {
+							bootbox.dialog({
+								title : '友情提示：',
+								message : data.message,
+								buttons : {
+									"success" : {
+										"label" : "确定",
+										"className" : "btn-danger"
+									}
+								}
+							});
+
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+					}
+				});
+
+	});
+
+	function beforeClick(treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		zTree.checkNode(treeNode, !treeNode.checked, null, true);
+		return false;
+	}
+	
+	function onCheck(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+		nodes = zTree.getCheckedNodes(true),
+		v = "";
+		for (var i=0, l=nodes.length; i<l; i++) {
+			if(nodes[i].level>0){
+				v += nodes[i].name + ",";
+			}
+		}
+		if (v.length > 0 ) v = v.substring(0, v.length-1);
+		var cityObj = $("#citySel");
+		cityObj.attr("value", v);
+	}
+
+	function showMenu() {
+		var cityObj = $("#citySel");
+		var cityOffset = $("#citySel").position();
+		$('.zTreeDemoBackground').height(200);
+		$("#menuContent").css({left:cityOffset.left + "px", top:cityOffset.top + cityObj.outerHeight() + "px"}).slideDown("fast");
+		$("body").bind("mousedown", onBodyDown);
+	}
+	function hideMenu() {
+		$("#menuContent").fadeOut("fast");
+		$("body").unbind("mousedown", onBodyDown);
+	}
+	function onBodyDown(event) {
+		if (!(event.target.id == "menuBtn" || event.target.id == "citySel" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+			$('.zTreeDemoBackground').height(0);
+			hideMenu();
+		}
+	}
+
+	$(document).ready(function(){
+		var setting = {
+				check: {
+					enable: true,
+					autoCheckTrigger: true
+					},
+				view: {
+					dblClickExpand: false
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				},
+				callback: {
+					beforeClick: beforeClick,
+					onCheck: onCheck
+				}
+			};
+		$.ajax({
+			type : "post",
+			url : "__ROOT__/Message/buildingselected",
+			dataType : "json",
+			data:{contentid:$('#contentid').val()},//用于过滤小区范围
+			success : function(data) {
+				var zNodes =data.message;
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+		
+	});
+	
+</script>

@@ -1,5 +1,6 @@
 <include file="Public/head" />
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/js/webupload/webuploader.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/bootstrap-datetimepicker.css">
 <body class="no-skin">
 	<include file="Public/header" />
 	<div class="main-container" id="main-container">
@@ -25,7 +26,7 @@
 							<!-- PAGE CONTENT BEGINS -->
 							<form class="form-horizontal" action="{:U('updatenotice')}" id="form"
 								method="post">
-								<input name="contentid" value="{$contentid}" type="hidden">
+								<input name="contentid" id="contentid" value="{$contentid}" type="hidden">
 								<input name="id" value="{$model.id}" type="hidden">
 								<input type="hidden" name="noticepicture" id="hdfnoticepicture" value="{$model.noticepicture}">
 								<div class="form-group">
@@ -70,11 +71,28 @@
 										for="form-field-10">推荐置顶</label>
 									<div class="col-sm-6">
 										<label>
-										  <input name="istop" id="istop"
-                                        <if condition="$model.istop eq 1">checked="checked"</if>
+										  <input name="istop" id="istop" <if condition="$model.istop eq 1">checked="checked"</if>
                                         value="1" class="ace ace-switch ace-switch-2" type="checkbox" />
                                         <span class="lbl"></span>
 										</label>
+                                    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-10">置顶开始时间</label>
+									<div class="col-sm-6">
+										<div class="input-group">
+										<input class="datetimepicker" id="starttime" name="starttime" type="text" class="form-control" readonly value="{$model.starttime}"/>
+										</div>
+                                    </div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-1 control-label no-padding-right"
+										for="form-field-10">置顶结束时间</label>
+									<div class="col-sm-6">
+										<div class="input-group">
+										<input class="datetimepicker" id="endtime" name="endtime" type="text" class="form-control" readonly value="{$model.endtime}"/>
+										</div>
                                     </div>
 								</div>
 								 <div class="col-md-offset-2 col-md-9">
@@ -105,8 +123,27 @@
 	<!-- /.main-container -->
 	<include file="Public/footerjs" />
 	<script src="__PUBLIC__/qwadmin/js/webupload/webuploader.min.js"></script>
+	<script src="__PUBLIC__/qwadmin/js/date-time/moment.js"></script>
+	<script src="__PUBLIC__/qwadmin/js/date-time/bootstrap-datetimepicker.js"></script>
+	
 	<!-- inline scripts related to this page -->
 	<script type="text/javascript">
+	 $('.datetimepicker').datetimepicker({
+		 format: 'YYYY-MM-DD h:mm:ss ',//use this option to display seconds
+		 icons: {
+			time: 'fa fa-clock-o',
+			date: 'fa fa-calendar',
+			up: 'fa fa-chevron-up',
+			down: 'fa fa-chevron-down',
+			previous: 'fa fa-chevron-left',
+			next: 'fa fa-chevron-right',
+			today: 'fa fa-arrows ',
+			clear: 'fa fa-trash',
+			close: 'fa fa-times'
+		 }
+		}).next().on(ace.click_event, function(){
+			$(this).prev().focus();
+		});
     $(function () {
     	if($('#hdfnoticepicture').val()!=''){
     		 var $list=$("#thelist"); 
@@ -240,6 +277,19 @@
                  this.sync();
              }
          });
+    	 function checkEndTime(){  
+    		    var startTime=$("#starttime").val();  
+    		    var start=new Date(startTime.replace("-", "/").replace("-", "/"));  
+    		    var endTime=$("#endtime").val();  
+    		    var end=new Date(endTime.replace("-", "/").replace("-", "/"));  
+    		    if(startTime==""||endTime==""){
+    		    	 return false;  
+    		    }
+    		    if((startTime!=""&&endTime!="")&&end<start){  
+    		        return false;  
+    		    }  
+    		    return true;  
+    		}  
 	 $(".submit").click(function () {
          var noticetitle = $("#noticetitle").val();//文章标题
          var noticecontent = $("#noticecontent").val();//文章内容
@@ -256,7 +306,42 @@
              });
              return;
          }
-         $("#form").submit();
+         if(!checkEndTime()){  
+        	 bootbox.alert({
+                 buttons: {
+                     ok: {
+                         label: '确定',
+                         className: 'btn-myStyle'
+                     }
+                 },
+                 message: '开始时间大于结束时间',
+                 title: "提示信息",
+             });
+        	    return;  
+        	}  
+         $.ajax({
+        	    type: 'post',
+        	    url: '{:U('updatenotice')}',
+        	    data: $("#form").serialize(),
+        	    success: function(data) {
+        	      if(data.status==0){
+        	    	  bootbox.alert({
+                          buttons: {
+                              ok: {
+                                  label: '确定',
+                                  className: 'btn-danger'
+                              }
+                          },
+                          message: data.message,
+                          title: "友情提示",
+                      });
+        	      }else{
+        	    	  var contentid=$('#contentid').val();
+        	    	  var url="{:U('Content/detail/id/"+contentid+"')}";
+        	    	  window.location.href=url;
+        	      }
+        	    }
+        	});
      });
     });
 	</script>

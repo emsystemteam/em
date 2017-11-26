@@ -32,7 +32,7 @@ class ContentController extends ComController {
 	// 模块管理明细-文章列表
 	public function detail() {
 		if (isset ( $_GET ['id'] )) {
-			$templates=M('em_dictionary')->where ('dict_name='.'"template"')->select();
+			$templates = M ( 'em_dictionary' )->where ( 'dict_name=' . '"template"' )->select ();
 			$authResult = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"authResult"' )->order ( 'CREATE_TIME desc' )->select ();
 			$holdtype = M ( 'em_dictionary' )->where ( 'DICT_NAME=' . '"householdStatus"' )->order ( 'CREATE_TIME desc' )->select ();
 			$data ['noticetitle'] = isset ( $_POST ['smstype'] ) ? trim ( $_POST ['smstype'] ) : 1; // 默认短信
@@ -50,14 +50,14 @@ class ContentController extends ComController {
 				);
 			}
 			$count = $m->where ( $condition )->count ();
-			$list = $m->where ( $condition )->order ( 'istop,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
+			$list = $m->where ( $condition )->order ( 'istop desc,starttime desc,createtime desc' )->limit ( $offset . ',' . $pagesize )->select ();
 			$page = new \Think\Page ( $count, $pagesize );
 			$page = $page->show ();
 			$content = M ( 'em_contentmanager' )->where ( 'status=1 and id=' . $id )->find ();
 			$this->assign ( 'list', $list );
 			$this->assign ( 'model', $content );
 			$this->assign ( 'page', $page );
-			$this->assign('templates',$templates);
+			$this->assign ( 'templates', $templates );
 			$this->assign ( 'authResults', $authResult );
 			$this->assign ( 'holdtype', $holdtype );
 			$this->display ();
@@ -133,77 +133,96 @@ class ContentController extends ComController {
 	}
 	// 指定楼宇发送微信
 	public function sendWechatSms() {
-		$noticeid = I ( 'noticeid' ); // 文章id
+		$noticeid = I ( 'noticeid' ); // 文章内容
+		$template = I ( 'template' ); // 微信模板消息
+		$title = I ( 'title' ); // 标题
+		$summary = I ( 'summary' ); // 简介
 		$totalselect = I ( 'totalselect' ); // 选择楼宇
-		if ($noticeid) {
-			if ($totalselect && count ( $totalselect ) > 0) {
-				$condition = array (); // 查询条件
-				$condition ['village'] = array (
-						'in',
-						$totalselect 
-				);
-				
-				$M = M ( 'member' )->where ( 'openid is not null' );
-				$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone', 'left' )->join ( 'qw_em_house_household on qw_em_house_household.household_id=qw_em_household.household_id', 'left' )->join ( 'qw_em_house on qw_em_house.house_id=qw_em_house_household.house_id', 'left' )->where ( $condition )->distinct ( true )->field ( 'qw_member.openid,qw_em_household.household_name' )->select ();
-				$notice = M ( 'em_notice' )->join ( 'qw_em_contentmanager on qw_em_notice.contentid=qw_em_contentmanager.id' )->where ( 'qw_em_notice.id=' . $noticeid )->field ( 'qw_em_notice.*,qw_em_contentmanager.contenttitile' )->find ();
-				// 发送模板消息
-				if (count ( $Member ) == 0) {
-					$this->ajaxReturn ( array (
-							'status' => 0,
-							'message' => '没有找到可以发送的微信信息' 
-					) );
-				} else {
-					foreach ( $Member as $row ) {
-						$template = array (
-								'touser' => $row [openid],
-								'template_id' => __TEMPLATE_ID__,
-								'url' => $_SERVER ['HTTP_HOST'] . __ROOT__ . '/mobile/detail/id/' . $notice ['id'] . '.html',
-								'topcolor' => '#7B68EE',
-								'data' => array (
-										'first' => array (
-												'value' => $notice ['contenttitile'],
-												'color' => "#743A3A" 
-										),
-										'keyword1' => array (
-												'value' => $notice ['noticetitle'],
-												'color' => '#743A3A' 
-										),
-										'keyword2' => array (
-												'value' => $row ['household_name'],
-												'color' => '#743A3A' 
-										),
-										'remark' => array (
-												'value' => '',
-												'color' => '#743A3A' 
-										) 
-								) 
-						);
-						$result = send_wechat_template ( $template );
-						if ($result == 0) {
-							$this->ajaxReturn ( array (
-									'status' => 1,
-									'message' => '发送成功'
-							) );
-							addlog ( '微信发送文章成功，ID：' . $row ['household_name'] );
-						} else {
+		$authresult = I ( 'authresult' ); // 住户状态
+		$householdtype = I ( 'householdtype' ); // 住户身份
+		if ($template && $noticeid) {
+			if ($title && $summary && trim ( $title ) != "" && trim ( $summary ) != "") {
+				if ($totalselect && count ( $totalselect ) > 0) {
+					$condition ['qw_em_house_household.house_id'] = array (
+							'in',
+							$totalselect 
+					);
+					$condition ['household_status'] = array (
+							'in',
+							$householdtype 
+					);
+					$condition ['auth_result'] = array (
+							'in',
+							$authresult 
+					);
+					$M = M ( 'member' )->where ( 'openid is not null' );
+					$Member = $M->join ( 'qw_em_household on qw_em_household.tel=qw_member.phone', 'left' )->join ( 'qw_em_house_household on qw_em_house_household.household_id=qw_em_household.household_id', 'left' )->join ( 'qw_em_house on qw_em_house.house_id=qw_em_house_household.house_id', 'left' )->where ( $condition )->distinct ( true )->field ( 'qw_member.openid,qw_em_household.household_name' )->select ();
+					if (count ( $Member ) == 0) {
+						$this->ajaxReturn ( array (
+								'status' => 0,
+								'message' => '没有找到可以发送的微信信息' 
+						) );
+					} else {
+						$error = 0;
+						foreach ( $Member as $row ) {
+							$message = array (
+									'touser' => $row [openid],
+									'template_id' => $template,
+									'url' => $_SERVER ['HTTP_HOST'] . __ROOT__ . '/mobile/detail/id/' . $noticeid . '.html',
+									'topcolor' => '#7B68EE',
+									'data' => array (
+											'first' => array (
+													'value' => $title,
+													'color' => "#743A3A" 
+											),
+											'keyword1' => array (
+													'value' => $summary,
+													'color' => '#743A3A' 
+											),
+											'keyword2' => array (
+													'value' => $row ['household_name'],
+													'color' => '#743A3A' 
+											),
+											'remark' => array (
+													'value' => '',
+													'color' => '#743A3A' 
+											) 
+									) 
+							);
+							$result = send_wechat_template ( $message );
+							if ($result != 0) {
+								$error ++;
+							}
+						}
+						if ($error > 0) {
 							$this->ajaxReturn ( array (
 									'status' => 0,
-									'message' => '发送失败'
+									'message' => '有' . $error . '条发送失败' 
+							) );
+						} else {
+							$this->ajaxReturn ( array (
+									'status' => 1,
+									'message' => '发送成功' 
 							) );
 						}
-						
+						addlog ( '微信发送文章成功，ID：' . $row ['household_name'] );
 					}
+				} else {
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '没有关联楼宇' 
+					) );
 				}
 			} else {
 				$this->ajaxReturn ( array (
 						'status' => 0,
-						'message' => '没有关联楼宇' 
+						'message' => '标题或简介不能为空' 
 				) );
 			}
 		} else {
 			$this->ajaxReturn ( array (
 					'status' => 0,
-					'message' => '没有选择文章' 
+					'message' => '微信模板未选择或者文章没选择' 
 			) );
 		}
 	}
@@ -299,24 +318,59 @@ class ContentController extends ComController {
 		}
 		if (! empty ( $model->id )) { // 更新
 			$model->modifytime = date ( 'y-m-d H:i:s', time () );
+			$model->istop = I ( 'post.istop', 0 );
+/* 			$model->starttime = I ( 'post.starttime', null );
+			$model->endtime= I ( 'post.endtime', null ); */
+			if (! strtotime ( $model->starttime )) { // 如果不是有效值
+				$model->starttime = null;
+			}
+			if (! strtotime ( $model->endtime )) { // 如果不是有效值
+				$model->endtime = null;
+			}
+			if(strtotime ( $model->starttime )&&strtotime ( $model->endtime )&&strtotime ( $model->starttime )-strtotime ( $model->endtime )>=0){
+				//都开始结束时间都填写了时校验
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '开始时间大于结束时间'
+				) );
+			}
 			$model->modifier = session ( 'uid' );
 			$flag = $model->save ();
 			if ($flag) {
-				$this->success ( "保存成功", 'detail/id/' . I ( 'contentid' ) );
 				addlog ( '信息模板保存成功，ID：' . $model->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '信息模板保存成功' 
+				) );
 			} else {
-				$this->success ( "保存失败" );
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '信息模板保存失败' 
+				) );
 			}
 		} else { // 新增
 			$model->createtime = date ( 'y-m-d H:i:s', time () );
 			$model->creater = session ( 'uid' );
 			$model->status = 1;
+			$model->istop = I ( 'post.istop', 0 );
+			if (! strtotime ( $model->starttime )) { // 如果不是有效值
+				$model->starttime = null;
+			}
+			if (! strtotime ( $model->endtime )) { // 如果不是有效值
+				$model->endtime = null;
+			}
 			$flag = $model->add ();
 			if ($flag) {
-				$this->success ( "创建成功", 'detail/id/' . I ( 'contentid' ) );
-				addlog ( '文章创建成功，ID：' . $model->id );
+				addlog ( '信息模板保存成功，ID：' . $model->id );
+				$this->ajaxReturn ( array (
+						'status' => 1,
+						'message' => '信息模板创建成功' 
+				) );
 			} else {
-				$this->error ( "创建失败" );
+				$this->ajaxReturn ( array (
+						'status' => 0,
+						'message' => '信息模板保存失败' 
+				) );
 			}
 		}
 	}

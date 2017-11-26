@@ -458,7 +458,32 @@ class MessageController extends ComController {
 	
 	// 选择楼宇树
 	public function buildingselected() {
-		$list = M ( 'em_village' )->select ();
+		$contentid=I('contentid');
+		if($contentid){
+			$content=M('em_contentmanager')->where('id='.$contentid)->find();
+			if($content['allowallvillage']==1){
+				$list = M ( 'em_village' )->select ();
+			}else {
+				$villages= M('em_contenttovillage')->where ( 'status=1 and contentid='.$contentid)
+				->field ( 'villageid' )
+				->select ();
+				if (count ( $villages) > 0) {
+					$condition ['village_id'] = array (
+							'in',
+							$villages
+					);
+					$list = M ( 'em_village' )->where($condition)->select ();
+				}else{
+					$this->ajaxReturn ( array (
+							'status' => 0,
+							'message' => '无数据'
+					) );
+				}
+			}
+			
+		}else{
+			$list = M ( 'em_village' )->select ();
+		}
 		if ($list) {
 			$treeArray = array ();
 			for($i = 0; $i < count ( $list ); $i ++) {

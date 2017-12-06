@@ -1,0 +1,182 @@
+<include file="Public/head"/>
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div class="row">
+                            <form class="form-inline" action="" method="get">
+                                <a class="btn btn-info" href="{:U('add')}" value="">添加投票</a>
+                                <label class="inline">&nbsp;&nbsp;投票搜索：</label>
+                                <select name="field" class="form-control">
+                                    <option <if condition="I('field') eq vote_name">selected</if> value="vote_name">名称</option>
+                                    <option <if condition="I('field') eq village_name">selected</if> value="village_name">小区</option>
+                                </select>
+                                <input type="text" name="keyword" value="{:I(keyword)}" class="form-control">
+                                <label class="inline">&nbsp;&nbsp;排序：</label>
+                                <select name="order" class="form-control">
+                                    <option <if condition="I('order') eq asc">selected</if> value="asc">添加时间升</option>
+                                    <option <if condition="I('order') eq desc">selected</if> value="desc">添加时间降</option>
+                                </select>
+                                <button type="submit" class="btn btn-purple btn-sm">
+                                    <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
+                                    Search
+                                </button>
+                            </form>
+                        </div>
+                        <div class="space-4"></div>
+                        <div class="row">
+                            <form id="form" method="post" action="{:U('del')}">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th class="center"><input class="check-all" type="checkbox" value=""></th>
+                                        <th>名称</th>
+                                        <th>添加时间</th>
+                                        <th class="center">开始时间</th>
+                                        <th class="center">结束时间</th>
+                                        <th>查看关联小区</th>
+                                        <th class="center">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <volist name="list" id="val">
+                                        <tr>
+                                            <td class="center">
+                                                <input class="voteIds" type="checkbox" name="voteIds[]" value="{$val['vote_id']}">   
+                                            </td>
+                                            <td class="center">{$val['vote_name']}</td>
+                                            <td class="center">
+                                                {$val['create_time']}
+                                            </td>
+                                            <td class="center">{$val['start_time']}</td>
+                                            <td class="center">{$val['end_time']}</td>
+                                            <td>{$val['village_name']}</td>
+                                            <td class="center">
+                                            	<a href="{:U('edit',array('vote_id'=>$val['vote_id']))}">投票设置</a>&nbsp;
+                                            	<if condition="$val['vote_status'] eq 1" >
+	                                            	<a href="{:U('VotePaper/add',array('vote_id'=>$val['vote_id']))}">添加问卷</a>&nbsp;
+	                                            <elseif condition="$val['vote_status'] eq 2"/>
+	                                            	<a href="{:U('VotePaper/edit',array('vote_id'=>$val['vote_id']))}">修改问卷</a>&nbsp;
+	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
+	                                            	<a href="{:U('release',array('vote_id'=>$val['vote_id']))}">发布投票</a>&nbsp;
+	                                            <else />
+	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
+	                                            	<a href="{:U('VotePaper/makeUp',array('vote_id'=>$val['vote_id']))}">投票补录</a>&nbsp;
+	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">投票结果</a>&nbsp;
+                                            	</if>
+                                                <a class="del" href="javascript:;" val="{:U('del',array('voteIds'=>$val['vote_id']))}" title="删除">删除</a>
+                                            </td>
+                                        </tr>
+                                    </volist>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <!-- <div class="cf">
+                                <input id="submit" class="btn btn-info" type="button" value="删除">
+                            </div> -->
+                            {$page}
+                        </div>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(function () {
+       /*  $(".group").click(function () {
+            $(this).addClass('hide');
+            $(this).parent().find(".groupselect").removeClass('hide');
+        })
+        $(".groupselect").on("change", function () {
+            var ob = $(this);
+            var gid = ob.val();
+            var uid = ob.parent().find('.group').attr('val');
+            $.get("{:U('update')}?ajax=yes&uid=" + uid + "&gid=" + gid, function (data) {
+                var text = ob.find("option:selected").text();
+                ob.parent().find(".group").removeClass('hide').html(text);
+                ob.addClass('hide');
+            });
+        }) */
+
+        $(".check-all").click(function () {
+            $(".villageIds").prop("checked", this.checked);
+        });
+      /*   $(".villageIds").click(function () {
+            var option = $(".ids");
+            option.each(function (i) {
+                if (!this.checked) {
+                    $(".check-all").prop("checked", false);
+                    return false;
+                } else {
+                    $(".check-all").prop("checked", true);
+                }
+            });
+        }); */
+        $("#submit").click(function () {
+            bootbox.confirm({
+                title: "系统提示",
+                message: "是否要删除所选小区？",
+                callback: function (result) {
+                    if (result) {
+                        $("#form").submit();
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+        });
+        $(".del").click(function () {
+            var url = $(this).attr('val');
+            bootbox.confirm({
+                title: "系统提示",
+                message: "是否要删除该小区?",
+                callback: function (result) {
+                    if (result) {
+                        window.location.href = url;
+                    }
+                },
+                buttons: {
+                    "cancel": {"label": "取消"},
+                    "confirm": {
+                        "label": "确定",
+                        "className": "btn-danger"
+                    }
+                }
+            });
+        });
+    })
+</script>
+</body>
+</html>

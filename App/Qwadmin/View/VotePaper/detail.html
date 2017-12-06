@@ -1,0 +1,212 @@
+<include file="Public/head"/>
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/prettify.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/animate.min.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/sweet-alert.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/em.css">
+<link rel="stylesheet" media="all" type="text/css" href="__PUBLIC__/qwadmin/css/dropzone.css">
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <section id="content">
+                	<div class="container">
+                		<div class="row">
+                			<div class="col-sm-10 col-sm-offset-1">
+                				<div class="card preview-topics">
+                					<div class="card-header">
+                						<h2 class="vote-h2">{$emvote.vote_name}
+                							<div class="pull-right" style="padding-right:50px;">
+                								<a href="/em/Vote/index" class="btn btn-default btn-sm">返回投票列表</a>
+                							</div>
+                						</h2>
+                					</div>
+                					<div class="hr-solid"></div>
+                					<div class="card-body card-padding">
+                                        <div class="topics-desc">
+                                        	<p>{$emvote.description}</p>
+                                        </div>
+                                        <volist name="votePapers" id="val" key="k">
+                                       		<div class="question-item" 
+                                       				<?php 
+                                          					if($val['question_type'] == 1){
+	                                						echo 'data-type="topics-radio"';
+	                                					} elseif ($val['question_type'] == 2){
+	                                						echo 'data-type="topics-checkbox"';
+	                                					} else {
+	                                				 		echo 'data-type="topics-blank"';
+	                                				 	};
+                                          				?> >
+	                                       		<div class="question-title">
+		                                       		<div class="qs-title">
+		                                       			{$val['question_titile']}
+		                                      				<span class="c-blue">
+		                                      					<?php 
+		                                         					if($val['question_type'] == 1){
+		                                						echo '【单选题】';
+		                                					} elseif ($val['question_type'] == 2){
+		                                						echo '【多选题】';
+		                                					} else {
+		                                				 		echo '【填空题】';
+		                                				 	};
+                                           				?>
+		                                          			</span>
+		                                       		</div>
+		                                       		<div class="topics-desc">
+		                                       			{$val['question_desc']}
+		                                       		</div>
+	                                        	</div>
+	                                        	<ul class="question-choice">
+	                                        		<if condition="$val['question_type'] == 3">
+														<div class="choice-info">
+		                                        			<div class="choice-item">
+		                                        				<input type="text" name="name_{$vo['vote_paper_option_id']}" class="form-control-k" />
+		                                        			</div>
+		                                        		</div>                                        			
+	                                        		</if>
+	                                        		<volist name="val['option']" id="vo" key="i">
+	                                        			<li style="display:inline-block;width:99%" <if condition="$vo['option_pic'] neq ''"> class="has-img"</if>>
+	                                        				<if condition="$vo['option_pic'] neq ''">
+			                                           			<img src="{$vo['option_pic']}"/>
+			                                           		</if>
+		                                        			<div class="choice-info">
+		                                        				<div class="choice-item">
+		                                        					<if condition="$val['question_type'] == 1">
+		                                        						<div class="choice-text">
+			                                        						<input type="radio" name="name_{$vo['vote_paper_option_id']}[]" class="vote-input">
+			                                        						<label>{$vo['option_titile']}</label>
+			                                        						<span>{$vo['option_desc']}</span>
+			                                        					</div>
+			                                        				<elseif condition="$val['question_type'] == 2"/>
+			                                        					<div class="choice-text">
+			                                        						<input type="checkbox" name="name_{$vo['vote_paper_option_id']}[]" class="vote-input">
+			                                        						<label>{$vo['option_titile']}</label>
+			                                        						<span>{$vo['option_desc']}</span>
+			                                        					</div>
+			                                        				<else />
+			                                        					<input type="text" name="name_{$vo['vote_paper_option_id']}" class="form-control-k" />
+		                                        					</if>
+		                                        				</div>
+		                                        			</div>
+		                                        		</li>
+	                                        		</volist>
+	                                        	</ul>
+                                        	</div>
+                                        </volist>
+                                        <div class="vote-foot">
+                                        	<p class="vote-warn">本人保证以上所填内容完全属实</p>
+                                        	<div class="sign">
+                                        		<label for="">投票人：</label>
+                                        	</div>
+                                        	<div class="vote-date">
+                                        		<span>年</span><span>月</span><span>日</span>
+                                        	</div>
+                                        </div>
+                                        <div class="p-20 text-center p-hide">
+                                        	<button type="button" class="btn btn-primary btn-w-m m-btn" data-action="print">
+                                        		<i class="fa fa-print"></i>打印投票
+                                        	</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                       </div>
+                  </div>
+               </section>
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<!-- <script src="__PUBLIC__/qwadmin/js/moment-with-locales.min.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/prettify.js" type="text/javascript" charset="utf-8"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery.slimscroll.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="__PUBLIC__/qwadmin/js/waves.min.js"></script>-->
+<script src="__PUBLIC__/qwadmin/js/bootstrap-growl.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/functions.js"></script>
+<!-- <script src="__PUBLIC__/qwadmin/js/menu.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/sweet-alert.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery-ui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/qwadmin/js/dropzone.js"></script>
+<script src="__PUBLIC__/qwadmin/js/add_topics.js"></script>
+<script charset="utf-8" src="__PUBLIC__/qwadmin/js/v.js"></script>
+<script src="__PUBLIC__/qwadmin/js/hm.js"></script>
+<script src="__PUBLIC__/qwadmin/js/analysis.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var ppp = <?php echo count($votePapers); ?> + 1;
+    $(function(){
+          $("#up-img").dropzone({
+              url: "/em/Upload/index",
+              dictMaxFilesExceeded:'此文件不会生效',
+              dictRemoveFile:'删除此文件',
+              dictDefaultMessage:'请上传图片',
+              dictInvalidInputType:'不是图片文件',
+              maxFilesize:1,
+              addRemoveLinks:false,
+              init: function() {
+                  this.on("success", function(file,msg) {
+                	  var obj = eval('(' + msg + ')');
+                	  //上传成功
+                      if(obj.state=='SUCCESS'){
+                          var img_url="http://localhost"+obj.url;
+                          $('.yulan').show();
+                          $('.yulan').find('img').attr('src',img_url);
+                      }
+                      if(obj.state=='ERROR'){
+                          sweetAlert({title:obj.title,text: '',type: "warning",timer:2000});
+                      }
+                  });
+                  this.on("error", function(file) {
+                      sweetAlert({title:'上传失败，文件尺寸超过1M',text: '',type: "warning",timer:2000});
+                  });
+              }
+         });
+            
+         $('form').submit(function(e){
+            e.preventDefault(); 
+            $('.question-choice li').each(function(){
+                var img_src = $(this).find('img').attr('src');
+                if(img_src!==undefined){
+                    $(this).find('.se_an').val($(this).find('.choice-text label').text()+'|_|'+$(this).find('.choice-text span').text()+'|_|'+img_src);
+                }else{
+                    $(this).find('.se_an').val($(this).find('.choice-text label').text()+'|_|'+$(this).find('.choice-text span').text());
+                }
+            });
+            
+            $.post('/em/VotePaper/save',$(this).serialize(),function(msg){
+                if(msg.status==0){
+                    sweetAlert({title:msg.info,text: '',type: "warning",timer:1500,showConfirmButton: false});
+                }
+                if(msg.status==1){
+                    sweetAlert({title:msg.info,text: '',type: "success",showConfirmButton: false});
+                    setTimeout(function(){
+                        window.location.href = msg.url;
+                    },1200);
+                }                    
+            },'json');
+        });
+    })
+</script>
+</body>
+</html>

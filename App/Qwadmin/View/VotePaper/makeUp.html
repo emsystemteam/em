@@ -1,0 +1,331 @@
+<include file="Public/head"/>
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/prettify.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/animate.min.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/sweet-alert.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/em.css">
+<link rel="stylesheet" media="all" type="text/css" href="__PUBLIC__/qwadmin/css/jquery-ui-timepicker-addon.css">
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <section id="content">
+                	<div class="container">
+                		<div class="row">
+                			<div class="col-sm-10 col-sm-offset-1">
+                				<div class="card preview-topics">
+                					<div class="card-header">
+                						<h2 class="vote-h2">{$emvote.vote_name}--投票补录
+                							<div class="pull-right" style="padding-right:50px;">
+                								<a href="/em/Vote/index" class="btn btn-default btn-sm">返回投票列表</a>
+                							</div>
+                						</h2>
+                					</div>
+                					<div class="hr-solid"></div>
+                					<div class="card-body card-padding">
+                						<form>
+                							<div class="vote-p-attr">
+                								<div class="row"><div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-4 p-t-10 text-right">
+                											<label for="">小区：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<select name="village" id="village" class="form-control-k xq">
+                												<option value="">---选择小区---</option>
+                												<volist name="villages" id="val">
+						                                            <option value="{$val['village_id']}">{$val.village_name}</option>
+						                                        </volist>
+                											</select>
+                										</div>
+                									</div>
+                								</div>
+                								<div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-3 p-t-10 text-right">
+                											<label for="">楼宇：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<select name="building" id="building" class="form-control-k building">
+                												<option value="">---选择楼宇---</option>
+                											</select>
+                										</div>
+                									</div>
+                								</div>
+                								<div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-3 p-t-10 text-right">
+                											<label for="">单元：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<select name="unit" id="unit" class="form-control-k unit">
+                												<option value="">---选择单元---</option>
+                											</select>
+                										</div>
+                									</div>
+                								</div>
+                								<div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-4 p-t-10 text-right">
+                											<label for="">房号：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<select name="house" id="house" class="form-control-k houseno">
+                												<option value="">---选择房号---</option>
+                											</select>
+                										</div>
+                									</div>
+                								</div>
+                								<div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-3 p-t-10 text-right">
+                											<label for="">投票人：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<select name="household" id="household" class="form-control-k yhid">
+                												<option value="">---选择住户---</option>
+                											</select>
+                										</div>
+                									</div>
+                								</div>
+                								<div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-3 p-t-10 text-right">
+                											<label for="">手机号：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<div class="select-user">
+                												<input name="phone" id="phone" type="text" class="form-control-k yh_phone">
+                												<ul class="select-user-list"></ul>
+                											</div>
+                										</div>
+                									</div>
+                								</div>
+                								<div class="col-lg-4">
+                									<div class="row">
+                										<div class="col-sm-4 p-t-10 text-right">
+                											<label for="">填写时间：</label>
+                										</div>
+                										<div class="col-sm-7">
+                											<input type="text" readonly="" id="tx_time" name="tx_time" value="" class="form-control-k se_time hasDatepicker" >
+                										</div>
+                									</div>
+                								</div>
+                							</div>
+                						</div>
+                                        <div class="topics-desc">
+                                        	<p>{$emvote.description}</p>
+                                        </div>
+                                        <volist name="votePapers" id="val" key="k">
+                                       		<div class="question-item" 
+                                       				<?php 
+                                          					if($val['question_type'] == 1){
+	                                						echo 'data-type="topics-radio"';
+	                                					} elseif ($val['question_type'] == 2){
+	                                						echo 'data-type="topics-checkbox"';
+	                                					} else {
+	                                				 		echo 'data-type="topics-blank"';
+	                                				 	};
+                                          				?> >
+	                                       		<div class="question-title">
+		                                       		<div class="qs-title">
+		                                       			{$val['question_titile']}
+		                                      				<span class="c-blue">
+		                                      					<?php 
+		                                         					if($val['question_type'] == 1){
+		                                						echo '【单选题】';
+		                                					} elseif ($val['question_type'] == 2){
+		                                						echo '【多选题】';
+		                                					} else {
+		                                				 		echo '【填空题】';
+		                                				 	};
+                                           				?>
+		                                          			</span>
+		                                       		</div>
+		                                       		<div class="topics-desc">
+		                                       			{$val['question_desc']}
+		                                       		</div>
+	                                        	</div>
+	                                        	<ul class="question-choice">
+	                                        		<if condition="$val['question_type'] == 3">
+														<div class="choice-info">
+		                                        			<div class="choice-item">
+		                                        				<input type="text" name="name_{$vo['vote_paper_option_id']}" class="form-control-k" />
+		                                        			</div>
+		                                        		</div>                                        			
+	                                        		</if>
+	                                        		<volist name="val['option']" id="vo" key="i">
+	                                        			<li style="display:inline-block;width:99%" <if condition="$vo['option_pic'] neq ''"> class="has-img"</if>>
+	                                        				<if condition="$vo['option_pic'] neq ''">
+			                                           			<img src="{$vo['option_pic']}"/>
+			                                           		</if>
+		                                        			<div class="choice-info">
+		                                        				<div class="choice-item">
+		                                        					<if condition="$val['question_type'] == 1">
+		                                        						<div class="choice-text">
+			                                        						<input id="in_{$vo['vote_paper_option_id']}" type="radio" value="{$vo['vote_paper_option_id']}" name="ans[{$val['vote_paper_id']}][]" class="vote-input">
+			                                        						<label>{$vo['option_titile']}</label>
+			                                        						<span>{$vo['option_desc']}</span>
+			                                        					</div>
+			                                        				<elseif condition="$val['question_type'] == 2"/>
+			                                        					<div class="choice-text">
+			                                        						<input type="checkbox" name="ans[{$vo['vote_paper_option_id']}][]" value="{$vo['vote_paper_option_id']}" class="vote-input">
+			                                        						<label>{$vo['option_titile']}</label>
+			                                        						<span>{$vo['option_desc']}</span>
+			                                        					</div>
+			                                        				<else />
+			                                        					<input id="in_{$vo['vote_paper_option_id']}" type="text" name="ans[{$val['vote_paper_id']}]" class="form-control-k" />
+		                                        					</if>
+		                                        				</div>
+		                                        			</div>
+		                                        		</li>
+	                                        		</volist>
+	                                        	</ul>
+                                        	</div>
+                                        </volist>
+                                        <div class="vote-foot">
+                                        	<p class="vote-warn">本人保证以上所填内容完全属实</p>
+                                        	<div class="sign">
+                                        		<label for="">投票人：</label>
+                                        	</div>
+                                        	<div class="vote-date">
+                                        		<span>年</span><span>月</span><span>日</span>
+                                        	</div>
+                                        </div>
+                                        <div class="p-20 text-center p-hide">
+                                        	<button type="submit" class="btn btn-primary btn-w-m">保存</button>
+                                        	<a href="javascript:history.go(-1)" class="btn btn-default btn-w-m m-l-10 waves-effect">返回</a>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                       </div>
+                  </div>
+               </section>
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<!-- <script src="__PUBLIC__/qwadmin/js/moment-with-locales.min.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/prettify.js" type="text/javascript" charset="utf-8"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery.slimscroll.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="__PUBLIC__/qwadmin/js/waves.min.js"></script>-->
+<script src="__PUBLIC__/qwadmin/js/bootstrap-growl.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/functions.js"></script>
+<!-- <script src="__PUBLIC__/qwadmin/js/menu.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/sweet-alert.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery-ui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/qwadmin/js/jquery-ui-timepicker-addon.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/qwadmin/js/jquery-ui-timepicker-zh-CN.js"></script>
+<script>
+    var ppp = <?php echo count($votePapers); ?> + 1;
+    $(function(){
+         $('form').submit(function(e){
+         	e.preventDefault();
+            $.post('/em/VotePaper/save',$(this).serialize(),function(msg){
+                if(msg.status==0){
+                    sweetAlert({title:msg.info,text: '',type: "warning",timer:1500,showConfirmButton: false});
+                }
+                if(msg.status==1){
+                    sweetAlert({title:msg.info,text: '',type: "success",showConfirmButton: false});
+                    setTimeout(function(){
+                        window.location.href = msg.url;
+                    },1200);
+                }                    
+            },'json');
+        });
+	    $("#tx_time").datetimepicker();
+    })
+    
+     /* $("#tx_time").on("click",function(){
+    	 alert("222");
+    	 $(this).datetimepicker();
+     }); */
+
+	$("#village").on("change", function () {
+		$("#building").empty();
+	    var ob = $(this);
+	    var villageId = ob.val();
+	    $("#building").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var building = document.getElementById("building");
+	    $.get("{:U('changeVillage')}?villageId=" + villageId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		building.options[index+1] = new Option(obj.building_name,obj.building_id);
+	        });
+	    });
+	})
+	
+	$("#building").on("change", function () {
+		$("#unit").empty();
+	    var ob = $(this);
+	    var buildId = ob.val();
+	    $("#unit").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var unit = document.getElementById("unit");
+	    $.get("{:U('changeBuilding')}?buildingId=" + buildId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		unit.options[index+1] = new Option(obj.unit_name,obj.unit_id);
+	        });
+	    });
+	})
+	
+	$("#unit").on("change", function () {
+		$("#house").empty();
+	    var ob = $(this);
+	    var unitId = ob.val();
+	    $("#house").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var house = document.getElementById("house");
+	    $.get("{:U('changeUnit')}?unitId=" + unitId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		house.options[index+1] = new Option(obj.house_name,obj.house_id);
+	        });
+	    });
+	})
+	$('#house').on("change", function () {
+		$("#household").empty();
+		var ob = $(this);
+	    var houseId = ob.val();
+	    $("#household").prepend("<option value=''>--请选择--</option>"); //为Select插入一个Option(第一个位置)
+	    var household = document.getElementById("household");
+	    $.get("{:U('changeHouse')}?houseId=" + houseId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		household.options[index+1] = new Option(obj.household_name,obj.household_id);
+	        });
+	    });
+	});
+    
+    $('#household').on("change", function () {
+		$("#phone").empty();
+		var ob = $(this);
+	    var householdId = ob.val();
+	    $.get("{:U('changeHousehold')}?householdId=" + householdId, function (data) {
+	    	$(data).each(function(index,obj){
+	    		$("#phone").val(obj.tel);
+	        });
+	    });
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<include file="Public/head"/>
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/prettify.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/animate.min.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/sweet-alert.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/em.css">
+<link rel="stylesheet" media="all" type="text/css" href="__PUBLIC__/qwadmin/css/dropzone.css">
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <section id="content">
+                   	<div class="container">
+                   		<div >
+                   			<div >
+                   				<h2>添加投票内容</h2>
+                   			</div>
+                   			<div class="hr-solid"></div>
+                   			<div >
+                   				<div class="topics-area">
+                   					<div class="left-col">
+                   						<div class="topics-title tixing">
+                                       		题型选择
+                                   		</div>
+                                   		<ul class="topics-type">
+                                   			<li class="topics-radio">单选题</li>
+                                   			<li class="topics-checkbox">多选题</li>
+                                   			<li class="topics-blank">填空题</li>
+                                   		</ul>
+                                   	</div>
+                                   	<div class="right-col">
+                               			<div class="topics-title">{$emvote.vote_name}</div>
+                               			<form method="post" class="add">
+                               				<input type="hidden" name="vote_id" value="{$emvote.vote_id}" />
+                               				<div class="topics-box ui-sortable">
+                               					<div class="topics-init <if condition="votePapers neq ''">none</if>">
+                                               		点击左侧题型，以添加题目到此空白区域
+                                           		</div>
+                                           		<volist name="votePapers" id="val" key="k">
+                                           			<div class="question-item setting" data-ppp="{$k}" 
+                                           					<?php 
+                                           					if($val['question_type'] == 1){
+		                                						echo 'data-type="topics-radio"';
+		                                					} elseif ($val['question_type'] == 2){
+		                                						echo 'data-type="topics-checkbox"';
+		                                					} else {
+		                                				 		echo 'data-type="topics-blank"';
+		                                				 	};
+                                           					 ?> >
+                                           				<div class="question-title">
+	                                           				<div class="qs-title">{$val['question_titile']}</div>
+	                                           				<div class="topics-desc">{$val['question_desc']}</div>
+	                                           				<input name="timu[{$k}][question_titile]" type="hidden" value="{$val['question_titile']}" class="se_timu">
+	                                           				<input name="timu[{$k}][question_type]" value="{$val['question_type']}" type="hidden" class="se_type">
+	                                           				<input name="timu[{$k}][question_desc]" value="{$val['question_desc']}" type="hidden" class="se_desc">
+	                                           				<input name="timu[{$k}][show_num]" type="hidden" class="se_show_num" value="1">
+	                                           				<input name="timu[{$k}][min_item]" type="hidden" class="se_min_item" value="1">
+	                                           				<input name="timu[{$k}][max_item]" type="hidden" class="se_max_item" value="2">
+	                                           			</div>
+                                           				<ul class="question-choice">
+	                                           				<volist name="val['option']" id="vo" key="i">
+		                                           				<li <if condition="$vo['option_pic'] neq ''"> class="has-img"</if>>
+		                                           					<if condition="$vo['option_pic'] neq ''">
+		                                           						<img src="{$vo['option_pic']}"/>
+		                                           					</if>
+		                                           					<div class="choice-info">
+		                                           						<i class="choice-icon"></i>
+		                                           						<div class="choice-item">
+		                                           							<div class="choice-text">
+		                                           								<label>{$vo['option_titile']}</label>
+		                                           								<span>{$vo['option_desc']}</span>
+		                                           							</div>
+		                                           						</div>
+		                                           					</div>
+		                                           					<input name="list[{$k}][]" type="hidden" class="se_an" value="">
+		                                           				</li>
+		                                           			</volist>
+	                                           			</ul>
+	                                           			<div class="question-operate">
+		                                           			<ul>
+		                                           				<li title="移动" class="qs-move">
+		                                           					<span>移动<span></span></span>
+		                                           				</li>
+		                                           				<li title="操作" data-shownum="1" data-min="1" data-max="2" data-type="1" class="qs-handle">
+		                                           					<span>操作<span></span></span>
+		                                           				</li>
+		                                           				<li title="删除" class="qs-delete">
+		                                           					<span>删除<span></span></span>
+		                                           				</li>
+		                                           			</ul>
+		                                           		</div>
+                                           			</div>
+                                           		</volist>
+                                           		<!-- <div class="question-item setting" data-ppp="0" data-type="topics-radio">
+                                           			<div class="question-title">
+                                           				<div class="qs-title">Q1 单选题</div>
+                                           				<div class="topics-desc"></div>
+                                           				<input name="timu[0][question_titile]" type="hidden" value="Q1 单选题" class="se_timu">
+                                           				<input name="timu[0][question_type]" value="1" type="hidden" class="se_type">
+                                           				<input name="timu[0][question_desc]" value="" type="hidden" class="se_desc">
+                                           				<input name="timu[0][show_num]" type="hidden" class="se_show_num" value="1">
+                                           				<input name="timu[0][min_item]" type="hidden" class="se_min_item" value="1">
+                                           				<input name="timu[0][max_item]" type="hidden" class="se_max_item" value="2">
+                                           			</div>
+                                           			<ul class="question-choice">
+                                           				<li>
+                                           					<div class="choice-info">
+                                           						<i class="choice-icon"></i>
+                                           						<div class="choice-item">
+                                           							<div class="choice-text">
+                                           								<label>选项1</label>
+                                           								<span></span>
+                                           							</div>
+                                           						</div>
+                                           					</div>
+                                           					<input name="list[0][]" type="hidden" class="se_an" value="">
+                                           				</li>
+                                           				<li>
+                                           					<div class="choice-info">
+                                           						<i class="choice-icon"></i>
+                                           						<div class="choice-item">
+                                           							<div class="choice-text">
+                                           								<label>选项2</label>
+                                           								<span></span>
+                                           							</div>
+                                           						</div>
+                                           					</div>
+                                           					<input name="list[0][]" type="hidden" class="se_an" value="">
+                                           				</li>
+                                           			</ul>
+                                           			<div class="question-operate">
+	                                           			<ul>
+	                                           				<li title="移动" class="qs-move">
+	                                           					<span>移动<span></span></span>
+	                                           				</li>
+	                                           				<li title="操作" data-shownum="1" data-min="1" data-max="2" data-type="1" class="qs-handle">
+	                                           					<span>操作<span></span></span>
+	                                           				</li>
+	                                           				<li title="删除" class="qs-delete">
+	                                           					<span>删除<span></span></span>
+	                                           				</li>
+	                                           			</ul>
+	                                           		</div>
+                                           			<div class="question-setting">
+                                           			<div class="set-qs-title">
+                                           				<label for="">问题标题：</label>
+                                           				<div>
+                                           					<input type="text" class="form-control-k qs_title_input" value="Q1 单选题">
+                                           				</div>
+                                           			</div>
+                                           			<div class="set-qs-title m-t-15">
+                                           				<label for="">问题描述：</label>
+                                           				<div>
+                                           					<input type="text" placeholder="问题描述" class="form-control-k i_desc" value="">
+                                           				</div>
+                                           			</div>
+                                           			<div class="set-qs-choice">
+                                           				<table>
+                                           					<thead>
+                                            					<tr>
+                                            						<th width="20%">选项文字</th>
+                                            						<th width="30%">选项说明</th>
+                                            						<th width="30%">图片</th>
+                                            						<th width="30%">操作</th>
+                                            					</tr>
+                                            				</thead>
+                                            				<tbody>
+                                            					<tr>
+                                            						<td><input type="text" class="form-control-k choice_text_input" value="选项1"></td>
+                                            						<td class="p-l-10"><input class="form-control-k" value="" placeholder="选项说明"></td>
+                                            						<td><a class="choice-img"><i class="fa fa-photo"></i></a></td>
+                                            						<td>
+                                            							<a href="javascript:" class="move-up" title="向上移动">
+                                            								<i class="fa fa-long-arrow-up"></i>
+                                            							</a>
+                                            							<a href="javascript:" class="m-l-20 move-down" title="向下移动">
+                                            								<i class="fa fa-long-arrow-down"></i>
+                                            							</a>
+                                            							<a href="javascript:" class="m-l-20 remove-choice" title="删除">
+                                            								<i class="fa fa-trash"></i>
+                                            							</a>
+                                            						</td>
+                                            					</tr>
+                                            					<tr>
+                                            						<td><input type="text" class="form-control-k choice_text_input" value="选项2"></td>
+                                            						<td class="p-l-10"><input class="form-control-k" value="" placeholder="选项说明"></td>
+                                            						<td><a class="choice-img"><i class="fa fa-photo"></i></a></td>
+                                            						<td>
+                                            							<a href="javascript:" class="move-up" title="向上移动"><i class="fa fa-long-arrow-up"></i></a>
+                                            							<a href="javascript:" class="m-l-20 move-down" title="向下移动"><i class="fa fa-long-arrow-down"></i></a>
+                                            							<a href="javascript:" class="m-l-20 remove-choice" title="删除"><i class="fa fa-trash"></i></a>
+                                            						</td>
+                                            					</tr>
+                                            					<tr>
+                                            						<td style="text-align: left;">
+                                            							<a href="javascript:" class="addChoice"><b class="fs-20">＋</b>添加选项</a>
+                                            						</td>
+                                            						<td colspan="3" style="text-align: right;">
+                                            							<div class="set-qs-logic">
+                                            								<div>
+		                                            							<label>每行显示:</label>
+		                                            							<select class="form-control-k col-show qs_title_input qs_shounum_input">
+		                                            								<option selected="selected">1</option>
+		                                            								<option>2</option>
+		                                            								<option>3</option>
+		                                            								<option>4</option>
+		                                            								<option>5</option>
+		                                            								<option>6</option>
+		                                            								<option>7</option>
+		                                            								<option>8</option>
+		                                            								<option>9</option>
+		                                            								<option>10</option>
+		                                            							</select>项
+		                                            						</div>
+		                                            					</div>
+		                                            				</td>
+		                                            			</tr>
+		                                            		</tbody>
+		                                            	</table>
+		                                            	<button type="button" class="btn btn-sm btn-primary btn-w-m save-set m-t-15">保存</button>
+		                                            </div>
+		                                        </div>
+		                                    </div> -->
+		                                </div>
+		                                <div class="topics-foot">
+		                                   <button href="submit" class="btn btn-primary c-white btn-w-m baoc">保存并预览</button>
+		                                   <a href="javascript:history.go(-1)" class="btn btn-default btn-w-m m-l-10">返回</a>
+		                                </div>
+		                             </form>
+		                         </div>
+		                     </div>
+		                  </div>
+		                </div>
+		            </div>
+		        </section>
+		        <div class="modal fade" id="upload" tabindex="-1" role="dialog" aria-hidden="false">
+		        	<div class="modal-dialog">
+		        		<div class="modal-content">
+		        			<div class="modal-header">
+		        				<h4 class="modal-title">选项图片</h4>
+		        			</div>
+		        			<div class="hr-solid"></div>
+		        			<div class="modal-body p-10">
+		        				<div class="row">
+		        					<label class="col-sm-3 text-right">上传图片：</label>
+		        					<span class="col-sm-6">
+		        						<a href="javascript:;" id="up-img" class="dz-clickable"> 选择图片</a>
+		        						<span class="c-red m-l-15">*建议每个选项的图片尺寸相同。</span>
+		        					</span>
+		        				</div>
+		        				<div class="yulan none">
+		        					<div class="hr-dashed"></div>
+		        					<div class="row">
+		        						<div class="yulan-img">
+		        							<img src="" alt="">
+		        							<input type="hidden" class="that_i">
+		        						</div>
+		        					</div>
+		        				</div>
+		        			</div>
+		        			<div class="modal-footer">
+		        				<button type="button" class="btn btn-primary save-img">确认</button>
+		        				<button type="button" class="btn btn-default close-upimg" data-dismiss="modal">关闭</button>
+		        			</div>
+		        		</div>
+		        	</div>
+		        </div>
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<!-- <script src="__PUBLIC__/qwadmin/js/moment-with-locales.min.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/prettify.js" type="text/javascript" charset="utf-8"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery.slimscroll.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="__PUBLIC__/qwadmin/js/waves.min.js"></script>-->
+<script src="__PUBLIC__/qwadmin/js/bootstrap-growl.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/functions.js"></script>
+<!-- <script src="__PUBLIC__/qwadmin/js/menu.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/sweet-alert.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery-ui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/qwadmin/js/dropzone.js"></script>
+<script src="__PUBLIC__/qwadmin/js/add_topics.js"></script>
+<script charset="utf-8" src="__PUBLIC__/qwadmin/js/v.js"></script>
+<script src="__PUBLIC__/qwadmin/js/hm.js"></script>
+<script src="__PUBLIC__/qwadmin/js/analysis.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var ppp = <?php echo count($votePapers); ?> + 1;
+    $(function(){
+          $("#up-img").dropzone({
+              url: "/em/Upload/index",
+              dictMaxFilesExceeded:'此文件不会生效',
+              dictRemoveFile:'删除此文件',
+              dictDefaultMessage:'请上传图片',
+              dictInvalidInputType:'不是图片文件',
+              maxFilesize:1,
+              addRemoveLinks:false,
+              init: function() {
+                  this.on("success", function(file,msg) {
+                	  var obj = eval('(' + msg + ')');
+                	  //上传成功
+                      if(obj.state=='SUCCESS'){
+                          var img_url="http://localhost"+obj.url;
+                          $('.yulan').show();
+                          $('.yulan').find('img').attr('src',img_url);
+                      }
+                      if(obj.state=='ERROR'){
+                          sweetAlert({title:obj.title,text: '',type: "warning",timer:2000});
+                      }
+                  });
+                  this.on("error", function(file) {
+                      sweetAlert({title:'上传失败，文件尺寸超过1M',text: '',type: "warning",timer:2000});
+                  });
+              }
+         });
+            
+         $('form').submit(function(e){
+            e.preventDefault(); 
+            $('.question-choice li').each(function(){
+                var img_src = $(this).find('img').attr('src');
+                if(img_src!==undefined){
+                    $(this).find('.se_an').val($(this).find('.choice-text label').text()+'|_|'+$(this).find('.choice-text span').text()+'|_|'+img_src);
+                }else{
+                    $(this).find('.se_an').val($(this).find('.choice-text label').text()+'|_|'+$(this).find('.choice-text span').text());
+                }
+            });
+            
+            $.post('/em/VotePaper/save',$(this).serialize(),function(msg){
+                if(msg.status==0){
+                    sweetAlert({title:msg.info,text: '',type: "warning",timer:1500,showConfirmButton: false});
+                }
+                if(msg.status==1){
+                    sweetAlert({title:msg.info,text: '',type: "success",showConfirmButton: false});
+                    setTimeout(function(){
+                        window.location.href = msg.url;
+                    },1200);
+                }                    
+            },'json');
+        });
+    })
+</script>
+</body>
+</html>

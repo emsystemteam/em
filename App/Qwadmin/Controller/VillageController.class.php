@@ -43,10 +43,10 @@ class VillageController extends ComController
         }
         if ($keyword <> '') {
             if ($field == 'village_name') {
-            	$where = "{$prefix}em_village.village_name LIKE '%$keyword%'";
+            	$where[$prefix.'em_village.village_name'] = array('like','%'.$keyword.'%');
             }
             if ($field == 'village_contacts') {
-            	$where = "{$prefix}em_village.owners_committee_contacts LIKE '%$keyword%'";
+            	$where[$prefix.'em_village.owners_committee_contacts'] = array('like','%'.$keyword.'%');
             }
         }
 
@@ -223,7 +223,7 @@ class VillageController extends ComController
         	$data['CREATE_TIME'] = $timenow;
         	$data['MODIFY_TIME'] = $timenow;
             $uid = M('em_village')->data($data)->add();
-            addlog('新增小区，小区ID：' . $villageId);
+            addlog('新增小区，小区ID：' . $uid);
         } else {
         	$data['MODIFY_TIME'] = $timenow;
         	M('em_village')->data($data)->where("village_id=$villageId")->save();

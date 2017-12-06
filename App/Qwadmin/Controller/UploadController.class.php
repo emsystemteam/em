@@ -15,9 +15,53 @@ use Think\Upload;
 
 class UploadController extends ComController
 {
-    public function index($type = null)
+    public function index()
     {
-
+    	$mimes = array(
+    			'image/jpeg',
+    			'image/jpg',
+    			'image/jpeg',
+    			'image/png',
+    			'image/pjpeg',
+    			'image/gif',
+    			'image/bmp',
+    			'image/x-png'
+    	);
+    	$exts = array(
+    			'jpeg',
+    			'jpg',
+    			'jpeg',
+    			'png',
+    			'pjpeg',
+    			'gif',
+    			'bmp',
+    			'x-png'
+    	);
+    	$upload = new Upload(array(
+    			'mimes' => $mimes,
+    			'exts' => $exts,
+    			'rootPath' => './Public/',
+    			'savePath' => 'attached/'.date('Y')."/".date('m')."/",
+    			'subName'  =>  array('date', 'd'),
+    	));
+    	$info = $upload->upload();
+    	if(!$info) {// 上传错误提示错误信息
+    		echo json_encode(array(
+    			'title'=>$upload->getError(),
+    			'state'=>'ERROR'
+    		));
+    		exit;
+    	}else{// 上传成功
+    		foreach ($info as $item) {
+    			$filePath[] = __ROOT__."/Public/".$item['savepath'].$item['savename'];
+    		}
+    		echo json_encode(array(
+    				'url'=>$filePath,
+    				'state'=>'SUCCESS'
+    		));
+//     		$ImgStr = implode("|", $filePath);
+//     		return $ImgStr;
+    	}
     }
 
     public function uploadpic()

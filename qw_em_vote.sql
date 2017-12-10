@@ -83,14 +83,21 @@ CREATE TABLE `qw_em_vote_result` (
   `vote_id` int(11) NOT NULL,
   `option_value` varchar(255) DEFAULT NULL,
   `answer` varchar(255) DEFAULT NULL,
-  `vote_type` int(11) NOT NULL COMMENT '1.业主投票，2.补录，关联字典表',
+  `vote_type` int(11) NOT NULL COMMENT '1.业主投票，2.补录',
   `user_id` int(11) NOT NULL COMMENT '投票用户，关联用户表',
   `order_filed` int(11) DEFAULT NULL COMMENT 'int型，从1开始，越小优先级越高',
   `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   `modify_time` timestamp NULL DEFAULT NULL COMMENT '修改时间',
   `operator` int(11) DEFAULT NULL,
+  `village` varchar(255) NOT NULL COMMENT '小区',
+  `building` varchar(255) NOT NULL COMMENT '楼宇',
+  `unit` varchar(255) NOT NULL COMMENT '单元',
+  `house` varchar(255) NOT NULL COMMENT '房屋',
+  `household` varchar(255) NOT NULL COMMENT '住户',
+  `tel` varchar(20) NOT NULL COMMENT '手机号',
+  `user_name` varchar(255) DEFAULT NULL COMMENT '用户名',
   PRIMARY KEY (`vote_result_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='投票结果表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='投票结果表';
 
 -- ----------------------------
 -- Table structure for qw_em_vote_village

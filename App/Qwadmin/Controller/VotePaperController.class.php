@@ -83,7 +83,103 @@ class VotePaperController extends ComController
     }
     
     public function makeUpSave(){
+    	M()->startTrans();
     	
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	$prefix = C('DB_PREFIX');
+    	$vote_id = isset($_POST['vote_id']) ? trim($_POST['vote_id']) : false;
+    	if(!$vote_id){
+    		$this->error('投票不能为空！');
+    	}
+    	
+    	$village = isset($_POST['village']) ? trim($_POST['village']) : false;
+    	if(!$village){
+    		$this->error('所属小区不能为空！');
+    	}
+    	$villageName =  M('em_village')->field("{$prefix}em_village.village_name")->where("village_id = $village")->find();
+    	
+    	$building = isset($_POST['building']) ? trim($_POST['building']) : false;
+    	if(!$building){
+    		$this->error('所属楼宇不能为空！');
+    	}
+    	$buildingName =  M('em_building')->field("{$prefix}em_building.building_name")->where("building_id = $building")->find();
+    	
+    	
+    	$unit = isset($_POST['unit']) ? trim($_POST['unit']) : false;
+    	if(!$unit){
+    		$this->error('所属单元不能为空！');
+    	}
+    	$unitName =  M('em_unit')->field("{$prefix}em_unit.unit_name")->where("unit_id = $unit")->find();
+    	
+    	
+    	$house = isset($_POST['house']) ? trim($_POST['house']) : false;
+    	if(!$house){
+    		$this->error('所属房屋不能为空！');
+    	}
+    	$houseName =  M('em_house')->field("{$prefix}em_house.house_name")->where("house_id = $house")->find();
+    	
+    	
+    	$household = isset($_POST['household']) ? trim($_POST['household']) : false;
+    	if(!$household){
+    		$this->error('住户不能为空！');
+    	}
+    	$householdName =  M('em_household')->field("{$prefix}em_household.household_name")->where("household_id = $household")->find();
+    	
+    	$phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+    	if(!$phone){
+    		$this->error('手机号不能为空！');
+    	}
+    	
+    	$member =  M('member')->field("{$prefix}member.uid,{$prefix}member.user")->where("phone = $phone")->find();
+    	$data['user_id'] = $member['uid'];
+    	$data['user_name'] = $member['user'];
+    	$data['village'] = $villageName['village_name'];
+    	$data['building'] = $buildingName['building_name'];
+    	$data['unit'] = $unitName['unit_name'];
+    	$data['house'] = $houseName['house_name'];
+    	$data['household'] = $householdName['household_name'];
+    	$data['tel'] = $phone;
+    	
+    	$data['modify_time'] = date('Y-m-d H:i:s',time());
+    	$data['vote_type'] = 2;//补录
+    	$data['vote_id'] = $vote_id;
+    	$data['operator'] = $uid;
+    	$time = isset($_POST['tx_time']) ? trim($_POST['tx_time']) : null;
+    	if(!empty($time)){
+    		$data['create_time'] = $time;
+    	}
+    	
+    	$ans = isset($_REQUEST['ans']) ? $_REQUEST['ans'] : false;
+    	foreach($ans as $k=>$v){
+    		$paperId = $k;
+    		$data['vote_paper_id'] = $paperId;
+    		if(is_array($v)){
+	    		$paperOptions = $v;
+	    		$optionValue = '';
+	    		foreach($paperOptions as $k1=>$v1){
+	    			$optionValue = $optionValue . ',' . $v1;
+	    		}
+	    		$optionValue = substr($optionValue, 1);
+	    		$data['option_value'] = $optionValue;
+	    		$result = M('em_vote_result')->data($data)->add();
+	    		if(!$result){
+	    			M()->rollback();
+	    		}
+    		}else{
+    			$data['option_value'] = '';
+    			$data['answer'] = $v;
+    			$result = M('em_vote_result')->data($data)->add();
+    			if(!$result){
+    				M()->rollback();
+    			}
+    		}
+    	}
+    	M()->commit();
+    	$this->success('补录成功！','/em/vote/index');
     }
 
     public function add()

@@ -27,7 +27,6 @@ class VotePaperController extends ComController
     	
     	$this->assign('emvote', $em_vote);
     	$this->assign('votePapers', $em_vote_paper);
-//     	var_dump($em_vote_paper);
     	$this->display('form');
     }
 

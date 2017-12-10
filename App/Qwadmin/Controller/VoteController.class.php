@@ -218,4 +218,112 @@ class VoteController extends ComController
     	$this->assign('hoseholdStatusDicts', $hoseholdStatusDicts);
         $this->display('form');
     }
+    
+    public function result()
+    {
+    	$vid = isset($_GET['vote_id']) ? intval($_GET['vote_id']) : false;
+    	
+    	$uid =  session('uid');
+    	if($uid == null){
+    		$this->error('您还未登录！');
+    	}
+    	
+    	$prefix = C('DB_PREFIX');
+    	$em_vote = M('em_vote')->field("{$prefix}em_vote.*")->where("{$prefix}em_vote.vote_id=$vid")->find();
+    	$em_vote_paper = M('em_vote_paper')->field("{$prefix}em_vote_paper.*")->where("{$prefix}em_vote_paper.vote_id=$vid")->select();
+    	foreach ($em_vote_paper as $k=>$v){
+    		$votePaperId = $em_vote_paper[$k]['vote_paper_id'];
+    		
+    		$allCount = M('em_vote_result')->field("{$prefix}em_vote_result.*")
+    		->where("{$prefix}em_vote_result.vote_paper_id = $votePaperId")->count();
+    		$em_vote_paper[$k]['allCount'] = $allCount;
+    		
+    		$em_vote_paper_option = M('em_vote_paper_option')
+    		->field("{$prefix}em_vote_paper_option.vote_paper_option_id,{$prefix}em_vote_paper_option.option_titile,{$prefix}em_vote_paper_option.option_desc,
+    			{$prefix}em_vote_paper_option.option_pic,sum(case when r.vote_result_id <> '' then 1 else 0 end) as count")
+    		->join("left join {$prefix}em_vote_result r on (r.option_value = {$prefix}em_vote_paper_option.vote_paper_option_id 
+				or (r.option_value LIKE CONCAT({$prefix}em_vote_paper_option.vote_paper_option_id,',%') or r.option_value LIKE CONCAT('%,',{$prefix}em_vote_paper_option.vote_paper_option_id)))")
+			->where("{$prefix}em_vote_paper_option.vote_paper_id=$votePaperId")
+    		->group("{$prefix}em_vote_paper_option.vote_paper_id,{$prefix}em_vote_paper_option.vote_paper_option_id,{$prefix}em_vote_paper_option.option_titile,
+    			{$prefix}em_vote_paper_option.option_desc,{$prefix}em_vote_paper_option.option_pic")
+			->select();
+    		
+    		foreach($em_vote_paper_option as $k1=>$v1){
+    			$optionCount = $v1['count'];
+    			$v1['percent'] = round($optionCount/$allCount*100,2)."%";
+    			$em_vote_paper_option[$k1] = $v1;
+    		}
+    		
+    		$em_vote_paper[$k]['option'] = $em_vote_paper_option;
+    	}
+    	
+    	$this->assign('emvote', $em_vote);
+    	$this->assign('votePapers', $em_vote_paper);
+    	$this->display('result');
+    }
+    
+    public function resultDetail()
+    {
+    	$prefix = C('DB_PREFIX');
+    	$questionType = isset($_GET['question_type']) ? intval($_GET['question_type']) : false;
+    	$paperId = isset($_GET['paper_id']) ? intval($_GET['paper_id']) : false;
+    	$optionId = isset($_GET['option_id']) ? intval($_GET['option_id']) : false;
+    	
+    	$field = isset($_GET['field']) ? $_GET['field'] : '';
+    	$keyword = isset($_GET['keyword']) ? htmlentities($_GET['keyword']) : '';
+    	$order = isset($_GET['order']) ? $_GET['order'] : 'DESC';
+    	$where = "";
+    	
+    	if ($order == 'asc') {
+    		$order = "{$prefix}em_vote_result.create_time asc";
+    	} elseif (($order == 'desc')) {
+    		$order = "{$prefix}em_vote_result.MODIFY_TIME desc";
+    	} else {
+    		$order = "{$prefix}em_vote_result.vote_result_id desc";
+    	}
+    	
+    	if ($keyword <> '') {
+    		if ($field == 'village_name') {
+    			$where[$prefix.'em_vote_result.village'] = array('eq',$keyword);
+    		}
+    		if ($field == 'tel') {
+    			$where[$prefix.'em_vote_result.tel'] = array('like',$keyword.'%');
+    		}
+    	}
+    	
+    	
+    	if($questionType == 3){
+    		$field = "{$prefix}em_vote_result.*,p.question_titile";
+    		$where['p.vote_paper_id'] = array('eq',$paperId);
+    		$join = "left join {$prefix}em_vote_paper p on p.vote_paper_id = {$prefix}em_vote_result.vote_paper_id";
+    	}else{
+    		$field = "{$prefix}em_vote_result.*,p.option_titile";
+    		$where['p.vote_paper_option_id'] = array('eq',$optionId);
+    		$join = "left join {$prefix}em_vote_paper_option p on ({$prefix}em_vote_result.option_value = p.vote_paper_option_id 
+				or ({$prefix}em_vote_result.option_value LIKE CONCAT(p.vote_paper_option_id,',%') 
+				or {$prefix}em_vote_result.option_value LIKE CONCAT('%,',p.vote_paper_option_id)))";
+    	}
+    	
+    	$count = M('em_vote_result')->field($field)
+    	->join($join)
+    	->where($where)
+    	->count();
+    	$emVoteResult = M('em_vote_result')->field($field)
+    	->join($join)
+    	->where($where)
+    	->order($order)
+    	->select();
+    	
+    	
+    	$p = isset($_GET['p']) ? intval($_GET['p']) : '1';
+    	$pagesize = 10;#每页数量
+    	$offset = $pagesize * ($p - 1);//计算记录偏移量
+    	
+    	$page = new \Think\Page($count, $pagesize);
+    	$page = $page->show();
+    	$this->assign('page', $page);
+    	$this->assign('list',$emVoteResult);
+    	$this->assign('questionType',$questionType);
+    	$this->display('resultDetail');
+    }
 }

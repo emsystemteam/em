@@ -1,0 +1,187 @@
+<include file="Public/head"/>
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/qwadmin/css/prettify.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/animate.min.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/sweet-alert.css">
+<link rel="stylesheet" href="__PUBLIC__/qwadmin/css/em.css">
+<link rel="stylesheet" media="all" type="text/css" href="__PUBLIC__/qwadmin/css/dropzone.css">
+<body class="no-skin">
+<include file="Public/header"/>
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+
+    <include file="Public/sidebar"/>
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            <include file="Public/breadcrumbs"/>
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <include file="Public/set"/>
+
+                <!-- /section:settings.box -->
+                <section id="content">
+                	<div class="container">
+                		<div class="card preview-topics">
+                			<div class="card-header print-show">
+                				<h2>{$emvote.vote_name}</h2>
+                			</div>
+                			<div class="hr-solid print-show"></div>
+                			<div class="card-body">
+                				<!-- <ul class="tab-nav tn-justified tn-icon">
+                					<li role="presentation" class="waves-effect active">
+                						<a class="col-sx-4" href="https://vip.weixiaoqu.com/vote/vote_result/id/1072.html">投票结果  </a>
+                					</li>
+                					<li role="presentation" class="waves-effect">
+                						<a class="col-sx-4" href="https://vip.weixiaoqu.com/vote/vote_info/id/1072.html">全部投票</a>
+                					</li>
+                				</ul> -->
+                				<div class="p-30">
+                					<!-- <h2 class="vote-h2">
+                						新站区阳光汇景小区2017年业主大会表决票
+                						<a href="https://vip.weixiaoqu.com/vote/vote_result/id/1072.html#change_xq" class="a-link" data-toggle="modal"><i class="fa fa-exchange"></i>选择小区</a>
+                					</h2> -->
+                					<div class="topics-desc">
+                						<p>{$emvote.description}</p>
+                					</div>
+                					<volist name="votePapers" id="val" key="k">
+                                    	<div class="question-item" 
+                                    			<?php 
+                                       					if($val['question_type'] == 1){
+                              						echo 'data-type="topics-radio"';
+                              					} elseif ($val['question_type'] == 2){
+                              						echo 'data-type="topics-checkbox"';
+                              					} else {
+                              				 		echo 'data-type="topics-blank"';
+                              				 	};
+                                       				?> >
+                                     		<div class="question-title">
+	                                      		<div class="qs-title">
+	                                      			{$val['question_titile']}
+	                                     				<span class="c-blue">
+	                                     					<?php 
+	                                        					if($val['question_type'] == 1){
+		                                						echo '【单选题】';
+		                                					} elseif ($val['question_type'] == 2){
+		                                						echo '【多选题】';
+		                                					} else {
+		                                				 		echo '【填空题】';
+		                                				 	};
+                                           				?>
+	                                         			</span>
+	                                      		</div>
+	                                      		<div class="topics-desc">
+	                                      			{$val['question_desc']}
+	                                      		</div>
+	                                      	</div>
+	                                      	<if condition="$val['question_type'] == 3">
+	                                      		<ul class="question-choice">
+	                                      			<li>
+	                                      				<a href="{:U('resultDetail',array('paper_id'=>$val['vote_paper_id'],'question_type'=>$val['question_type']))}" class="a-link">
+	                                      					<i class="fa fa-search"></i>查看填空题答案
+	                                      				</a>
+	                                      			</li>
+	                                      		</ul>
+											<else />
+												<div class="vote-result">
+	                                      			<table>
+			               								<thead>
+			               									<tr>
+			               										<th width="30%">选项</th>
+			               										<th>小计</th>
+			               										<th width="30%">比例</th>
+			               										<th>操作</th>
+			               									</tr>
+			               								</thead>
+	               										<tbody>
+	               											<volist  name="val['option']" id="vo" key="i">
+	               												<tr>
+				               										<td>
+				               											<div class="m-l-10">{$vo['option_titile']}</div>
+				               										</td>
+				               										<td>
+				               											<span class="ren">{$vo['count']}</span>人
+				               										</td>
+				               										<td class="progress-td">
+				               											<div class="progress progress-striped">
+				               												<div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: {$vo['percent']}">
+				               													<span class="sr-only"></span>
+				               												</div>
+				               											</div>
+				               											<span>{$vo['percent']}</span>
+				               										</td>
+				               										<td>
+				               											<a href="{:U('resultDetail',array('option_id'=>$vo['vote_paper_option_id'],'question_type'=>$val['question_type']))}" class="a-link">
+				               												<i class="fa fa-list"></i>查看详情
+				                                                   		</a>
+				                                                   	</td>
+			                                                   </tr>
+	               											</volist>
+		                                                   	<tr>
+		                                                   		<td>本题有效填写人次</td>
+		                                                   		<td>
+		                                                   			<span class="ren_count">{$val['allCount']}</span>人
+		                                                   		</td>
+		                                                   		<td></td>
+		                                                   		<td></td>
+		                                                   	</tr>
+	                                                 	</tbody>
+	               									</table>
+	               								</div>
+                                       		</if>
+                                      	</div>
+                                    </volist>
+                                    <div class="p-20 text-center p-hide">
+                                     	<button type="button" class="btn btn-primary btn-w-m m-btn" data-action="print">
+                                     		<i class="fa fa-print"></i>打印结果
+                             			</button>
+                             		</div>
+                             	</div>
+                             </div>
+                         </div>
+                    </div>
+               </section>
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    <include file="Public/footer"/>
+
+</div><!-- /.main-container -->
+
+<include file="Public/footerjs"/>
+<!-- inline scripts related to this page -->
+<!-- <script src="__PUBLIC__/qwadmin/js/moment-with-locales.min.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/prettify.js" type="text/javascript" charset="utf-8"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery.slimscroll.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="__PUBLIC__/qwadmin/js/waves.min.js"></script>-->
+<script src="__PUBLIC__/qwadmin/js/bootstrap-growl.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/functions.js"></script>
+<!-- <script src="__PUBLIC__/qwadmin/js/menu.js"></script> -->
+<script src="__PUBLIC__/qwadmin/js/sweet-alert.min.js"></script>
+<script src="__PUBLIC__/qwadmin/js/jquery-ui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/qwadmin/js/dropzone.js"></script>
+<script src="__PUBLIC__/qwadmin/js/add_topics.js"></script>
+<script charset="utf-8" src="__PUBLIC__/qwadmin/js/v.js"></script>
+<script src="__PUBLIC__/qwadmin/js/hm.js"></script>
+<script src="__PUBLIC__/qwadmin/js/analysis.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	$(function(){
+	    $('.vote-result table').each(function(){
+	        var num = 0;
+	        var ppp = $(this);
+	        ppp.find('.ren').each(function(){
+	            num += parseInt($(this).text());
+	        });
+	        ppp.find('.ren_count').text(num);
+	        
+	    });
+	});
+</script>
+</body>
+</html>

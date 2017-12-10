@@ -73,7 +73,6 @@ class HouseController extends ComController
         
         
         $count = $emHouse->field("{$prefix}em_house.*")
-            ->order($order)
             ->where($where)
             ->join("left join {$prefix}em_village v ON {$prefix}em_house.village = v.village_id")
             ->join("left join {$prefix}em_building b ON {$prefix}em_house.building = b.building_id")

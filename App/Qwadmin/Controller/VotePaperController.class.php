@@ -307,8 +307,7 @@ class VotePaperController extends ComController
     	}
     	//$em_vote = $emVote->field("{$prefix}em_vote.*")->where("{$prefix}em_vote.vote_id=$vid")->find();
     	M()->commit();
-//     	$this->success('操作成功！','/em/vote/index');
-    	$this->redirect("view",array('vote_id'=>$vid));
+    	$this->success('操作成功！','/em/VotePaper/view/vote_id/'.$vid);
     }
     
     /**

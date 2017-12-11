@@ -191,7 +191,7 @@
                 	  var obj = eval('(' + msg + ')');
                 	  //上传成功
                       if(obj.state=='SUCCESS'){
-                          var img_url="http://localhost"+obj.url;
+                          var img_url=obj.url;
                           $('.yulan').show();
                           $('.yulan').find('img').attr('src',img_url);
                       }

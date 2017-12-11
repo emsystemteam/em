@@ -116,6 +116,10 @@ class VoteController extends ComController
         }
     }
 
+    public function relationVillage(){
+    	$vid = isset($_GET['vote_id']) ? intval($_GET['vote_id']) : false;
+    }
+    
     public function edit()
     {
 
@@ -205,7 +209,7 @@ class VoteController extends ComController
 
         }
 //         $this->success('操作成功！','index');
-        $this->redirect("VotePaper/add",array());
+        $this->redirect("VotePaper/add",array('vote_id'=>$voteId));
     }
 
 

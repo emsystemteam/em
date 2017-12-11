@@ -50,11 +50,11 @@
                                     <thead>
                                     <tr>
                                         <th class="center"><input class="check-all" type="checkbox" value=""></th>
-                                        <th>名称</th>
-                                        <th>添加时间</th>
+                                        <th class="center">名称</th>
+                                        <th class="center">添加时间</th>
                                         <th class="center">开始时间</th>
                                         <th class="center">结束时间</th>
-                                        <th>查看关联小区</th>
+                                        <th class="center">查看关联小区</th>
                                         <th class="center">操作</th>
                                     </tr>
                                     </thead>
@@ -76,6 +76,7 @@
                                             	<if condition="$val['vote_status'] eq 1" >
 	                                            	<a href="{:U('VotePaper/add',array('vote_id'=>$val['vote_id']))}">添加问卷</a>&nbsp;
 	                                            <elseif condition="$val['vote_status'] eq 2"/>
+	                                            	<a href="{:U('relationVillage',array('vote_id'=>$val['vote_id']))}">关联小区</a>&nbsp;
 	                                            	<a href="{:U('VotePaper/edit',array('vote_id'=>$val['vote_id']))}">修改问卷</a>&nbsp;
 	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
 	                                            	<a href="{:U('release',array('vote_id'=>$val['vote_id']))}">发布投票</a>&nbsp;
@@ -142,7 +143,7 @@
         $("#submit").click(function () {
             bootbox.confirm({
                 title: "系统提示",
-                message: "是否要删除所选小区？",
+                message: "是否要删除所选投票？",
                 callback: function (result) {
                     if (result) {
                         $("#form").submit();
@@ -161,7 +162,7 @@
             var url = $(this).attr('val');
             bootbox.confirm({
                 title: "系统提示",
-                message: "是否要删除该小区?",
+                message: "是否要删除该投票?",
                 callback: function (result) {
                     if (result) {
                         window.location.href = url;

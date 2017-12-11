@@ -47,6 +47,9 @@ class VotePaperController extends ComController
     	$this->display('detail');
     }
     
+    /**
+     * 投票补录
+     */
     public function makeUp(){
     	$vid = isset($_GET['vote_id']) ? intval($_GET['vote_id']) : false;
     	
@@ -80,7 +83,10 @@ class VotePaperController extends ComController
     	$this->assign('votePapers', $em_vote_paper);
     	$this->display('makeUp');
     }
-    
+   
+    /**
+     * 投票补录保存
+     */
     public function makeUpSave(){
     	M()->startTrans();
     	
@@ -238,9 +244,12 @@ class VotePaperController extends ComController
     	}else{
     		//如果原来投票下的问卷为空，那么认为是新增问卷，修改投票状态为未开始
     		$voteStatus = M('em_dictionary')->where("dict_name = 'voteStatus' and dict_key = '未开始'")->find();
+    		var_dump($voteStatus);
     		if($voteStatus){
     			$data['vote_status'] = $voteStatus['dict_value'];
-    			if(!M('em_vote')->data($data)->where("vote_id=$vid")->save()){
+    			$result = M('em_vote')->data($data)->where("vote_id=$vid")->save();
+    			var_dump(M('em_vote')->getLastSql());
+    			if(!$result){
     				addlog('修改投票状态为未开始状态异常');
     				M()->rollback();
     				$this->error('修改问卷异常!');
@@ -298,7 +307,8 @@ class VotePaperController extends ComController
     	}
     	//$em_vote = $emVote->field("{$prefix}em_vote.*")->where("{$prefix}em_vote.vote_id=$vid")->find();
     	M()->commit();
-    	$this->success('操作成功！','/em/vote/index');
+//     	$this->success('操作成功！','/em/vote/index');
+    	$this->redirect("view",array('vote_id'=>$vid));
     }
     
     /**
@@ -335,6 +345,10 @@ class VotePaperController extends ComController
     	$this->ajaxReturn($thisHouse);
     }
     
+    /**
+     * 切换房屋
+     * @param string $houseId 房屋ID
+     */
     public function changeHouse($houseId= FALSE)
     {
     	$prefix = C('DB_PREFIX');
@@ -344,6 +358,10 @@ class VotePaperController extends ComController
     	$this->ajaxReturn($thisHousehold);
     }
     
+    /**
+     * 切换住户
+     * @param string $householdId
+     */
     public function changeHousehold($householdId= FALSE)
     {
     	$prefix = C('DB_PREFIX');

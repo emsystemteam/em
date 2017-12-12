@@ -70,13 +70,13 @@
                                             </td>
                                             <td class="center">{$val['start_time']}</td>
                                             <td class="center">{$val['end_time']}</td>
-                                            <td>{$val['village_name']}</td>
+                                            <td class="center"><php>echo '<a class="linkShowModal" href="javascript:void(0);" val="'.$val['vote_id'].'">查看小区</a>';</php></td>
                                             <td class="center">
                                             	<a href="{:U('edit',array('vote_id'=>$val['vote_id']))}">投票设置</a>&nbsp;
                                             	<if condition="$val['vote_status'] eq 1" >
 	                                            	<a href="{:U('VotePaper/add',array('vote_id'=>$val['vote_id']))}">添加问卷</a>&nbsp;
 	                                            <elseif condition="$val['vote_status'] eq 2"/>
-	                                            	<a href="{:U('relationVillage',array('vote_id'=>$val['vote_id']))}">关联小区</a>&nbsp;
+	                                            	<php>echo '<a class="linkOpenModal" href="javascript:void(0);" val="'.$val['vote_id'].'"><i class="fa fa-plus"></i>关联小区</a>';</php>&nbsp;
 	                                            	<a href="{:U('VotePaper/edit',array('vote_id'=>$val['vote_id']))}">修改问卷</a>&nbsp;
 	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
 	                                            	<a href="{:U('release',array('vote_id'=>$val['vote_id']))}">发布投票</a>&nbsp;
@@ -103,6 +103,49 @@
             </div><!-- /.page-content -->
         </div>
     </div><!-- /.main-content -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog"
+					aria-labelledby="ModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="ModalLabel">已关联的小区</h4>
+							</div>
+							<div id="bingdvillagelist" class="modal-body" style="height:100%; overflow:scroll;">
+						</div>
+						<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+							</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.page-content -->
+				</div>
+				<!-- /.page-content -->
+			</div>
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+					aria-labelledby="myModalLabel" aria-hidden="true">
+					<input type="hidden" id="hdfvoteid"/>
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true">&times;</button>
+								<h4 class="modal-title" id="myModalLabel">选择小区</h4>
+							</div>
+							<div class="modal-body" style="height:100%; overflow:scroll;"><include file="Public/buildingselected" /></div>
+							<div class="modal-footer">
+							<button type="button" class="btn btn-info" id="btnSave" 
+									data-dismiss="modal">保存</button>
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">关闭</button>
+							</div>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.page-content -->
+				</div>
     <include file="Public/footer"/>
 
 </div><!-- /.main-container -->
@@ -177,7 +220,168 @@
                 }
             });
         });
+        
+      //打开模态框(查看小区)
+    	$('.linkShowModal').click(function(){
+    		var vote_id=$(this).attr('val');
+    		$('#Modal').modal({});
+    		$('#bingdvillagelist').children().remove();
+    		var sendData = {
+    				vote_id :vote_id
+    			};
+    		$.ajax({
+    			type : "post",
+    			url : "__URL__/getvillagetovotebyid",
+    			dataType : "json",
+    			data : sendData,
+    			success : function(data) {
+    				if (data.status == "1") {
+    					if(data.message.length>0){
+   							 for(var i=0;i<data.message.length;i++){
+   									var insertHtml='<button id=v'+data.message[i].id+' class="btn btn-primary btn-sm btn-icon-text"'+
+   									 'title="'+data.message[i].village_name+'"><i class="fa fa-home"></i>'+
+   									 '<span>'+data.message[i].village_name+'</span>'+
+   										 '<a onclick="deleteVillage('+data.message[i].id+')" href="javascript:;" class="deleteVillage" var='+data.message[i].id+'>'+
+   										 '<i class="fa fa-times"></i>'+
+   										 '</a>'+ 
+   									 '</button>';
+   									$('#bingdvillagelist').append(insertHtml);
+   								}
+    					}
+    				}else{
+    					bootbox.alert({
+                            buttons: {
+                                ok: {
+                                    label: '确定',
+                                    className: 'btn-myStyle'
+                                }
+                            },
+                            message:  data.message,
+                            title: "提示信息",
+                        });
+    				}
+    			},
+    			error : function(XMLHttpRequest, textStatus, errorThrown) {
+    			}
+    		});
+    	});
+        
+      
+    	//打开模态框(关联小区)
+    	$('.linkOpenModal').click(function(){
+    		var voteid=$(this).attr('val');
+    		bindtreeview();
+    		$('#hdfvoteid').val(voteid);
+    		removeChild();
+    		$('#myModal').modal({});
+    	});
+    	//删除楼宇只保留小区信息
+		function removeChild() {
+			var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			if(zTreeObj!=null){
+				
+			
+			var nodes = zTreeObj.getNodes();
+			if (nodes && nodes.length > 0) {
+				for (var i = 0; i < nodes.length; i++) {
+					var first = nodes[i].id.substr(0, 1);
+					if (first == "p") {
+						zTreeObj.removeChildNodes(nodes[i]);
+					}
+
+				}
+			}}
+		}
+    	
+    	
+		//关联小区 	
+		$('#btnSave').click(function(){
+			var zTreeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			var checkedNodes = zTreeObj.getCheckedNodes(); 
+			 if(checkedNodes.length==0){
+				 bootbox.dialog({
+		                title: '友情提示：',
+		                message: '请选择楼宇',
+		                buttons: {
+		                    "success": {
+		                        "label": "确定",
+		                        "className": "btn-info"
+		                    }
+		                }
+		            });
+				 return;
+			 }else{
+				//文章关联小区
+				var totalselect = new Array();//选中多少小区
+				for (var i = 0; i < checkedNodes.length; i++) {
+						totalselect.push(checkedNodes[i].id.substr(1,checkedNodes[i].id.length));
+					}
+					var sendData = {
+						voteid : $('#hdfvoteid').val(),
+						totalselect:totalselect
+					};
+					$.ajax({
+						type : "post",
+						url : "__URL__/relationVillage",
+						dataType : "json",
+						data : sendData,
+						success : function(data) {
+							if (data.status == "1") {
+
+							} else {
+								bootbox.dialog({
+									title : '友情提示：',
+									message : data.message,
+									buttons : {
+										"success" : {
+											"label" : "确定",
+											"className" : "btn-danger"
+										}
+									}
+								});
+							}
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown) {
+						}
+					});
+				}
+			});
+		
+		
+		
+        
     })
+    
+    //删除关联小区
+		function deleteVillage(id){
+			var sendData = {
+					id : id
+				};
+				$.ajax({
+					type : "post",
+					url : "__URL__/deleteVillage",
+					dataType : "json",
+					data : sendData,
+					success : function(data) {
+						if (data.status == "1") {
+							$('#v'+id).remove();
+						} else {
+							bootbox.dialog({
+								title : '友情提示：',
+								message : data.message,
+								buttons : {
+									"success" : {
+										"label" : "确定",
+										"className" : "btn-danger"
+									}
+								}
+							});
+						}
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+					}
+				});
+		}
 </script>
 </body>
 </html>

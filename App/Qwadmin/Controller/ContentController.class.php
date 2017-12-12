@@ -90,7 +90,7 @@ class ContentController extends ComController {
 					$result = false;
 				}
 			}
-			if ($flag) {
+			if ($result) {
 				// 提交事务
 				$m->commit ();
 			} else {

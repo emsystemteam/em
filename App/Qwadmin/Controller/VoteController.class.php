@@ -267,20 +267,20 @@ class VoteController extends ComController {
 		$data ['operator'] = session ( 'uid' );
 		
 		$timenow = date ( 'Y-m-d H:i:s', time () );
-		if (! $voteId) {
+		if (!$voteId) {
 			$data ['create_time'] = $timenow;
 			$data ['modify_time'] = $timenow;
 			$voteId = M ( 'em_vote' )->data ( $data )->add ();
 			addlog ( '新增投票，投票ID：' . $voteId );
+			$this->redirect ( "VotePaper/add", array (
+					'vote_id' => $voteId
+			) );
 		} else {
 			$data ['modify_time'] = $timenow;
 			M ( 'em_vote' )->data ( $data )->where ( "vote_id=$voteId" )->save ();
 			addlog ( '编辑投票信息，投票ID：' . $voteId );
+			$this->success('操作成功！','index');
 		}
-		// $this->success('操作成功！','index');
-		$this->redirect ( "VotePaper/add", array (
-				'vote_id' => $voteId 
-		) );
 	}
 	public function add() {
 		$prefix = C ( 'DB_PREFIX' );

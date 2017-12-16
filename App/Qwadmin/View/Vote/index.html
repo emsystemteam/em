@@ -80,9 +80,12 @@
 	                                            	<a href="{:U('VotePaper/edit',array('vote_id'=>$val['vote_id']))}">修改问卷</a>&nbsp;
 	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
 	                                            	<a href="{:U('release',array('vote_id'=>$val['vote_id']))}">发布投票</a>&nbsp;
+	                                          	<elseif condition="$val['vote_status'] eq 3"/>
+	                                            	<a href="{:U('VotePaper/makeUp',array('vote_id'=>$val['vote_id']))}">投票补录</a>&nbsp;
+	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
+	                                            	<a href="{:U('Vote/result',array('vote_id'=>$val['vote_id']))}">投票结果</a>&nbsp;
 	                                            <else />
 	                                            	<a href="{:U('VotePaper/view',array('vote_id'=>$val['vote_id']))}">预览</a>&nbsp;
-	                                            	<a href="{:U('VotePaper/makeUp',array('vote_id'=>$val['vote_id']))}">投票补录</a>&nbsp;
 	                                            	<a href="{:U('Vote/result',array('vote_id'=>$val['vote_id']))}">投票结果</a>&nbsp;
                                             	</if>
                                                 <a class="del" href="javascript:;" val="{:U('del',array('voteIds'=>$val['vote_id']))}" title="删除">删除</a>

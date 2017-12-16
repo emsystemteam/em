@@ -64,8 +64,13 @@ class VoteController extends ComController {
 			);
 		}
 		
-		$count = $emVote->field ( "{$prefix}em_vote.*" )->order ( $order )->where ( $where )->join ( "left join {$prefix}em_vote_village vv ON {$prefix}em_vote.vote_id = vv.vote_id" )->join ( "left join {$prefix}em_village vg ON vv.village_id = vg.village_id" )->count ();
+		//如果有投票截止时间小于当前时间，那么认为该投票已经结束，修改投票状态为结束状态
+		$data ['vote_status'] = 4;
+		$timenow = date ( 'Y-m-d H:i:s', time () );
+		$data ['modify_time'] = $timenow;
+		M ('em_vote')->data ($data)->where ("end_time < now()")->save();
 		
+		$count = $emVote->field ( "{$prefix}em_vote.*" )->order ( $order )->where ( $where )->join ( "left join {$prefix}em_vote_village vv ON {$prefix}em_vote.vote_id = vv.vote_id" )->join ( "left join {$prefix}em_village vg ON vv.village_id = vg.village_id" )->count ();
 		$list = $emVote->field ( "{$prefix}em_vote.*" )->order ( $order )->where ( $where )->join ( "left join {$prefix}em_vote_village vv ON {$prefix}em_vote.vote_id = vv.vote_id" )->join ( "left join {$prefix}em_village vg ON vv.village_id = vg.village_id" )->limit ( $offset . ',' . $pagesize )->select ();
 		$page = new \Think\Page ( $count, $pagesize );
 		$page = $page->show ();
